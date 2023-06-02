@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BT_POS_NET"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1080" Width="1920">
+        Title="Bubbletill POS" Height="1080" Width="1920" Icon="/Assets/icon.png" WindowState="Maximized" WindowStyle="None">
     <Grid x:Name="POSParentGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40*"/>
@@ -22,14 +22,23 @@
                     <ColumnDefinition Width="234*"/>
                     <ColumnDefinition Width="254*"/>
                 </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Source="/Assets/logo-short.png" RenderTransformOrigin="0.5,0.5">
+                    <Image.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform Y="5"/>
+                        </TransformGroup>
+                    </Image.RenderTransform>
+                </Image>
                 <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="11/11/11 11:11" VerticalAlignment="Center" FontSize="20"/>
                 <TextBlock Grid.Column="3" TextWrapping="Wrap" Text="Online" VerticalAlignment="Center" FontSize="20"/>
                 <TextBlock Grid.Column="4" TextWrapping="Wrap" Text="Register# 11" VerticalAlignment="Center" FontSize="20"/>
                 <TextBlock Grid.Column="5" TextWrapping="Wrap" Text="Transaction# 1111" VerticalAlignment="Center" FontSize="20"/>
                 <TextBlock Grid.Column="6" TextWrapping="Wrap" Text="Operator# 1111" VerticalAlignment="Center" FontSize="20"/>
             </Grid>
-
         </GroupBox>
-
+        <ContentControl x:Name="POSViewContainer" Grid.Row="1" Content="Loading..." HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
     </Grid>
 </Window>

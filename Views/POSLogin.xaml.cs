@@ -1,5 +1,4 @@
-﻿using BT_POS_NET.Views;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,18 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BT_POS_NET
+namespace BT_POS_NET.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for POSLogin.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class POSLogin : UserControl
     {
-        public MainWindow()
+        public POSLogin()
         {
             InitializeComponent();
-
-            POSViewContainer.Content = new POSLogin();
         }
     }
 }

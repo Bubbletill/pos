@@ -1,4 +1,4 @@
-﻿using BT_POS_NET.Views;
+﻿using BT_POS.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BT_POS_NET
+namespace BT_POS
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -25,7 +25,9 @@ namespace BT_POS_NET
         {
             InitializeComponent();
 
+            POSParentHeader.Visibility = Visibility.Hidden;
             POSViewContainer.Content = new POSLogin();
+
         }
     }
 }

@@ -5,13 +5,20 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using BT_POS.Data;
 
-namespace BT_POS_NET
+namespace BT_POS
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
     {
+        Transaction currentTransaction;
+
+        public App()
+        {
+            Console.WriteLine("Start up");
+        }
     }
 }

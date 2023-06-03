@@ -1,9 +1,9 @@
-﻿<Window x:Class="BT_POS_NET.MainWindow"
+﻿<Window x:Class="BT_POS.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BT_POS_NET"
+        xmlns:local="clr-namespace:BT_POS"
         mc:Ignorable="d"
         Title="Bubbletill POS" Height="1080" Width="1920" Icon="/Assets/icon.png" WindowState="Maximized" WindowStyle="None">
     <Grid x:Name="POSParentGrid">
@@ -11,7 +11,7 @@
             <RowDefinition Height="40*"/>
             <RowDefinition Height="467*"/>
         </Grid.RowDefinitions>
-        <GroupBox Grid.Row="0" Grid.RowSpan="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="#FFABDFFF" Background="#FFABDFFF" BorderThickness="0,0,0,0" Foreground="Black">
+        <GroupBox x:Name="POSParentHeader" Grid.Row="0" Grid.RowSpan="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="#FFABDFFF" Background="#FFABDFFF" BorderThickness="0,0,0,0" Foreground="Black">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="120*"/>

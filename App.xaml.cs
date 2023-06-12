@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using BT_POS.Data;
+using BT_COMMONS.Transactions;
 
 namespace BT_POS
 {

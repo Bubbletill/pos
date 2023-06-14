@@ -2,7 +2,9 @@
 using System.Windows;
 using BT_COMMONS;
 using BT_COMMONS.Database;
+using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Helpers;
+using BT_POS.RepositoryImpl;
 using BT_POS.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,8 @@ namespace BT_POS;
 
 public partial class App : Application
 {
+
+    public static string ControllerToken;
 
     public static IHost? AppHost { get; private set; }
 
@@ -28,6 +32,7 @@ public partial class App : Application
 
                 services.AddSingleton<DatabaseAccess>(x => new DatabaseAccess(config["LocalConnectionString"]));
                 services.AddSingleton<APIAccess>(x => new APIAccess(config["ControllerApiUrl"]));
+                services.AddSingleton<IOperatorRepository, OperatorRepository>();
 
                 services.AddSingleton<MainWindow>();
                 services.AddViewFactory<POSLogin>();

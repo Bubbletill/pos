@@ -2,10 +2,6 @@
 using BT_COMMONS.Database;
 using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Operators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BT_POS.RepositoryImpl;
@@ -21,13 +17,59 @@ public class OperatorRepository : IOperatorRepository
         _api = api;
     }
 
-    public Operator GetOperator(int id)
+    public async Task<Operator?> GetOperator(int id)
     {
-        throw new NotImplementedException();
+        var opers = await _database.LoadData<Operator, dynamic>("SELECT id, isactive, operatorid, operatorpassword, istemppassword, firstname, nickname, lastname, groupsid, dateofbirth, hiredate, terminationdate FROM `operators` WHERE `id`=?;", new { id });
+        if (opers.Count == 0)
+        {
+            return null;
+        }
+
+        var oper = opers[0].parse();
+
+        return oper;
     }
 
-    public OperatorLoginResponse OperatorLogin(OperatorLoginRequest request)
+    public async Task<OperatorLoginResponse> OperatorLogin(OperatorLoginRequest request)
     {
-        throw new NotImplementedException();
+        APIResponse<OperatorLoginResponse> loginResponse = await _api.Post<OperatorLoginResponse, OperatorLoginRequest>("operator/login", request);
+        return loginResponse.Data;
+
+        // Code when offline to controller
+        /*var opers = await _database.LoadData<Operator, dynamic>("SELECT id, isactive, operatorid, operatorpassword, groupsid FROM `operators` WHERE `operatorid`=?;", new { request.Id });
+        if (opers.Count == 0)
+        {
+            return new OperatorLoginResponse
+            {
+                JWT = string.Empty,
+                Message = "Invalid operator id or password."
+            };
+        }
+
+        var oper = opers[0].parse();
+
+        if (!oper.IsActive)
+        {
+            return new OperatorLoginResponse
+            {
+                JWT = string.Empty,
+                Message = "Operator is disabled."
+            };
+        }
+
+        if (!BCrypt.Net.BCrypt.Verify(request.Password, oper.OperatorPassword))
+        {
+            return new OperatorLoginResponse
+            {
+                JWT = string.Empty,
+                Message = "Invalid operator id or password."
+            };
+        }
+
+        return new OperatorLoginResponse
+        {
+            JWT = "Soon",
+            Message = string.Empty
+        };*/
     }
 }

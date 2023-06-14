@@ -1,5 +1,5 @@
-﻿using BT_COMMONS.Data;
-using BT_COMMONS.Database;
+﻿using BT_COMMONS.Database;
+using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Operators;
 using System;
 using System.Collections.Generic;
@@ -25,14 +25,15 @@ namespace BT_POS.Views
     public partial class POSLogin : UserControl
     {
         private readonly POSController _controller;
-        private readonly APIAccess _apiAccess;
+        private readonly IOperatorRepository _operatorRepository;
 
-        public POSLogin(POSController controller, APIAccess apiAccess)
+        public POSLogin(POSController controller, IOperatorRepository operatorRepository)
         {
             InitializeComponent();
             ErrorBox.Visibility = Visibility.Hidden;
             _controller = controller;
-            _apiAccess = apiAccess;
+            _operatorRepository = operatorRepository;
+            UserIdBox.Focus();
         }
 
         private void BarError(string error = "")
@@ -55,31 +56,38 @@ namespace BT_POS.Views
                 return;
             }
 
-            APIResponse<OperatorLoginResponse> loginResponse = await _apiAccess.Post<OperatorLoginResponse, OperatorLoginRequest>("operator/login", new OperatorLoginRequest
+            LoginButton.Content = "Working...";
+
+            OperatorLoginResponse loginResponse = await _operatorRepository.OperatorLogin(new OperatorLoginRequest
             {
                 Id = UserIdBox.Text,
                 Password = PasswordBox.Password
             });
 
-            if (loginResponse.StatusCode == System.Net.HttpStatusCode.OK)
+            if (loginResponse == null)
             {
-                _controller.ControllerAuthenticationToken = loginResponse.Data.JWT;
+                BarError("Internal error. Please try again later.");
+                LoginButton.Content = "Login";
+                return;
+            }
+
+            if (loginResponse.JWT != string.Empty && loginResponse.JWT != null)
+            {
+                _controller.ControllerAuthenticationToken = loginResponse.JWT;
                 var status = await _controller.CompleteLogin();
                 if (!status)
                 {
                     BarError("Failed to complete login. Please try again later.");
+                    LoginButton.Content = "Login";
                     return;
                 }
 
                 App.LoginComplete();
-            } 
-            else if (loginResponse.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                BarError(loginResponse.Data.Message);
             }
             else
             {
-                BarError("Internal error. Please try again later.");
+                BarError(loginResponse.Message);
+                LoginButton.Content = "Login";
             }
         } 
 

@@ -6,6 +6,7 @@
     <RootNamespace>BT_POS</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <UserSecretsId>fd40def0-d52b-4f50-93ac-adbc98a939d0</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

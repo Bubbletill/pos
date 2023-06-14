@@ -10,7 +10,7 @@ namespace BT_POS;
 public class POSController
 {
 
-    private readonly APIAccess _apiAccess;
+    private readonly IAPIAccess _apiAccess;
     public string? ControllerAuthenticationToken { get; set; }
 
     public bool OnlineToController { get; set; }
@@ -20,7 +20,7 @@ public class POSController
     public Operator? CurrentOperator { get; set; }
     public Transaction? CurrentTransaction { get; set; }
 
-    public POSController(APIAccess apiAccess)
+    public POSController(IAPIAccess apiAccess)
     {
         _apiAccess = apiAccess;
         RegisterNumber = 1;

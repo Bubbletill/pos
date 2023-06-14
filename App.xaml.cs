@@ -1,7 +1,11 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
+using BT_COMMONS;
 using BT_COMMONS.Database;
 using BT_COMMONS.Helpers;
+using BT_POS.Data;
 using BT_POS.Views;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -17,7 +21,14 @@ public partial class App : Application
         AppHost = Host.CreateDefaultBuilder()
             .ConfigureServices((hostContext, services) =>
             {
-                services.AddSingleton<APIAccess>(x => new APIAccess("https://127.0.0.1:5001/api/"));
+                IConfigurationBuilder builder = new ConfigurationBuilder();
+                builder.AddJsonFile("AppSettings.json");
+                IConfiguration config = builder.Build();
+
+                services.AddSingleton<IConfiguration>(provider => config);
+
+                services.AddSingleton<DatabaseAccess>(x => new DatabaseAccess(config["LocalConnectionString"]));
+                services.AddSingleton<IAPIAccess, PAPIAccess>();
 
                 services.AddSingleton<MainWindow>();
                 services.AddViewFactory<POSLogin>();
@@ -30,6 +41,12 @@ public partial class App : Application
     protected override async void OnStartup(StartupEventArgs e)
     {
         await AppHost!.StartAsync();
+
+        var apiAccess =AppHost.Services.GetRequiredService<IAPIAccess>();
+        var config = AppHost.Services.GetRequiredService<IConfiguration>();
+        Trace.WriteLine(config["ControllerApiUrl"]);
+        apiAccess.UpdateWithUrl(config["ControllerApiUrl"]);
+
         var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();
 

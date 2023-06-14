@@ -3,7 +3,6 @@ using System.Windows;
 using BT_COMMONS;
 using BT_COMMONS.Database;
 using BT_COMMONS.Helpers;
-using BT_POS.Data;
 using BT_POS.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +27,7 @@ public partial class App : Application
                 services.AddSingleton<IConfiguration>(provider => config);
 
                 services.AddSingleton<DatabaseAccess>(x => new DatabaseAccess(config["LocalConnectionString"]));
-                services.AddSingleton<IAPIAccess, PAPIAccess>();
+                services.AddSingleton<APIAccess>(x => new APIAccess(config["ControllerApiUrl"]));
 
                 services.AddSingleton<MainWindow>();
                 services.AddViewFactory<POSLogin>();
@@ -41,11 +40,6 @@ public partial class App : Application
     protected override async void OnStartup(StartupEventArgs e)
     {
         await AppHost!.StartAsync();
-
-        var apiAccess =AppHost.Services.GetRequiredService<IAPIAccess>();
-        var config = AppHost.Services.GetRequiredService<IConfiguration>();
-        Trace.WriteLine(config["ControllerApiUrl"]);
-        apiAccess.UpdateWithUrl(config["ControllerApiUrl"]);
 
         var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();

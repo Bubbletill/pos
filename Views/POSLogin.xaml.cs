@@ -25,9 +25,9 @@ namespace BT_POS.Views
     public partial class POSLogin : UserControl
     {
         private readonly POSController _controller;
-        private readonly IAPIAccess _apiAccess;
+        private readonly APIAccess _apiAccess;
 
-        public POSLogin(POSController controller, IAPIAccess apiAccess)
+        public POSLogin(POSController controller, APIAccess apiAccess)
         {
             InitializeComponent();
             ErrorBox.Visibility = Visibility.Hidden;

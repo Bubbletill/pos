@@ -1,33 +1,33 @@
-﻿using BT_POS.Views;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BT_COMMONS.Helpers;
+using BT_POS.Views;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace BT_POS
+namespace BT_POS;
+
+public partial class MainWindow : Window
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    private readonly POSController _posController;
+    private readonly IAbstractFactory<POSHome> _posHome;
+
+    public MainWindow(IAbstractFactory<POSLogin> posLogin, IAbstractFactory<POSHome> posHome, POSController posController)
     {
-        public MainWindow()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            POSParentHeader.Visibility = Visibility.Hidden;
-            POSViewContainer.Content = new POSLogin();
+        _posController = posController;
+        _posHome = posHome;
 
-        }
+        //POSParentHeader.Visibility = Visibility.Hidden;
+
+        POSParentHeader_Register.Text = "Register# " + _posController.RegisterNumber;
+
+        POSViewContainer.Content = posLogin.Create();
+
+    }
+
+    public void LoginComplete(POSHome posHome)
+    {
+        POSParentHeader_Operator.Text = "Oper# " + _posController.CurrentOperator.OperatorId;
+
+        POSViewContainer.Content = posHome;
     }
 }

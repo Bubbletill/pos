@@ -13,18 +13,22 @@
             <ColumnDefinition Width="89*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="356*"/>
+            <RowDefinition Height="59*"/>
+            <RowDefinition Height="297*"/>
             <RowDefinition Height="304*"/>
             <RowDefinition Height="335*"/>
         </Grid.RowDefinitions>
-        <Image Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Bottom" Source="/Assets/logo.png" RenderTransformOrigin="0.5,0.5" Stretch="None">
+        <GroupBox x:Name="ErrorBox" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="0" Background="Red" BorderBrush="Red" BorderThickness="0,0,0,0" ClipToBounds="True" >
+            <TextBlock x:Name="ErrorBoxText" Foreground="White" FontSize="24" Text="efef" VerticalAlignment="Center"/>
+        </GroupBox>
+        <Image Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Source="/Assets/logo.png" RenderTransformOrigin="0.5,0.5" Stretch="None" Margin="0,56,0,0" Grid.Row="1">
             <Image.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleX="0.75" ScaleY="0.75"/>
                 </TransformGroup>
             </Image.RenderTransform>
         </Image>
-        <GroupBox Grid.Row="1" Grid.Column="1" BorderThickness="0,0,0,0" Background="#FFABDFFF">
+        <GroupBox Grid.Row="2" Grid.Column="1" BorderThickness="0,0,0,0" Background="#FFABDFFF">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="181*"/>
@@ -38,11 +42,11 @@
                 </Grid.RowDefinitions>
                 <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" Text="User ID" VerticalAlignment="Center" FontSize="30" Height="40" Width="97"/>
                 <TextBlock HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" Text="Password" VerticalAlignment="Center" FontSize="30" Height="40" Width="124"/>
-                <TextBox Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="30" Width="Auto" />
-                <PasswordBox Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="2" VerticalAlignment="Center" FontSize="30" Width="Auto" />
+                <TextBox x:Name="UserIdBox" Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="30" Width="Auto" KeyUp="UserIdBox_KeyUp" />
+                <PasswordBox x:Name="PasswordBox" Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="2" VerticalAlignment="Center" FontSize="30" Width="Auto" KeyUp="PasswordBox_KeyUp" />
                 <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-                    <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Login" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" MinWidth="200" MinHeight="95" BorderBrush="{x:Null}" Background="#FFC1C1C1" Foreground="Black"/>
-                    <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Back Office" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" MinWidth="200" MinHeight="95" Margin="50,0,0,0" BorderBrush="{x:Null}" Background="#FFC1C1C1" Foreground="Black"/>
+                    <Button x:Name="LoginButton" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Login" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" MinWidth="200" MinHeight="95" BorderBrush="{x:Null}" Background="#FFC1C1C1" Foreground="Black" Click="LoginButton_Click"/>
+                    <Button x:Name="BackOfficeButton" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Back Office" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" MinWidth="200" MinHeight="95" Margin="50,0,0,0" BorderBrush="{x:Null}" Background="#FFC1C1C1" Foreground="Black" Click="BackOfficeButton_Click"/>
                 </StackPanel>
             </Grid>
 

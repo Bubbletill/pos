@@ -32,11 +32,11 @@
                         </TransformGroup>
                     </Image.RenderTransform>
                 </Image>
-                <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="11/11/11 11:11" VerticalAlignment="Center" FontSize="20"/>
-                <TextBlock Grid.Column="3" TextWrapping="Wrap" Text="Online" VerticalAlignment="Center" FontSize="20"/>
-                <TextBlock Grid.Column="4" TextWrapping="Wrap" Text="Register# 11" VerticalAlignment="Center" FontSize="20"/>
-                <TextBlock Grid.Column="5" TextWrapping="Wrap" Text="Transaction# 1111" VerticalAlignment="Center" FontSize="20"/>
-                <TextBlock Grid.Column="6" TextWrapping="Wrap" Text="Operator# 1111" VerticalAlignment="Center" FontSize="20"/>
+                <TextBlock x:Name="POSParentHeader_DateTime" Grid.Column="2" TextWrapping="Wrap" Text="" VerticalAlignment="Center" FontSize="20"/>
+                <TextBlock x:Name="POSParentHeader_Status" Grid.Column="3" TextWrapping="Wrap" Text="Online" VerticalAlignment="Center" FontSize="20"/>
+                <TextBlock x:Name="POSParentHeader_Register" Grid.Column="4" TextWrapping="Wrap" Text="Register# " VerticalAlignment="Center" FontSize="20"/>
+                <TextBlock x:Name="POSParentHeader_Trans" Grid.Column="5" TextWrapping="Wrap" Text="Transaction# 0" VerticalAlignment="Center" FontSize="20"/>
+                <TextBlock x:Name="POSParentHeader_Operator" Grid.Column="6" TextWrapping="Wrap" Text="Operator# " VerticalAlignment="Center" FontSize="20"/>
             </Grid>
         </GroupBox>
         <ContentControl x:Name="POSViewContainer" Grid.Row="1" Content="Loading..." HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>

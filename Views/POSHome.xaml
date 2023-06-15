@@ -7,6 +7,19 @@
              mc:Ignorable="d" 
              d:DesignHeight="995" d:DesignWidth="1920" Background="White">
     <Grid>
-            
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="961*"/>
+            <ColumnDefinition Width="959*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="171*"/>
+            <RowDefinition Height="28*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel x:Name="ButtonStackPanel" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <Button Style="{DynamicResource BTButton}" Content="Hello"></Button>
+            <Button Style="{DynamicResource BTButton}" Content="OOps"/>
+            <Button Style="{DynamicResource BTButton}" Content="Bye"/>
+        </StackPanel>
     </Grid>
 </UserControl>

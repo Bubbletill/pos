@@ -8,6 +8,7 @@ public partial class MainWindow : Window
 {
     private readonly POSController _posController;
     private readonly IAbstractFactory<POSHome> _posHome;
+    private readonly IAbstractFactory<POSLogin> _posLogin;
 
     public MainWindow(IAbstractFactory<POSLogin> posLogin, IAbstractFactory<POSHome> posHome, POSController posController)
     {
@@ -15,6 +16,7 @@ public partial class MainWindow : Window
 
         _posController = posController;
         _posHome = posHome;
+        _posLogin = posLogin;
 
         //POSParentHeader.Visibility = Visibility.Hidden;
 
@@ -26,8 +28,22 @@ public partial class MainWindow : Window
 
     public void LoginComplete(POSHome posHome)
     {
-        POSParentHeader_Operator.Text = "Oper# " + _posController.CurrentOperator.OperatorId;
+        POSParentHeader_Operator.Text = "Operator# " + _posController.CurrentOperator.OperatorId;
+
+        if (!_posController.GotInitialControllerData)
+        {
+            POSParentHeader_Trans.Text = "Transaction# " + _posController.TempPreviousTransId;
+            _posController.GotInitialControllerData = true; 
+        }
 
         POSViewContainer.Content = posHome;
+    }
+
+    public void Logout()
+    {
+        POSParentHeader_Operator.Text = "Operator# ";
+        _posController.CurrentOperator = null;
+        App.SetAPIToken(null);
+        POSViewContainer.Content = _posLogin.Create();
     }
 }

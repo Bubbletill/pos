@@ -1,5 +1,7 @@
-﻿using System;
+﻿using BT_POS.Buttons.Menu;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +22,35 @@ namespace BT_POS.Views
     /// </summary>
     public partial class POSHome : UserControl
     {
-        public POSHome()
+        private readonly MainWindow _mainWindow;
+        private List<POSMenuButton> buttons;
+        private readonly Style _buttonStyle;
+
+        public POSHome(MainWindow mainWindow)
         {
+            _mainWindow = mainWindow;
             InitializeComponent();
+            buttons = new List<POSMenuButton>
+            {
+                POSMenuButton.ADMIN,
+                POSMenuButton.LOGOUT
+            };
+
+            _buttonStyle = FindResource("BTButton") as Style;
+
+            buttons.ForEach(type =>
+            {
+                Button button = new Button();
+                button.Style = _buttonStyle;
+                button.Content = POSMenuButtonGetter.Get(type).Name;
+                button.Click += (s, e) =>
+                {
+                    POSMenuButtonGetter.Get(type).OnClick(_mainWindow);
+                };
+
+                ButtonStackPanel.Children.Add(button);
+                ButtonStackPanel.UpdateLayout();
+            });
         }
     }
 }

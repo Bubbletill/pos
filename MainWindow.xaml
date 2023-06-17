@@ -11,7 +11,7 @@
             <RowDefinition Height="40*"/>
             <RowDefinition Height="467*"/>
         </Grid.RowDefinitions>
-        <GroupBox x:Name="POSParentHeader" Grid.Row="0" Grid.RowSpan="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="#FFABDFFF" Background="#FFABDFFF" BorderThickness="0,0,0,0" Foreground="Black">
+        <GroupBox Style="{DynamicResource BTParentHeader}" x:Name="POSParentHeader" Grid.Row="0" Grid.RowSpan="1" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="120*"/>
@@ -22,7 +22,7 @@
                     <ColumnDefinition Width="234*"/>
                     <ColumnDefinition Width="254*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Source="/Assets/logo-short.png" RenderTransformOrigin="0.5,0.5">
+                <Image Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Source="/Assets/logo-short.png" RenderTransformOrigin="0.5,0.5" Margin="10,0,0,0">
                     <Image.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform/>
@@ -35,7 +35,7 @@
                 <TextBlock x:Name="POSParentHeader_DateTime" Grid.Column="2" TextWrapping="Wrap" Text="" VerticalAlignment="Center" FontSize="20"/>
                 <TextBlock x:Name="POSParentHeader_Status" Grid.Column="3" TextWrapping="Wrap" Text="Online" VerticalAlignment="Center" FontSize="20"/>
                 <TextBlock x:Name="POSParentHeader_Register" Grid.Column="4" TextWrapping="Wrap" Text="Register# " VerticalAlignment="Center" FontSize="20"/>
-                <TextBlock x:Name="POSParentHeader_Trans" Grid.Column="5" TextWrapping="Wrap" Text="Transaction# 0" VerticalAlignment="Center" FontSize="20"/>
+                <TextBlock x:Name="POSParentHeader_Trans" Grid.Column="5" TextWrapping="Wrap" Text="Transaction# " VerticalAlignment="Center" FontSize="20"/>
                 <TextBlock x:Name="POSParentHeader_Operator" Grid.Column="6" TextWrapping="Wrap" Text="Operator# " VerticalAlignment="Center" FontSize="20"/>
             </Grid>
         </GroupBox>

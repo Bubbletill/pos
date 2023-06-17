@@ -6,6 +6,7 @@ using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Helpers;
 using BT_POS.RepositoryImpl;
 using BT_POS.Views;
+using BT_POS.Views.Admin;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,9 +15,6 @@ namespace BT_POS;
 
 public partial class App : Application
 {
-
-    public static string ControllerToken;
-
     public static IHost? AppHost { get; private set; }
 
     public App()
@@ -33,10 +31,14 @@ public partial class App : Application
                 services.AddSingleton<DatabaseAccess>(x => new DatabaseAccess(config["LocalConnectionString"]));
                 services.AddSingleton<APIAccess>(x => new APIAccess(config["ControllerApiUrl"]));
                 services.AddSingleton<IOperatorRepository, OperatorRepository>();
+                services.AddSingleton<ITransactionRepository, TransactionRepository>();
 
                 services.AddSingleton<MainWindow>();
                 services.AddViewFactory<POSLogin>();
+
                 services.AddViewFactory<POSHome>();
+
+                services.AddViewFactory<POSAdmin>();
 
                 services.AddSingleton<POSController>();
             }).Build();
@@ -57,6 +59,12 @@ public partial class App : Application
         await AppHost!.StopAsync();
 
         base.OnExit(e);
+    }
+
+    public static void SetAPIToken(string token)
+    {
+        APIAccess api = AppHost.Services.GetRequiredService<APIAccess>();
+        api.UpdateWithToken(token);
     }
 
     public static void LoginComplete()

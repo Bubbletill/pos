@@ -20,7 +20,8 @@
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             BorderThickness="2"
-                            BorderBrush="#FFC1C1C1">
+                            BorderBrush="#FFC1C1C1"
+                            CornerRadius="7">
 
                         <Border.Background>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" MappingMode="RelativeToBoundingBox">
@@ -32,6 +33,26 @@
                         <ContentPresenter
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!-- POS Parent Header -->
+    <Style x:Key="BTParentHeader" TargetType="GroupBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GroupBox">
+                    <Border 
+                            BorderBrush="#FFABDFFF" 
+                        Background="#FFABDFFF" 
+                        BorderThickness="0,0,0,0" 
+                        CornerRadius="0,0,0,0">
+
+                        <ContentPresenter
+                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Stretch"/>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

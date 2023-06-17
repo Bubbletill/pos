@@ -9,5 +9,5 @@ namespace BT_POS.Buttons.Menu;
 public class POSMenuButtonData : IPOSButtonData
 {
     public string Name { get; set; }
-    public UserControl Control { get; set; }
+    public Func<MainWindow, string> OnClick { get; set; }
 }

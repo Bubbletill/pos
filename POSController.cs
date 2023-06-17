@@ -1,6 +1,7 @@
 ﻿using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
+using BT_COMMONS.Transactions.API;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -12,24 +13,30 @@ public class POSController
 {
 
     private readonly IOperatorRepository _operatorRepository;
+    private readonly ITransactionRepository _transactionRepository;
     public string? ControllerAuthenticationToken { get; set; }
+    public bool GotInitialControllerData { get; set; } = false;
 
     public bool OnlineToController { get; set; }
 
+    public readonly int StoreNumber;
     public readonly int RegisterNumber;
+    public int TempPreviousTransId = 0;
 
     public Operator? CurrentOperator { get; set; }
     public Transaction? CurrentTransaction { get; set; }
 
-    public POSController(IOperatorRepository operatorRepository)
+    public POSController(IOperatorRepository operatorRepository, ITransactionRepository transactionRepository)
     {
         _operatorRepository = operatorRepository;
+        _transactionRepository = transactionRepository;
+        StoreNumber = 1;
         RegisterNumber = 1;
     }
 
     public async Task<bool> CompleteLogin()
     {
-        App.ControllerToken = ControllerAuthenticationToken;
+        App.SetAPIToken(ControllerAuthenticationToken);
 
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(ControllerAuthenticationToken);
@@ -39,6 +46,16 @@ public class POSController
         if (oper == null)
         {
             return false;
+        }
+
+        if (!GotInitialControllerData)
+        {
+            int? prevTrans = await _transactionRepository.GetPreviousTransactionId(StoreNumber, RegisterNumber);
+
+            if (prevTrans == null)
+                return false;
+
+            TempPreviousTransId = prevTrans.Value;
         }
 
         CurrentOperator = oper;

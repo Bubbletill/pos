@@ -32,7 +32,7 @@ public partial class MainWindow : Window
 
         if (!_posController.GotInitialControllerData)
         {
-            POSParentHeader_Trans.Text = "Transaction# " + _posController.TempPreviousTransId;
+            POSParentHeader_Trans.Text = "Transaction# " + _posController.CurrentTransId;
             _posController.GotInitialControllerData = true; 
         }
 

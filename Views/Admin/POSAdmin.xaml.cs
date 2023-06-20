@@ -14,21 +14,20 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BT_POS.Views.Admin
+namespace BT_POS.Views.Admin;
+
+public partial class POSAdmin : UserControl
 {
-    public partial class POSAdmin : UserControl
+    private readonly MainWindow _mainWindow;
+
+    public POSAdmin(MainWindow mainWindow)
     {
-        private readonly MainWindow _mainWindow;
+        InitializeComponent();
+        _mainWindow = mainWindow;
+    }
 
-        public POSAdmin(MainWindow mainWindow)
-        {
-            InitializeComponent();
-            _mainWindow = mainWindow;
-        }
-
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            _mainWindow.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<POSHome>();
-        }
+    private void BackButton_Click(object sender, RoutedEventArgs e)
+    {
+        _mainWindow.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<POSHome>();
     }
 }

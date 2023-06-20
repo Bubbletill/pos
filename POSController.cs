@@ -6,6 +6,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace BT_POS;
 
@@ -21,10 +22,10 @@ public class POSController
 
     public readonly int StoreNumber;
     public readonly int RegisterNumber;
-    public int TempPreviousTransId = 0;
 
     public Operator? CurrentOperator { get; set; }
     public Transaction? CurrentTransaction { get; set; }
+    public int CurrentTransId = 0;
 
     public POSController(IOperatorRepository operatorRepository, ITransactionRepository transactionRepository)
     {
@@ -55,7 +56,7 @@ public class POSController
             if (prevTrans == null)
                 return false;
 
-            TempPreviousTransId = prevTrans.Value;
+            CurrentTransId = prevTrans.Value;
         }
 
         CurrentOperator = oper;

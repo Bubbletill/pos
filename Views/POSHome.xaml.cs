@@ -1,6 +1,8 @@
-﻿using BT_POS.Buttons.Menu;
+﻿using BT_COMMONS.Transactions;
+using BT_POS.Buttons.Menu;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -15,42 +17,47 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BT_POS.Views
-{
-    /// <summary>
-    /// Interaction logic for POSHome.xaml
-    /// </summary>
-    public partial class POSHome : UserControl
-    {
-        private readonly MainWindow _mainWindow;
-        private List<POSMenuButton> buttons;
-        private readonly Style _buttonStyle;
+namespace BT_POS.Views;
 
-        public POSHome(MainWindow mainWindow)
+public partial class POSHome : UserControl
+{
+    private readonly MainWindow _mainWindow;
+    private readonly POSController _posController;
+    private List<POSMenuButton> buttons;
+    private readonly Style _buttonStyle;
+
+    public POSHome(MainWindow mainWindow, POSController posController)
+    {
+        _mainWindow = mainWindow;
+        _posController = posController;
+        InitializeComponent();
+
+        if (_posController.CurrentTransaction != null )
         {
-            _mainWindow = mainWindow;
-            InitializeComponent();
-            buttons = new List<POSMenuButton>
+            BasketGrid.ItemsSource = _posController.CurrentTransaction.Basket;
+        }
+
+        buttons = new List<POSMenuButton>
+        {
+            POSMenuButton.ADMIN,
+            POSMenuButton.RETURN,
+            POSMenuButton.LOGOUT
+        };
+
+        _buttonStyle = FindResource("BTButton") as Style;
+
+        buttons.ForEach(type =>
+        {
+            Button button = new Button();
+            button.Style = _buttonStyle;
+            button.Content = POSMenuButtonGetter.Get(type).Name;
+            button.Click += (s, e) =>
             {
-                POSMenuButton.ADMIN,
-                POSMenuButton.LOGOUT
+                POSMenuButtonGetter.Get(type).OnClick(_mainWindow);
             };
 
-            _buttonStyle = FindResource("BTButton") as Style;
-
-            buttons.ForEach(type =>
-            {
-                Button button = new Button();
-                button.Style = _buttonStyle;
-                button.Content = POSMenuButtonGetter.Get(type).Name;
-                button.Click += (s, e) =>
-                {
-                    POSMenuButtonGetter.Get(type).OnClick(_mainWindow);
-                };
-
-                ButtonStackPanel.Children.Add(button);
-                ButtonStackPanel.UpdateLayout();
-            });
-        }
+            ButtonStackPanel.Children.Add(button);
+            ButtonStackPanel.UpdateLayout();
+        });
     }
 }

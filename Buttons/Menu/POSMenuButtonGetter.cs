@@ -1,6 +1,8 @@
-﻿using BT_POS.Views;
+﻿using BT_COMMONS.Transactions;
+using BT_POS.Views;
 using BT_POS.Views.Admin;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Diagnostics;
 
 namespace BT_POS.Buttons.Menu;
@@ -44,7 +46,26 @@ public class POSMenuButtonGetter
                         Name = "Return",
                         OnClick = w =>
                         {
-
+                            POSController controller = App.AppHost.Services.GetRequiredService<POSController>();
+                            if (controller.CurrentTransaction == null)
+                            {
+                                controller.CurrentTransId++;
+                                controller.CurrentTransaction = new Transaction();
+                                controller.CurrentTransaction.Init(controller.StoreNumber, controller.RegisterNumber, DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), controller.CurrentTransId, TransactionType.SALE);
+                                controller.CurrentTransaction.AddToBasket(new BasketItem
+                                {
+                                    Code = 9999,
+                                    Description = "Example Item",
+                                    Quantity = 1,
+                                    FilePrice = 2.99f,
+                                    SalePrice = 2.99f
+                                });
+                                POSHome home = App.AppHost.Services.GetRequiredService<POSHome>();
+                                home.BasketGrid.ItemsSource = controller.CurrentTransaction.Basket;
+                                home.BasketGrid.UpdateLayout();
+                                Trace.WriteLine("Return running");
+                                Trace.WriteLine(controller.CurrentTransaction.Basket.ToString());
+                            }
                             return "";
                         }
                     };

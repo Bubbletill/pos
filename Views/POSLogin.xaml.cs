@@ -17,100 +17,96 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BT_POS.Views
+namespace BT_POS.Views;
+
+public partial class POSLogin : UserControl
 {
-    /// <summary>
-    /// Interaction logic for POSLogin.xaml
-    /// </summary>
-    public partial class POSLogin : UserControl
+    private readonly POSController _controller;
+    private readonly IOperatorRepository _operatorRepository;
+
+    public POSLogin(POSController controller, IOperatorRepository operatorRepository)
     {
-        private readonly POSController _controller;
-        private readonly IOperatorRepository _operatorRepository;
+        InitializeComponent();
+        ErrorBox.Visibility = Visibility.Hidden;
+        _controller = controller;
+        _operatorRepository = operatorRepository;
+        UserIdBox.Focus();
+    }
 
-        public POSLogin(POSController controller, IOperatorRepository operatorRepository)
+    private void BarError(string error = "")
+    {
+        if (error == "")
         {
-            InitializeComponent();
             ErrorBox.Visibility = Visibility.Hidden;
-            _controller = controller;
-            _operatorRepository = operatorRepository;
-            UserIdBox.Focus();
+        } else
+        {
+            ErrorBoxText.Text = error;
+            ErrorBox.Visibility = Visibility.Visible;
+        }
+    }
+
+    private async void LoginButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (UserIdBox.Text == "" || PasswordBox.Password == "")
+        {
+            BarError("Please enter an operator id and password.");
+            return;
         }
 
-        private void BarError(string error = "")
+        LoginButton.Content = "Working...";
+
+        OperatorLoginResponse loginResponse = await _operatorRepository.OperatorLogin(new OperatorLoginRequest
         {
-            if (error == "")
-            {
-                ErrorBox.Visibility = Visibility.Hidden;
-            } else
-            {
-                ErrorBoxText.Text = error;
-                ErrorBox.Visibility = Visibility.Visible;
-            }
+            Id = UserIdBox.Text,
+            Password = PasswordBox.Password
+        });
+
+        if (loginResponse == null)
+        {
+            BarError("Internal error. Please try again later.");
+            LoginButton.Content = "Login";
+            return;
         }
 
-        private async void LoginButton_Click(object sender, RoutedEventArgs e)
+        if (loginResponse.JWT != string.Empty && loginResponse.JWT != null)
         {
-            if (UserIdBox.Text == "" || PasswordBox.Password == "")
+            _controller.ControllerAuthenticationToken = loginResponse.JWT;
+            var status = await _controller.CompleteLogin();
+            if (!status)
             {
-                BarError("Please enter an operator id and password.");
-                return;
-            }
-
-            LoginButton.Content = "Working...";
-
-            OperatorLoginResponse loginResponse = await _operatorRepository.OperatorLogin(new OperatorLoginRequest
-            {
-                Id = UserIdBox.Text,
-                Password = PasswordBox.Password
-            });
-
-            if (loginResponse == null)
-            {
-                BarError("Internal error. Please try again later.");
+                BarError("Failed to complete login. Please try again later.");
                 LoginButton.Content = "Login";
                 return;
             }
 
-            if (loginResponse.JWT != string.Empty && loginResponse.JWT != null)
-            {
-                _controller.ControllerAuthenticationToken = loginResponse.JWT;
-                var status = await _controller.CompleteLogin();
-                if (!status)
-                {
-                    BarError("Failed to complete login. Please try again later.");
-                    LoginButton.Content = "Login";
-                    return;
-                }
-
-                App.LoginComplete();
-            }
-            else
-            {
-                BarError(loginResponse.Message);
-                LoginButton.Content = "Login";
-            }
-        } 
-
-        private void BackOfficeButton_Click(object sender, RoutedEventArgs e)
-        {
-            
+            App.LoginComplete();
         }
-
-        private void UserIdBox_KeyUp(object sender, KeyEventArgs e)
+        else
         {
-            if (e.Key == Key.Enter)
-            {
-                BarError();
-                PasswordBox.Focus();
-            }
+            BarError(loginResponse.Message);
+            LoginButton.Content = "Login";
         }
+    } 
 
-        private void PasswordBox_KeyUp(object sender, KeyEventArgs e)
+    private void BackOfficeButton_Click(object sender, RoutedEventArgs e)
+    {
+        
+    }
+
+    private void UserIdBox_KeyUp(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
         {
-            if (e.Key == Key.Enter) 
-            {
-                LoginButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-            }
+            BarError();
+            PasswordBox.Focus();
+        }
+    }
+
+    private void PasswordBox_KeyUp(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter) 
+        {
+            LoginButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
         }
     }
 }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BT_POS"
         mc:Ignorable="d"
-        Title="Bubbletill POS" Height="1080" Width="1920" Icon="/Assets/icon.png" WindowState="Maximized" WindowStyle="None">
+        Title="Bubbletill POS" Height="1080" Width="1920" Icon="/Assets/icon.png" WindowStyle="None" WindowState="Maximized">
     <Grid x:Name="POSParentGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40*"/>

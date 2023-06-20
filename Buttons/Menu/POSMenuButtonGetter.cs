@@ -71,6 +71,19 @@ public class POSMenuButtonGetter
                     };
                 }
 
+            case POSMenuButton.HOTSHOT:
+                {
+                    return new POSMenuButtonData
+                    {
+                        Name = "Hotshot",
+                        OnClick = w =>
+                        {
+
+                            return "";
+                        }
+                    };
+                }
+
             case POSMenuButton.ITEM_MOD:
                 {
                     return new POSMenuButtonData

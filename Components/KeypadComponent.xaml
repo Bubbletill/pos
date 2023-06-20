@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="BT_POS.Components.KeypadComponent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BT_POS.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="500">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150*"/>
+            <RowDefinition Height="150*"/>
+            <RowDefinition Height="150*"/>
+            <RowDefinition Height="150*"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="166*"/>
+            <ColumnDefinition Width="166*"/>
+            <ColumnDefinition Width="166*"/>
+        </Grid.ColumnDefinitions>
+
+        <Button x:Name="SevenButton" Grid.Row="0" Grid.Column="0" Style="{DynamicResource BTKeypadButton}" Content="7" Click="SevenButton_Click"/>
+        <Button x:Name="EightButton" Grid.Row="0" Grid.Column="1" Style="{DynamicResource BTKeypadButton}" Content="8" Click="EightButton_Click"/>
+        <Button x:Name="NineButton" Grid.Row="0" Grid.Column="2" Style="{DynamicResource BTKeypadButton}" Content="9" Click="NineButton_Click"/>
+
+        <Button x:Name="FourButton" Grid.Row="1" Grid.Column="0" Style="{DynamicResource BTKeypadButton}" Content="4" Click="FourButton_Click"/>
+        <Button x:Name="FiveButton" Grid.Row="1" Grid.Column="1" Style="{DynamicResource BTKeypadButton}" Content="5" Click="FiveButton_Click"/>
+        <Button x:Name="SixButton" Grid.Row="1" Grid.Column="2" Style="{DynamicResource BTKeypadButton}" Content="6" Click="SixButton_Click"/>
+
+        <Button x:Name="OneButton" Grid.Row="2" Grid.Column="0" Style="{DynamicResource BTKeypadButton}" Content="1" Click="OneButton_Click"/>
+        <Button x:Name="TwoButton" Grid.Row="2" Grid.Column="1" Style="{DynamicResource BTKeypadButton}" Content="2" Click="TwoButton_Click"/>
+        <Button x:Name="ThreeButton" Grid.Row="2" Grid.Column="2" Style="{DynamicResource BTKeypadButton}" Content="3" Click="ThreeButton_Click"/>
+
+        <Button x:Name="ZeroButton" Grid.Row="3" Grid.Column="0" Style="{DynamicResource BTKeypadButton}" Content="0" Click="ZeroButton_Click"/>
+        <Button x:Name="PeriodButton" Grid.Row="3" Grid.Column="1" Style="{DynamicResource BTKeypadButton}" Content="." Click="PeriodButton_Click"/>
+        <Button x:Name="BackButton" Grid.Row="3" Grid.Column="2" Style="{DynamicResource BTKeypadButton}" Content="&lt;" Click="BackButton_Click"/>
+
+        <Button x:Name="ClearButton" Grid.Row="4" Grid.Column="0" Style="{DynamicResource BTKeypadOKButton}" Content="Clear" Click="ClearButton_Click"/>
+        <Button x:Name="EnterButton" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Style="{DynamicResource BTKeypadOKButton}" Content="Enter" Click="EnterButton_Click"/>
+    </Grid>
+</UserControl>

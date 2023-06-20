@@ -4,24 +4,37 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BT_POS.Views"
-             xmlns:Transactions="clr-namespace:BT_COMMONS.Transactions;assembly=BT-COMMONS" x:Class="BT_POS.Views.POSHome"
+             xmlns:Transactions="clr-namespace:BT_COMMONS.Transactions;assembly=BT-COMMONS" xmlns:components="clr-namespace:BT_POS.Components" x:Class="BT_POS.Views.POSHome"
              mc:Ignorable="d" 
              d:DesignHeight="995" d:DesignWidth="1920" Background="White">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="961*"/>
-            <ColumnDefinition Width="715*"/>
+            <ColumnDefinition Width="873*"/>
+            <ColumnDefinition Width="803*"/>
             <ColumnDefinition Width="244*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="171*"/>
-            <RowDefinition Height="28*"/>
+            <RowDefinition Height="186*"/>
+            <RowDefinition Height="669*"/>
+            <RowDefinition Height="140*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel x:Name="ButtonStackPanel" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal"/>
-        <StackPanel x:Name="SideButtonStackPanel" Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Orientation="Vertical" VerticalAlignment="Bottom"/>
-        <DataGrid x:Name="BasketGrid" AutoGenerateColumns="False" FontSize="20" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False">
+        <!-- Side buttons -->
+        <StackPanel x:Name="ButtonStackPanel" Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" Orientation="Vertical"/>
+
+
+        <!-- Basket -->
+        <DataGrid x:Name="BasketGrid" AutoGenerateColumns="False" FontSize="20" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" Grid.RowSpan="2" RenderTransformOrigin="0.5,0.5">
+            <DataGrid.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0.99" ScaleY="0.99"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </DataGrid.RenderTransform>
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Code" Binding="{Binding Code}"/>
                 <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
                 <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}"/>
                 <DataGridTextColumn Header="File Price" Binding="{Binding FilePrice}"/>
@@ -31,5 +44,36 @@
                 <Transactions:BasketItem/>
             </DataGrid.DataContext>
         </DataGrid>
+
+        <!-- Information Box -->
+        <GroupBox Grid.Row="0" Grid.Column="1" BorderThickness="0,0,0,0" Background="#FFABDFFF" RenderTransformOrigin="0.5,0.5">
+            <GroupBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0.95" ScaleY="0.95"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </GroupBox.RenderTransform>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="54*"/>
+                    <RowDefinition Height="125*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="36" FontWeight="Bold" Text="Sale" />
+                <TextBlock Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="24" TextWrapping="Wrap">
+                    Scan or key-in the item code for each item presented. Once all items have been scanned, proceed to collect payment by pressing Tender.
+                </TextBlock>
+            </Grid>
+        </GroupBox>
+        
+        <!-- Keypad -->
+        <components:KeypadComponent x:Name="Keypad" Grid.Row="1" Grid.Column="1" MaxHeight="700" MaxWidth="500"/>
+
+
+        <!-- Manual Entry -->
+        <TextBlock Grid.Row="2" Grid.Column="0" Margin="10,10,0,0" FontSize="24" FontWeight="Bold" TextDecorations="Underline" Text="Manual Code Entry"/>
+        <TextBox x:Name="ManualCodeEntryBox" Grid.Row="2" Grid.Column="0" MaxHeight="40" MinWidth="500" HorizontalAlignment="Left" Margin="10,0,0,0" FontSize="24" KeyDown="ManualCodeEntryBox_KeyDown"/>
     </Grid>
 </UserControl>

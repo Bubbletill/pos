@@ -41,10 +41,13 @@ public partial class POSHome : UserControl
         {
             POSMenuButton.ADMIN,
             POSMenuButton.RETURN,
+            POSMenuButton.HOTSHOT,
+            POSMenuButton.ITEM_MOD,
+            POSMenuButton.TRANS_MOD,
             POSMenuButton.LOGOUT
         };
 
-        _buttonStyle = FindResource("BTButton") as Style;
+        _buttonStyle = FindResource("BTVerticleButton") as Style;
 
         buttons.ForEach(type =>
         {
@@ -59,5 +62,12 @@ public partial class POSHome : UserControl
             ButtonStackPanel.Children.Add(button);
             ButtonStackPanel.UpdateLayout();
         });
+
+        Keypad.SelectedBox = ManualCodeEntryBox;
+    }
+
+    private void ManualCodeEntryBox_KeyDown(object sender, KeyEventArgs e)
+    {
+        Trace.WriteLine("yay keydown " + e.Key.ToString());
     }
 }

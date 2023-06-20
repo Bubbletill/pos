@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BT_POS.Views"
+             xmlns:local="clr-namespace:BT_POS.Views" xmlns:components="clr-namespace:BT_POS.Components"
              mc:Ignorable="d" 
              d:DesignHeight="995" d:DesignWidth="1920" Background="White">
     <Grid>
@@ -18,9 +18,13 @@
             <RowDefinition Height="304*"/>
             <RowDefinition Height="335*"/>
         </Grid.RowDefinitions>
+        
+        <!-- Error Box -->
         <GroupBox x:Name="ErrorBox" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="0" Background="Red" BorderBrush="Red" BorderThickness="0,0,0,0" ClipToBounds="True" >
             <TextBlock x:Name="ErrorBoxText" Foreground="White" FontSize="24" Text="efef" VerticalAlignment="Center"/>
         </GroupBox>
+
+        <!-- Logo -->
         <Image Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Source="/Assets/logo.png" RenderTransformOrigin="0.5,0.5" Stretch="None" Margin="0,56,0,0" Grid.Row="1">
             <Image.RenderTransform>
                 <TransformGroup>
@@ -28,6 +32,8 @@
                 </TransformGroup>
             </Image.RenderTransform>
         </Image>
+
+        <!-- Login Form -->
         <GroupBox Grid.Row="2" Grid.Column="1" BorderThickness="0,0,0,0" Background="#FFABDFFF">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -45,11 +51,10 @@
                 <TextBox x:Name="UserIdBox" Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="30" Width="Auto" KeyUp="UserIdBox_KeyUp" />
                 <PasswordBox x:Name="PasswordBox" Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="2" VerticalAlignment="Center" FontSize="30" Width="Auto" KeyUp="PasswordBox_KeyUp" />
                 <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-                    <Button x:Name="LoginButton" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Login" Style="{DynamicResource BTButton}" Click="LoginButton_Click"/>
-                    <Button x:Name="BackOfficeButton" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Back Office" Style="{DynamicResource BTButton}" Click="BackOfficeButton_Click"/>
+                    <Button x:Name="LoginButton" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Login" Style="{DynamicResource BTHorizontalButton}" Click="LoginButton_Click"/>
+                    <Button x:Name="BackOfficeButton" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Back Office" Style="{DynamicResource BTHorizontalButton}" Click="BackOfficeButton_Click"/>
                 </StackPanel>
             </Grid>
-
         </GroupBox>
 
 

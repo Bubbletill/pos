@@ -11,6 +11,7 @@ public enum POSMenuButton
     ADMIN,
     TENDER,
     RETURN,
+    HOTSHOT,
     ITEM_MOD,
     TRANS_MOD,
     LOGOUT,

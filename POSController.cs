@@ -1,6 +1,7 @@
 ﻿using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
+using BT_POS.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IdentityModel.Tokens.Jwt;

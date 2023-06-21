@@ -1,6 +1,7 @@
 ﻿using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Transactions;
 using BT_POS.Buttons.Menu;
+using BT_POS.RepositoryImpl;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,15 +27,16 @@ public partial class POSHome : UserControl
     private readonly MainWindow _mainWindow;
     private readonly POSController _posController;
     private readonly IStockRepository _stockRepository;
+    private readonly IButtonRepository _buttonRepository;
 
-    private List<POSMenuButton> buttons;
     private readonly Style _buttonStyle;
 
-    public POSHome(MainWindow mainWindow, POSController posController, IStockRepository stockRepository)
+    public POSHome(MainWindow mainWindow, POSController posController, IStockRepository stockRepository, IButtonRepository buttonRepository)
     {
         _mainWindow = mainWindow;
         _posController = posController;
         _stockRepository = stockRepository;
+        _buttonRepository = buttonRepository;
 
         InitializeComponent();
 
@@ -43,18 +45,16 @@ public partial class POSHome : UserControl
             BasketGrid.ItemsSource = _posController.CurrentTransaction.Basket;
         }
 
-        buttons = new List<POSMenuButton>
-        {
-            POSMenuButton.ADMIN,
-            POSMenuButton.RETURN,
-            POSMenuButton.HOTSHOT,
-            POSMenuButton.ITEM_MOD,
-            POSMenuButton.TRANS_MOD,
-            POSMenuButton.LOGOUT
-        };
-
         _buttonStyle = FindResource("BTVerticleButton") as Style;
+        LoadButtons(App.HomeButtons);
 
+        Keypad.SelectedBox = ManualCodeEntryBox;
+    }
+
+
+    public void LoadButtons(List<POSMenuButton> buttons)
+    {
+        ButtonStackPanel.Children.Clear();
         buttons.ForEach(type =>
         {
             Button button = new Button();
@@ -66,10 +66,9 @@ public partial class POSHome : UserControl
             };
 
             ButtonStackPanel.Children.Add(button);
-            ButtonStackPanel.UpdateLayout();
         });
-
-        Keypad.SelectedBox = ManualCodeEntryBox;
+        ButtonStackPanel.InvalidateVisual();
+        ButtonStackPanel.UpdateLayout();
     }
 
     private async void ManualCodeEntryBox_KeyDown(object sender, KeyEventArgs e)
@@ -97,6 +96,10 @@ public partial class POSHome : UserControl
         }
 
         _mainWindow.HeaderError();
+        if (_posController.CurrentTransaction == null)
+        {
+            LoadButtons(App.HomeTransButtons);
+        }
         _posController.AddItemToBasket(item);
         BasketGrid.ItemsSource = _posController.CurrentTransaction!.Basket;
         BasketGrid.Items.Refresh();

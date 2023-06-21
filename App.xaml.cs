@@ -1,10 +1,12 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using BT_COMMONS;
 using BT_COMMONS.Database;
 using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Helpers;
+using BT_POS.Buttons.Menu;
 using BT_POS.RepositoryImpl;
 using BT_POS.Views;
 using BT_POS.Views.Admin;
@@ -17,6 +19,9 @@ namespace BT_POS;
 public partial class App : Application
 {
     public static IHost? AppHost { get; private set; }
+
+    public static List<POSMenuButton> HomeButtons;
+    public static List<POSMenuButton> HomeTransButtons;
 
     public App()
     {
@@ -34,6 +39,7 @@ public partial class App : Application
                 services.AddSingleton<IOperatorRepository, OperatorRepository>();
                 services.AddSingleton<ITransactionRepository, TransactionRepository>();
                 services.AddSingleton<IStockRepository, StockRepository>();
+                services.AddSingleton<IButtonRepository, ButtonRepository>();
 
                 services.AddSingleton<MainWindow>();
                 services.AddViewFactory<POSLogin>();
@@ -49,6 +55,10 @@ public partial class App : Application
     protected override async void OnStartup(StartupEventArgs e)
     {
         await AppHost!.StartAsync();
+
+        var btnRepo = AppHost.Services.GetRequiredService<IButtonRepository>();
+        HomeButtons = await btnRepo.GetHomeButtons();
+        HomeTransButtons = await btnRepo.GetHomeTransButtons();
 
         var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();

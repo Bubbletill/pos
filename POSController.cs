@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace BT_POS;
 
@@ -78,7 +79,7 @@ public class POSController
             CurrentTransId++;
             CurrentTransaction = new Transaction();
             CurrentTransaction.Init(StoreNumber, RegisterNumber, DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), CurrentTransId, TransactionType.SALE);
-            
+
             MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
             mw.POSParentHeader_Trans.Text = "Transaction# " + CurrentTransId;
         }

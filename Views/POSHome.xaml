@@ -9,22 +9,26 @@
              d:DesignHeight="995" d:DesignWidth="1920" Background="White">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="873*"/>
+            <ColumnDefinition Width="222*"/>
+            <ColumnDefinition Width="222*"/>
+            <ColumnDefinition Width="222*"/>
+            <ColumnDefinition Width="204*"/>
             <ColumnDefinition Width="803*"/>
             <ColumnDefinition Width="244*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="186*"/>
             <RowDefinition Height="669*"/>
-            <RowDefinition Height="140*"/>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
 
         <!-- Side buttons -->
-        <StackPanel x:Name="ButtonStackPanel" Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" Orientation="Vertical"/>
+        <StackPanel x:Name="ButtonStackPanel" Grid.Row="0" Grid.RowSpan="4" Grid.Column="5" Orientation="Vertical"/>
 
 
         <!-- Basket -->
-        <DataGrid x:Name="BasketGrid" AutoGenerateColumns="False" FontSize="20" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" Grid.RowSpan="2" RenderTransformOrigin="0.5,0.5">
+        <DataGrid x:Name="BasketGrid" AutoGenerateColumns="False" FontSize="20" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" Grid.RowSpan="2" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="4">
             <DataGrid.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleX="0.99" ScaleY="0.99"/>
@@ -45,8 +49,52 @@
             </DataGrid.DataContext>
         </DataGrid>
 
+        <!-- Totals -->
+        
+        <!-- Total -->
+        <TextBlock x:Name="TotalTitle" Grid.Column="0" Grid.Row="2" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Total"/>
+        <Border x:Name="TotalBorder" Grid.Column="0" Grid.Row="3" BorderBrush="Black" Background="#FFE4E4E4" BorderThickness="1" RenderTransformOrigin="0.5,0.5">
+            <Border.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0.95" ScaleY="0.9"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Border.RenderTransform>
+            <TextBlock x:Name="TotalTextBlock" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Text="£0.00"/>
+        </Border>
+
+        <!-- Tendered
+        <TextBlock x:Name="TenderedTitle" Grid.Column="1" Grid.Row="2" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Tendered"/>
+        <Border x:Name="TenderedBorder" Grid.Column="1" Grid.Row="3" BorderBrush="Black" Background="#FFE4E4E4" BorderThickness="1" RenderTransformOrigin="0.5,0.5">
+            <Border.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0.95" ScaleY="0.9"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Border.RenderTransform>
+            <TextBlock x:Name="TenderedTextBlock" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Text="£0.00"/>
+        </Border>
+
+        Remaining
+        <TextBlock x:Name="LeftToTenderTitle" Grid.Column="2" Grid.Row="2" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Remaining"/>
+        <Border x:Name="LeftToTenderBorder" Grid.Column="2" Grid.Row="3" BorderBrush="Black" Background="#FFE4E4E4" BorderThickness="1" RenderTransformOrigin="0.5,0.5">
+            <Border.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0.95" ScaleY="0.9"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Border.RenderTransform>
+            <TextBlock x:Name="LeftToTenderTextBlock" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Text="£0.00"/>
+        </Border>-->
+
         <!-- Information Box -->
-        <GroupBox Grid.Row="0" Grid.Column="1" BorderThickness="0,0,0,0" Background="#FFABDFFF" RenderTransformOrigin="0.5,0.5">
+        <GroupBox Grid.Row="0" Grid.Column="4" BorderThickness="0,0,0,0" Background="#FFABDFFF" RenderTransformOrigin="0.5,0.5">
             <GroupBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleX="0.95" ScaleY="0.95"/>
@@ -67,13 +115,12 @@
                 </TextBlock>
             </Grid>
         </GroupBox>
-        
-        <!-- Keypad -->
-        <components:KeypadComponent x:Name="Keypad" Grid.Row="1" Grid.Column="1" MaxHeight="700" MaxWidth="500"/>
 
+        <!-- Keypad -->
+        <components:KeypadComponent x:Name="Keypad" Grid.Row="1" Grid.Column="4" MaxHeight="700" MaxWidth="500"/>
 
         <!-- Manual Entry -->
-        <TextBlock Grid.Row="2" Grid.Column="0" Margin="10,10,0,0" FontSize="24" FontWeight="Bold" TextDecorations="Underline" Text="Manual Code Entry"/>
-        <TextBox x:Name="ManualCodeEntryBox" Grid.Row="2" Grid.Column="0" MaxHeight="40" MinWidth="500" HorizontalAlignment="Left" Margin="10,0,0,0" FontSize="24" KeyDown="ManualCodeEntryBox_KeyDown" PreviewTextInput="ManualCodeEntryBox_PreviewTextInput"/>
+        <TextBlock Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Margin="10,10,0,0" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Manual Code Entry"/>
+        <TextBox x:Name="ManualCodeEntryBox" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="3" MaxHeight="40" MinWidth="500" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,6,0,0" FontSize="24" KeyDown="ManualCodeEntryBox_KeyDown" PreviewTextInput="ManualCodeEntryBox_PreviewTextInput"/>
     </Grid>
 </UserControl>

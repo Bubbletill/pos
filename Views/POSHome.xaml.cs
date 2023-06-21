@@ -101,6 +101,7 @@ public partial class POSHome : UserControl
             LoadButtons(App.HomeTransButtons);
         }
         _posController.AddItemToBasket(item);
+        TotalTextBlock.Text = "£" + _posController.CurrentTransaction!.GetTotal();
         BasketGrid.ItemsSource = _posController.CurrentTransaction!.Basket;
         BasketGrid.Items.Refresh();
         ManualCodeEntryBox.Clear();

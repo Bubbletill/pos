@@ -11,6 +11,8 @@ public class POSMenuButtonGetter
 {
     public static IPOSButtonData Get(POSMenuButton button)
     {
+        POSController controller = App.AppHost.Services.GetRequiredService<POSController>();
+
         switch (button)
         {
             case POSMenuButton.ADMIN:
@@ -20,6 +22,12 @@ public class POSMenuButtonGetter
                         Name = "Admin",
                         OnClick = w =>
                         {
+                            if (controller.CurrentTransaction != null)
+                            {
+                                w.HeaderError("Action not allowed. Please suspend the current transaction to access this menu.");
+                                return "";
+                            }
+                            
                             w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<POSAdmin>();
                             return "";
                         }
@@ -33,7 +41,12 @@ public class POSMenuButtonGetter
                         Name = "Tender",
                         OnClick = w =>
                         {
-                            
+                            if (controller.CurrentTransaction == null)
+                            {
+                                w.HeaderError("Action not allowed. There is no active transaction.");
+                                return "";
+                            }
+
                             return "";
                         }
                     };
@@ -46,26 +59,6 @@ public class POSMenuButtonGetter
                         Name = "Return",
                         OnClick = w =>
                         {
-                            POSController controller = App.AppHost.Services.GetRequiredService<POSController>();
-                            if (controller.CurrentTransaction == null)
-                            {
-                                controller.CurrentTransId++;
-                                controller.CurrentTransaction = new Transaction();
-                                controller.CurrentTransaction.Init(controller.StoreNumber, controller.RegisterNumber, DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), controller.CurrentTransId, TransactionType.SALE);
-                                controller.CurrentTransaction.AddToBasket(new BasketItem
-                                {
-                                    Code = 9999,
-                                    Description = "Example Item",
-                                    Quantity = 1,
-                                    FilePrice = 2.99f,
-                                    SalePrice = 2.99f
-                                });
-                                POSHome home = App.AppHost.Services.GetRequiredService<POSHome>();
-                                home.BasketGrid.ItemsSource = controller.CurrentTransaction.Basket;
-                                home.BasketGrid.UpdateLayout();
-                                Trace.WriteLine("Return running");
-                                Trace.WriteLine(controller.CurrentTransaction.Basket.ToString());
-                            }
                             return "";
                         }
                     };
@@ -91,6 +84,11 @@ public class POSMenuButtonGetter
                         Name = "Item Mod",
                         OnClick = w =>
                         {
+                            if (controller.CurrentTransaction == null)
+                            {
+                                w.HeaderError("Action not allowed. There is no active transaction.");
+                                return "";
+                            }
 
                             return "";
                         }
@@ -104,6 +102,11 @@ public class POSMenuButtonGetter
                         Name = "Trans Mod",
                         OnClick = w =>
                         {
+                            if (controller.CurrentTransaction == null)
+                            {
+                                w.HeaderError("Action not allowed. There is no active transaction.");
+                                return "";
+                            }
 
                             return "";
                         }
@@ -117,6 +120,12 @@ public class POSMenuButtonGetter
                         Name = "Sign-out",
                         OnClick = w =>
                         {
+                            if (controller.CurrentTransaction != null)
+                            {
+                                w.HeaderError("Action not allowed. Please suspend the current transaction to sign-out.");
+                                return "";
+                            }
+
                             w.Logout();
                             return "";
                         }
@@ -130,6 +139,11 @@ public class POSMenuButtonGetter
                         Name = "Suspend",
                         OnClick = w =>
                         {
+                            if (controller.CurrentTransaction == null)
+                            {
+                                w.HeaderError("Action not allowed. There is no transaction to suspend.");
+                                return "";
+                            }
 
                             return "";
                         }
@@ -143,6 +157,11 @@ public class POSMenuButtonGetter
                         Name = "Resume",
                         OnClick = w =>
                         {
+                            if (controller.CurrentTransaction != null)
+                            {
+                                w.HeaderError("Action not allowed. Please suspend the current transaction to resume another.");
+                                return "";
+                            }
 
                             return "";
                         }

@@ -18,12 +18,25 @@ public partial class MainWindow : Window
         _posHome = posHome;
         _posLogin = posLogin;
 
-        //POSParentHeader.Visibility = Visibility.Hidden;
+        POSParentErrorBox.Visibility = Visibility.Hidden;
 
         POSParentHeader_Register.Text = "Register# " + _posController.RegisterNumber;
 
         POSViewContainer.Content = posLogin.Create();
 
+    }
+
+    public void HeaderError(string? error = null)
+    {
+        if (error == null)
+        {
+            POSParentErrorBox.Visibility = Visibility.Hidden;
+            POSParentErrorBoxText.Text = "";
+            return;
+        }
+
+        POSParentErrorBoxText.Text = error;
+        POSParentErrorBox.Visibility = Visibility.Visible;
     }
 
     public void LoginComplete(POSHome posHome)

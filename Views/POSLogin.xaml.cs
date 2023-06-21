@@ -27,29 +27,16 @@ public partial class POSLogin : UserControl
     public POSLogin(POSController controller, IOperatorRepository operatorRepository)
     {
         InitializeComponent();
-        ErrorBox.Visibility = Visibility.Hidden;
         _controller = controller;
         _operatorRepository = operatorRepository;
         UserIdBox.Focus();
-    }
-
-    private void BarError(string error = "")
-    {
-        if (error == "")
-        {
-            ErrorBox.Visibility = Visibility.Hidden;
-        } else
-        {
-            ErrorBoxText.Text = error;
-            ErrorBox.Visibility = Visibility.Visible;
-        }
     }
 
     private async void LoginButton_Click(object sender, RoutedEventArgs e)
     {
         if (UserIdBox.Text == "" || PasswordBox.Password == "")
         {
-            BarError("Please enter an operator id and password.");
+            _controller.HeaderError("Please enter an operator id and password.");
             return;
         }
 
@@ -63,7 +50,7 @@ public partial class POSLogin : UserControl
 
         if (loginResponse == null)
         {
-            BarError("Internal error. Please try again later.");
+            _controller.HeaderError("Internal error. Please try again later.");
             LoginButton.Content = "Login";
             return;
         }
@@ -74,7 +61,7 @@ public partial class POSLogin : UserControl
             var status = await _controller.CompleteLogin();
             if (!status)
             {
-                BarError("Failed to complete login. Please try again later.");
+                _controller.HeaderError("Failed to complete login. Please try again later.");
                 LoginButton.Content = "Login";
                 return;
             }
@@ -83,7 +70,7 @@ public partial class POSLogin : UserControl
         }
         else
         {
-            BarError(loginResponse.Message);
+            _controller.HeaderError(loginResponse.Message);
             LoginButton.Content = "Login";
         }
     } 
@@ -97,7 +84,7 @@ public partial class POSLogin : UserControl
     {
         if (e.Key == Key.Enter)
         {
-            BarError();
+            _controller.HeaderError();
             PasswordBox.Focus();
         }
     }
@@ -106,6 +93,7 @@ public partial class POSLogin : UserControl
     {
         if (e.Key == Key.Enter) 
         {
+            _controller.HeaderError();
             LoginButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
         }
     }

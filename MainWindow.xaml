@@ -32,6 +32,19 @@
                         </TransformGroup>
                     </Image.RenderTransform>
                 </Image>
+
+                <GroupBox x:Name="POSParentErrorBox" Grid.Column="1" Background="Red" BorderBrush="Red" BorderThickness="0,0,0,0" ClipToBounds="True" RenderTransformOrigin="0.5,0.5" >
+                    <GroupBox.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="1" ScaleY="0.95"/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </GroupBox.RenderTransform>
+                    <TextBlock x:Name="POSParentErrorBoxText" Foreground="White" FontSize="24" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" TextWrapping="Wrap"/>
+                </GroupBox>
+
                 <TextBlock x:Name="POSParentHeader_DateTime" Grid.Column="2" TextWrapping="Wrap" Text="" VerticalAlignment="Center" FontSize="20"/>
                 <TextBlock x:Name="POSParentHeader_Status" Grid.Column="3" TextWrapping="Wrap" Text="Online" VerticalAlignment="Center" FontSize="20"/>
                 <TextBlock x:Name="POSParentHeader_Register" Grid.Column="4" TextWrapping="Wrap" Text="Register# " VerticalAlignment="Center" FontSize="20"/>

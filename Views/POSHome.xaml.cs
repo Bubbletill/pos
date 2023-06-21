@@ -1,4 +1,5 @@
-﻿using BT_COMMONS.Transactions;
+﻿using BT_COMMONS.DataRepositories;
+using BT_COMMONS.Transactions;
 using BT_POS.Buttons.Menu;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,13 +25,17 @@ public partial class POSHome : UserControl
 {
     private readonly MainWindow _mainWindow;
     private readonly POSController _posController;
+    private readonly IStockRepository _stockRepository;
+
     private List<POSMenuButton> buttons;
     private readonly Style _buttonStyle;
 
-    public POSHome(MainWindow mainWindow, POSController posController)
+    public POSHome(MainWindow mainWindow, POSController posController, IStockRepository stockRepository)
     {
         _mainWindow = mainWindow;
         _posController = posController;
+        _stockRepository = stockRepository;
+
         InitializeComponent();
 
         if (_posController.CurrentTransaction != null )
@@ -66,8 +72,40 @@ public partial class POSHome : UserControl
         Keypad.SelectedBox = ManualCodeEntryBox;
     }
 
-    private void ManualCodeEntryBox_KeyDown(object sender, KeyEventArgs e)
+    private async void ManualCodeEntryBox_KeyDown(object sender, KeyEventArgs e)
     {
-        Trace.WriteLine("yay keydown " + e.Key.ToString());
+        if (e.Key != Key.Enter)
+            return;
+        int code;
+        try
+        {
+            code = Int32.Parse(ManualCodeEntryBox.Text);
+        } 
+        catch (Exception ex)
+        {
+            ManualCodeEntryBox.Clear();
+            _mainWindow.HeaderError("Invalid item code.");
+            return;
+        }
+        
+        BasketItem? item = await _stockRepository.GetItem(code);
+        if (item == null)
+        {
+            ManualCodeEntryBox.Clear();
+            _mainWindow.HeaderError("Invalid item code.");
+            return;
+        }
+
+        _mainWindow.HeaderError();
+        _posController.AddItemToBasket(item);
+        BasketGrid.ItemsSource = _posController.CurrentTransaction!.Basket;
+        BasketGrid.Items.Refresh();
+        ManualCodeEntryBox.Clear();
+    }
+
+    private void ManualCodeEntryBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+    {
+        Regex regex = new Regex("[^0-9]+");
+        e.Handled = regex.IsMatch(e.Text);
     }
 }

@@ -74,6 +74,6 @@
 
         <!-- Manual Entry -->
         <TextBlock Grid.Row="2" Grid.Column="0" Margin="10,10,0,0" FontSize="24" FontWeight="Bold" TextDecorations="Underline" Text="Manual Code Entry"/>
-        <TextBox x:Name="ManualCodeEntryBox" Grid.Row="2" Grid.Column="0" MaxHeight="40" MinWidth="500" HorizontalAlignment="Left" Margin="10,0,0,0" FontSize="24" KeyDown="ManualCodeEntryBox_KeyDown"/>
+        <TextBox x:Name="ManualCodeEntryBox" Grid.Row="2" Grid.Column="0" MaxHeight="40" MinWidth="500" HorizontalAlignment="Left" Margin="10,0,0,0" FontSize="24" KeyDown="ManualCodeEntryBox_KeyDown" PreviewTextInput="ManualCodeEntryBox_PreviewTextInput"/>
     </Grid>
 </UserControl>

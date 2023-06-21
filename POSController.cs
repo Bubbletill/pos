@@ -1,7 +1,7 @@
 ﻿using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
-using BT_COMMONS.Transactions.API;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -35,6 +35,12 @@ public class POSController
         RegisterNumber = 1;
     }
 
+    public void HeaderError(string? error = null)
+    {
+        MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
+        mw.HeaderError(error);
+    }
+
     public async Task<bool> CompleteLogin()
     {
         App.SetAPIToken(ControllerAuthenticationToken);
@@ -62,5 +68,20 @@ public class POSController
         CurrentOperator = oper;
 
         return true;
+    }
+
+    public void AddItemToBasket(BasketItem item)
+    {
+        if (CurrentTransaction == null)
+        {
+            CurrentTransId++;
+            CurrentTransaction = new Transaction();
+            CurrentTransaction.Init(StoreNumber, RegisterNumber, DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), CurrentTransId, TransactionType.SALE);
+            
+            MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
+            mw.POSParentHeader_Trans.Text = "Transaction# " + CurrentTransId;
+        }
+
+        CurrentTransaction.AddToBasket(item);
     }
 }

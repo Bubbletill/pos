@@ -2,7 +2,6 @@
 using BT_COMMONS;
 using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Transactions;
-using BT_COMMONS.Transactions.API;
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,8 +30,13 @@ public class TransactionRepository : ITransactionRepository
         return response.Data;
     }
 
-    public Task<bool> SubmitTransaction(Transaction transaction)
+    public async Task<bool> SubmitTransaction(Transaction transaction)
     {
-        throw new NotImplementedException();
+        APIResponse<APIGenericResponse> response = await _api.Post<APIGenericResponse, Transaction>("transaction/submit", transaction);
+        Trace.WriteLine(response.StatusCode);
+        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            return false;
+
+        return true;
     }
 }

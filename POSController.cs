@@ -5,6 +5,7 @@ using BT_POS.Views;
 using BT_POS.Views.Tender;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
@@ -91,8 +92,39 @@ public class POSController
     public void AddTender(TransactionTender tender, float amount)
     {
         CurrentTransaction!.AddTender(tender, amount);
+
+        if (CurrentTransaction.IsTenderComplete())
+        {
+            Trace.WriteLine("submitting");
+            Submit();
+            return;
+        }
+
         MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
         POSTenderHome tenderHome = App.AppHost.Services.GetRequiredService<POSTenderHome>();
         mainWindow.POSViewContainer.Content = tenderHome;
+    }
+
+    // Submits current transaction to the database.
+    private async void Submit()
+    {
+        if (CurrentTransaction == null)
+            return;
+
+        CurrentTransaction.Logs.Add("Transaction Ended at " + DateTime.Now.ToString());
+
+        var success = await _transactionRepository.SubmitTransaction(CurrentTransaction);
+        if (!success)
+        {
+            CurrentTransaction.Logs.Add("Transaction failed to submit to controller.");
+            // Store on disk?
+            return;
+        }
+
+        CurrentTransaction = null;
+
+        MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
+        POSHome home = App.AppHost.Services.GetRequiredService<POSHome>();
+        mainWindow.POSViewContainer.Content = home;
     }
 }

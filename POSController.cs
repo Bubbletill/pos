@@ -80,7 +80,7 @@ public class POSController
         {
             CurrentTransId++;
             CurrentTransaction = new Transaction();
-            CurrentTransaction.Init(StoreNumber, RegisterNumber, DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), CurrentTransId, TransactionType.SALE);
+            CurrentTransaction.Init(StoreNumber, RegisterNumber, CurrentOperator!.OperatorId, DateTime.Now, CurrentTransId, TransactionType.SALE);
 
             MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
             mw.POSParentHeader_Trans.Text = "Transaction# " + CurrentTransId;
@@ -95,7 +95,6 @@ public class POSController
 
         if (CurrentTransaction.IsTenderComplete())
         {
-            Trace.WriteLine("submitting");
             Submit();
             return;
         }
@@ -111,7 +110,7 @@ public class POSController
         if (CurrentTransaction == null)
             return;
 
-        CurrentTransaction.Logs.Add("Transaction Ended at " + DateTime.Now.ToString());
+        CurrentTransaction.Logs.Add("Transaction " + CurrentTransaction.TransactionId + " ended at " + DateTime.Now.ToString());
 
         var success = await _transactionRepository.SubmitTransaction(CurrentTransaction);
         if (!success)

@@ -2,6 +2,7 @@
 using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
 using BT_POS.Views;
+using BT_POS.Views.Tender;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -85,5 +86,13 @@ public class POSController
         }
 
         CurrentTransaction.AddToBasket(item);
+    }
+
+    public void AddTender(TransactionTender tender, float amount)
+    {
+        CurrentTransaction!.AddTender(tender, amount);
+        MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
+        POSTenderHome tenderHome = App.AppHost.Services.GetRequiredService<POSTenderHome>();
+        mainWindow.POSViewContainer.Content = tenderHome;
     }
 }

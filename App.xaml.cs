@@ -10,6 +10,7 @@ using BT_POS.Buttons.Menu;
 using BT_POS.RepositoryImpl;
 using BT_POS.Views;
 using BT_POS.Views.Admin;
+using BT_POS.Views.Tender;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -45,6 +46,7 @@ public partial class App : Application
                 services.AddViewFactory<POSLogin>();
 
                 services.AddViewFactory<POSHome>();
+                services.AddViewFactory<POSTenderHome>();
 
                 services.AddViewFactory<POSAdmin>();
 

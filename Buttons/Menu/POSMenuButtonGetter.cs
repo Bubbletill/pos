@@ -1,6 +1,7 @@
 ﻿using BT_COMMONS.Transactions;
 using BT_POS.Views;
 using BT_POS.Views.Admin;
+using BT_POS.Views.Tender;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics;
@@ -17,7 +18,7 @@ public class POSMenuButtonGetter
         {
             case POSMenuButton.ADMIN:
                 {
-                    return new POSMenuButtonData
+                    return new POSButtonData
                     {
                         Name = "Admin",
                         OnClick = w =>
@@ -36,7 +37,7 @@ public class POSMenuButtonGetter
 
             case POSMenuButton.TENDER:
                 {
-                    return new POSMenuButtonData
+                    return new POSButtonData
                     {
                         Name = "Tender",
                         OnClick = w =>
@@ -47,6 +48,7 @@ public class POSMenuButtonGetter
                                 return "";
                             }
 
+                            w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<POSTenderHome>();
                             return "";
                         }
                     };
@@ -54,7 +56,7 @@ public class POSMenuButtonGetter
 
             case POSMenuButton.RETURN:
                 {
-                    return new POSMenuButtonData
+                    return new POSButtonData
                     {
                         Name = "Return",
                         OnClick = w =>
@@ -66,7 +68,7 @@ public class POSMenuButtonGetter
 
             case POSMenuButton.HOTSHOT:
                 {
-                    return new POSMenuButtonData
+                    return new POSButtonData
                     {
                         Name = "Hotshot",
                         OnClick = w =>
@@ -79,7 +81,7 @@ public class POSMenuButtonGetter
 
             case POSMenuButton.ITEM_MOD:
                 {
-                    return new POSMenuButtonData
+                    return new POSButtonData
                     {
                         Name = "Item Mod",
                         OnClick = w =>
@@ -97,7 +99,7 @@ public class POSMenuButtonGetter
 
             case POSMenuButton.TRANS_MOD:
                 {
-                    return new POSMenuButtonData
+                    return new POSButtonData
                     {
                         Name = "Trans Mod",
                         OnClick = w =>
@@ -115,7 +117,7 @@ public class POSMenuButtonGetter
 
             case POSMenuButton.LOGOUT:
                 {
-                    return new POSMenuButtonData
+                    return new POSButtonData
                     {
                         Name = "Sign-out",
                         OnClick = w =>
@@ -134,7 +136,7 @@ public class POSMenuButtonGetter
 
             case POSMenuButton.SUSPEND:
                 {
-                    return new POSMenuButtonData
+                    return new POSButtonData
                     {
                         Name = "Suspend",
                         OnClick = w =>
@@ -152,7 +154,7 @@ public class POSMenuButtonGetter
 
             case POSMenuButton.RESUME:
                 {
-                    return new POSMenuButtonData
+                    return new POSButtonData
                     {
                         Name = "Resume",
                         OnClick = w =>

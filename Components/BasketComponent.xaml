@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="BT_POS.Components.BasketComponent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BT_POS.Components" xmlns:Transactions="clr-namespace:BT_COMMONS.Transactions;assembly=BT-COMMONS"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <DataGrid x:Name="BasketGrid" AutoGenerateColumns="False" FontSize="20" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" RenderTransformOrigin="0.5,0.5">
+            <DataGrid.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0.99" ScaleY="0.99"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </DataGrid.RenderTransform>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Code" Binding="{Binding Code}"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
+                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}"/>
+                <DataGridTextColumn Header="File Price" Binding="{Binding FilePrice}"/>
+                <DataGridTextColumn Header="Sale Price" Binding="{Binding SalePrice}"/>
+            </DataGrid.Columns>
+            <DataGrid.DataContext>
+                <Transactions:BasketItem/>
+            </DataGrid.DataContext>
+        </DataGrid>
+    </Grid>
+</UserControl>

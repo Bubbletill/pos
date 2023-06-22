@@ -39,14 +39,18 @@ public partial class POSHome : UserControl
         _buttonRepository = buttonRepository;
 
         InitializeComponent();
+        _buttonStyle = FindResource("BTVerticleButton") as Style;
 
         if (_posController.CurrentTransaction != null )
         {
-            BasketGrid.ItemsSource = _posController.CurrentTransaction.Basket;
+            BasketComponent.BasketGrid.ItemsSource = _posController.CurrentTransaction.Basket;
+            LoadButtons(App.HomeTransButtons);
+            TotalTextBlock.Text = "£" + _posController.CurrentTransaction!.GetTotal();
+        } 
+        else
+        {
+            LoadButtons(App.HomeButtons);
         }
-
-        _buttonStyle = FindResource("BTVerticleButton") as Style;
-        LoadButtons(App.HomeButtons);
 
         Keypad.SelectedBox = ManualCodeEntryBox;
     }
@@ -102,8 +106,8 @@ public partial class POSHome : UserControl
         }
         _posController.AddItemToBasket(item);
         TotalTextBlock.Text = "£" + _posController.CurrentTransaction!.GetTotal();
-        BasketGrid.ItemsSource = _posController.CurrentTransaction!.Basket;
-        BasketGrid.Items.Refresh();
+        BasketComponent.BasketGrid.ItemsSource = _posController.CurrentTransaction!.Basket;
+        BasketComponent.BasketGrid.Items.Refresh();
         ManualCodeEntryBox.Clear();
     }
 

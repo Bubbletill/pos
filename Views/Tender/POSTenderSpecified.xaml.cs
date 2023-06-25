@@ -1,5 +1,5 @@
-﻿using BT_COMMONS.Helpers;
-using BT_COMMONS.Transactions;
+﻿using BT_COMMONS.Transactions;
+using BT_COMMONS.Transactions.TenderAttributes;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Menu;
 using Microsoft.Extensions.DependencyInjection;
@@ -96,6 +96,13 @@ public partial class POSTenderSpecified : UserControl
         {
             ManualAmountEntryBox.Clear();
             _mainWindow.HeaderError("Invalid price.");
+            return;
+        }
+
+        if (!_tender.AllowHigherTender() && amount > _controller.CurrentTransaction!.GetRemainingTender())
+        {
+            ManualAmountEntryBox.Clear();
+            _mainWindow.HeaderError("This tender does not accept higher than the outstanding transaction balance.");
             return;
         }
 

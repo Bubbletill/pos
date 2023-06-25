@@ -1,13 +1,17 @@
-﻿using BT_COMMONS.DataRepositories;
+﻿using BT_COMMONS.App;
+using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
+using BT_COMMONS.Transactions.TenderAttributes;
 using BT_POS.Views;
 using BT_POS.Views.Tender;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,11 +29,11 @@ public class POSController
 
     public bool OnlineToController { get; set; }
 
-    public readonly int StoreNumber;
-    public readonly int RegisterNumber;
+    public int StoreNumber { get; set; }
+    public int RegisterNumber { get; set; }
 
-    public Dictionary<TransactionTender, float> TenderHardTotals { get; private set; }
-    public Dictionary<TransactionType, float> TypeHardTotals { get; private set; }
+    public Dictionary<TransactionTender, float> TenderHardTotals { get; set; }
+    public Dictionary<TransactionType, float> TypeHardTotals { get; set; }
 
     public Operator? CurrentOperator { get; set; }
     public Transaction? CurrentTransaction { get; set; }
@@ -39,8 +43,6 @@ public class POSController
     {
         _operatorRepository = operatorRepository;
         _transactionRepository = transactionRepository;
-        StoreNumber = 1;
-        RegisterNumber = 1;
 
         TenderHardTotals = new Dictionary<TransactionTender, float>();
         TypeHardTotals = new Dictionary<TransactionType, float>();
@@ -116,6 +118,14 @@ public class POSController
         var current = TenderHardTotals.GetValueOrDefault(tender, 0);
         current += amount;
         TenderHardTotals[tender] = current;
+
+        string json = JsonConvert.SerializeObject(new HardTotals
+        {
+            Tender = TenderHardTotals,
+            Type = TypeHardTotals
+        });
+
+        File.WriteAllText("C:\\bubbletill\\hardtotals.json", json);
     }
 
     private void IncreaseTypeHardTotal(TransactionType type, float amount)
@@ -123,6 +133,14 @@ public class POSController
         var current = TypeHardTotals.GetValueOrDefault(type, 0);
         current += amount;
         TypeHardTotals[type] = current;
+
+        string json = JsonConvert.SerializeObject(new HardTotals
+        {
+            Tender = TenderHardTotals,
+            Type = TypeHardTotals
+        });
+
+        File.WriteAllText("C:\\bubbletill\\hardtotals.json", json);
     }
 
     // Submits current transaction to the database.
@@ -131,9 +149,16 @@ public class POSController
         if (CurrentTransaction == null)
             return;
 
+
         // Update hard totals
         foreach (KeyValuePair<TransactionTender, float> entry in CurrentTransaction.Tenders)
         {
+            if (CurrentTransaction.GetChangeTender() == entry.Key)
+            {
+                IncreaseTenderHardTotal(entry.Key, entry.Value - CurrentTransaction.Change);
+                continue;
+            }
+
             IncreaseTenderHardTotal(entry.Key, entry.Value);
         }
 

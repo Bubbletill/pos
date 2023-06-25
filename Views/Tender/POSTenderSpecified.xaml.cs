@@ -1,7 +1,7 @@
-﻿using BT_COMMONS.Transactions;
+﻿using BT_COMMONS.Helpers;
+using BT_COMMONS.Transactions;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Menu;
-using BT_POS.Buttons.Tender;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,6 @@ namespace BT_POS.Views.Tender;
 public partial class POSTenderSpecified : UserControl
 {
     private readonly TransactionTender _tender;
-    private readonly IPOSButtonData _tenderData;
     private readonly POSController _controller;
     private readonly MainWindow _mainWindow;
     private readonly Style _buttonStyle;
@@ -32,7 +31,6 @@ public partial class POSTenderSpecified : UserControl
     public POSTenderSpecified(TransactionTender tender, POSController controller, MainWindow mainWindow)
     {
         _tender = tender;
-        _tenderData = POSTenderButtonGertter.Get(_tender);
         _controller = controller;
         _mainWindow = mainWindow;
 
@@ -43,7 +41,7 @@ public partial class POSTenderSpecified : UserControl
         _buttonStyle = FindResource("BTVerticleButton") as Style;
         UpdateTotals();
         Keypad.SelectedBox = ManualAmountEntryBox;
-        ViewInfoComponent.Title = "Tender: " + _tenderData.Name;
+        ViewInfoComponent.Title = "Tender: " + _tender.GetTenderExternalName();
 
         AddAmountButton(controller.CurrentTransaction!.GetRemainingTender());
 

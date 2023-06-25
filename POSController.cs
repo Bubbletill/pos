@@ -5,6 +5,7 @@ using BT_POS.Views;
 using BT_POS.Views.Tender;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -27,6 +28,9 @@ public class POSController
     public readonly int StoreNumber;
     public readonly int RegisterNumber;
 
+    public Dictionary<TransactionTender, float> TenderHardTotals { get; private set; }
+    public Dictionary<TransactionType, float> TypeHardTotals { get; private set; }
+
     public Operator? CurrentOperator { get; set; }
     public Transaction? CurrentTransaction { get; set; }
     public int CurrentTransId = 0;
@@ -37,6 +41,9 @@ public class POSController
         _transactionRepository = transactionRepository;
         StoreNumber = 1;
         RegisterNumber = 1;
+
+        TenderHardTotals = new Dictionary<TransactionTender, float>();
+        TypeHardTotals = new Dictionary<TransactionType, float>();
     }
 
     public void HeaderError(string? error = null)
@@ -104,11 +111,33 @@ public class POSController
         mainWindow.POSViewContainer.Content = tenderHome;
     }
 
+    private void IncreaseTenderHardTotal(TransactionTender tender, float amount)
+    {
+        var current = TenderHardTotals.GetValueOrDefault(tender, 0);
+        current += amount;
+        TenderHardTotals[tender] = current;
+    }
+
+    private void IncreaseTypeHardTotal(TransactionType type, float amount)
+    {
+        var current = TypeHardTotals.GetValueOrDefault(type, 0);
+        current += amount;
+        TypeHardTotals[type] = current;
+    }
+
     // Submits current transaction to the database.
     private async void Submit()
     {
         if (CurrentTransaction == null)
             return;
+
+        // Update hard totals
+        foreach (KeyValuePair<TransactionTender, float> entry in CurrentTransaction.Tenders)
+        {
+            IncreaseTenderHardTotal(entry.Key, entry.Value);
+        }
+
+        IncreaseTypeHardTotal(CurrentTransaction.Type, CurrentTransaction.GetTotal());
 
         CurrentTransaction.Logs.Add("Transaction " + CurrentTransaction.TransactionId + " ended at " + DateTime.Now.ToString());
 

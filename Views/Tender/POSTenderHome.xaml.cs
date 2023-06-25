@@ -1,6 +1,6 @@
-﻿using BT_COMMONS.Transactions;
+﻿using BT_COMMONS.Helpers;
+using BT_COMMONS.Transactions;
 using BT_POS.Buttons.Menu;
-using BT_POS.Buttons.Tender;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -74,10 +74,10 @@ public partial class POSTenderHome : UserControl
         {
             Button button = new Button();
             button.Style = _buttonStyle;
-            button.Content = POSTenderButtonGertter.Get(type).Name;
+            button.Content = type.GetTenderExternalName();
             button.Click += (s, e) =>
             {
-                POSTenderButtonGertter.Get(type).OnClick(_mainWindow);
+                _mainWindow.POSViewContainer.Content = new POSTenderSpecified(TransactionTender.EXTERNAL_CARD, _controller, _mainWindow);
             };
 
             ButtonStackPanel.Children.Add(button);

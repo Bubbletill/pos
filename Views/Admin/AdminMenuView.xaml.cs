@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 
 namespace BT_POS.Views.Admin;
 
-public partial class POSAdmin : UserControl
+public partial class AdminMenuView : UserControl
 {
     private readonly MainWindow _mainWindow;
 
-    public POSAdmin(MainWindow mainWindow)
+    public AdminMenuView(MainWindow mainWindow)
     {
         InitializeComponent();
         _mainWindow = mainWindow;
@@ -28,6 +28,6 @@ public partial class POSAdmin : UserControl
 
     private void BackButton_Click(object sender, RoutedEventArgs e)
     {
-        _mainWindow.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<POSHome>();
+        _mainWindow.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<HomeView>();
     }
 }

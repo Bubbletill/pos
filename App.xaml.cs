@@ -14,6 +14,7 @@ using BT_POS.Buttons.Menu;
 using BT_POS.RepositoryImpl;
 using BT_POS.Views;
 using BT_POS.Views.Admin;
+using BT_POS.Views.Menus;
 using BT_POS.Views.Tender;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,8 +27,8 @@ public partial class App : Application
 {
     public static IHost? AppHost { get; private set; }
 
-    public static List<POSMenuButton> HomeButtons;
-    public static List<POSMenuButton> HomeTransButtons;
+    public static List<HomeButton> HomeButtons;
+    public static List<HomeButton> HomeTransButtons;
 
     public App()
     {
@@ -48,12 +49,14 @@ public partial class App : Application
                 services.AddSingleton<IButtonRepository, ButtonRepository>();
 
                 services.AddSingleton<MainWindow>();
-                services.AddViewFactory<POSLogin>();
+                services.AddViewFactory<LoginView>();
 
-                services.AddViewFactory<POSHome>();
-                services.AddViewFactory<POSTenderHome>();
+                services.AddViewFactory<HomeView>();
+                services.AddViewFactory<TenderHomeView>();
 
-                services.AddViewFactory<POSAdmin>();
+                services.AddViewFactory<TransModMenuView>();
+
+                services.AddViewFactory<AdminMenuView>();
 
                 services.AddSingleton<POSController>();
             }).Build();
@@ -154,7 +157,7 @@ public partial class App : Application
     public static void LoginComplete()
     {
         var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
-        var home = AppHost.Services.GetRequiredService<POSHome>();
+        var home = AppHost.Services.GetRequiredService<HomeView>();
         mainWindow.LoginComplete(home);
     }
 }

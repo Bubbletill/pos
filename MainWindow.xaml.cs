@@ -1,4 +1,5 @@
 ﻿using BT_COMMONS.Helpers;
+using BT_COMMONS.Transactions;
 using BT_POS.Views;
 using System.Windows;
 
@@ -7,10 +8,10 @@ namespace BT_POS;
 public partial class MainWindow : Window
 {
     private readonly POSController _posController;
-    private readonly IAbstractFactory<POSHome> _posHome;
-    private readonly IAbstractFactory<POSLogin> _posLogin;
+    private readonly IAbstractFactory<HomeView> _posHome;
+    private readonly IAbstractFactory<LoginView> _posLogin;
 
-    public MainWindow(IAbstractFactory<POSLogin> posLogin, IAbstractFactory<POSHome> posHome, POSController posController)
+    public MainWindow(IAbstractFactory<LoginView> posLogin, IAbstractFactory<HomeView> posHome, POSController posController)
     {
         InitializeComponent();
 
@@ -39,12 +40,14 @@ public partial class MainWindow : Window
         POSParentErrorBox.Visibility = Visibility.Visible;
     }
 
-    public void LoginComplete(POSHome posHome)
+    public void LoginComplete(HomeView posHome)
     {
         POSParentHeader_Operator.Text = "Operator# " + _posController.CurrentOperator.OperatorId;
 
         if (!_posController.GotInitialControllerData)
         {
+            _posController.OpenRegister();
+
             POSParentHeader_Trans.Text = "Transaction# " + _posController.CurrentTransId;
             _posController.GotInitialControllerData = true; 
         }

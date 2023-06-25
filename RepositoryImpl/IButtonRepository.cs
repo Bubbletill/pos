@@ -9,6 +9,6 @@ namespace BT_POS.RepositoryImpl;
 
 public interface IButtonRepository
 {
-    Task<List<POSMenuButton>?> GetHomeButtons();
-    Task<List<POSMenuButton>?> GetHomeTransButtons();
+    Task<List<HomeButton>?> GetHomeButtons();
+    Task<List<HomeButton>?> GetHomeTransButtons();
 }

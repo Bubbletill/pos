@@ -83,19 +83,27 @@ public class POSController
         return true;
     }
 
+    public void StartTransaction(TransactionType type)
+    {
+        if (CurrentTransaction != null)
+            return;
+
+        CurrentTransId++;
+        CurrentTransaction = new Transaction();
+        CurrentTransaction.Init(StoreNumber, RegisterNumber, CurrentOperator!.OperatorId, DateTime.Now, CurrentTransId, type);
+
+        MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
+        mw.POSParentHeader_Trans.Text = "Transaction# " + CurrentTransId;
+    }
+
     public void AddItemToBasket(BasketItem item)
     {
         if (CurrentTransaction == null)
         {
-            CurrentTransId++;
-            CurrentTransaction = new Transaction();
-            CurrentTransaction.Init(StoreNumber, RegisterNumber, CurrentOperator!.OperatorId, DateTime.Now, CurrentTransId, TransactionType.SALE);
-
-            MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
-            mw.POSParentHeader_Trans.Text = "Transaction# " + CurrentTransId;
+            StartTransaction(TransactionType.SALE);
         }
 
-        CurrentTransaction.AddToBasket(item);
+        CurrentTransaction!.AddToBasket(item);
     }
 
     public void AddTender(TransactionTender tender, float amount)
@@ -109,7 +117,7 @@ public class POSController
         }
 
         MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
-        POSTenderHome tenderHome = App.AppHost.Services.GetRequiredService<POSTenderHome>();
+        TenderHomeView tenderHome = App.AppHost.Services.GetRequiredService<TenderHomeView>();
         mainWindow.POSViewContainer.Content = tenderHome;
     }
 
@@ -141,6 +149,20 @@ public class POSController
         });
 
         File.WriteAllText("C:\\bubbletill\\hardtotals.json", json);
+    }
+
+    // Custom transactions
+    public void OpenRegister()
+    {
+        StartTransaction(TransactionType.REGISTER_OPEN);
+        Submit();
+    }
+
+    public void VoidTransaction()
+    {
+        CurrentTransaction!.UpdateTransactionType(TransactionType.VOID);
+        CurrentTransaction.VoidTender();
+        Submit();
     }
 
     // Submits current transaction to the database.
@@ -177,7 +199,7 @@ public class POSController
         CurrentTransaction = null;
 
         MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
-        POSHome home = App.AppHost.Services.GetRequiredService<POSHome>();
+        HomeView home = App.AppHost.Services.GetRequiredService<HomeView>();
         mainWindow.POSViewContainer.Content = home;
     }
 }

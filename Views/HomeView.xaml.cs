@@ -1,5 +1,6 @@
 ﻿using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Transactions;
+using BT_POS.Buttons;
 using BT_POS.Buttons.Menu;
 using BT_POS.RepositoryImpl;
 using System;
@@ -22,7 +23,7 @@ using System.Windows.Shapes;
 
 namespace BT_POS.Views;
 
-public partial class POSHome : UserControl
+public partial class HomeView : UserControl
 {
     private readonly MainWindow _mainWindow;
     private readonly POSController _posController;
@@ -31,7 +32,7 @@ public partial class POSHome : UserControl
 
     private readonly Style _buttonStyle;
 
-    public POSHome(MainWindow mainWindow, POSController posController, IStockRepository stockRepository, IButtonRepository buttonRepository)
+    public HomeView(MainWindow mainWindow, POSController posController, IStockRepository stockRepository, IButtonRepository buttonRepository)
     {
         _mainWindow = mainWindow;
         _posController = posController;
@@ -56,17 +57,18 @@ public partial class POSHome : UserControl
     }
 
 
-    public void LoadButtons(List<POSMenuButton> buttons)
+    public void LoadButtons(List<HomeButton> buttons)
     {
         ButtonStackPanel.Children.Clear();
         buttons.ForEach(type =>
         {
+            IButtonData data = HomeButtonGetter.Get(type);
             Button button = new Button();
             button.Style = _buttonStyle;
-            button.Content = POSMenuButtonGetter.Get(type).Name;
+            button.Content = data.Name;
             button.Click += (s, e) =>
             {
-                POSMenuButtonGetter.Get(type).OnClick(_mainWindow);
+                data.OnClick(_mainWindow);
             };
 
             ButtonStackPanel.Children.Add(button);

@@ -6,8 +6,8 @@ using System.Windows.Controls;
 
 namespace BT_POS.Buttons;
 
-public class POSButtonData : IPOSButtonData
+public class ButtonData : IButtonData
 {
     public string Name { get; set; }
-    public Func<MainWindow, string> OnClick { get; set; }
+    public Action<MainWindow> OnClick { get; set; }
 }

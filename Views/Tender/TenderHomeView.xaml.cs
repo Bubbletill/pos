@@ -19,13 +19,13 @@ using System.Windows.Shapes;
 
 namespace BT_POS.Views.Tender;
 
-public partial class POSTenderHome : UserControl
+public partial class TenderHomeView : UserControl
 {
     private readonly POSController _controller;
     private readonly MainWindow _mainWindow;
     private readonly Style _buttonStyle;
 
-    public POSTenderHome(POSController controller, MainWindow mainWindow)
+    public TenderHomeView(POSController controller, MainWindow mainWindow)
     {
         _controller = controller;
         _mainWindow = mainWindow;
@@ -47,7 +47,7 @@ public partial class POSTenderHome : UserControl
             button.Content = "Back";
             button.Click += (s, e) =>
             {
-                POSHome home = App.AppHost.Services.GetRequiredService<POSHome>();
+                HomeView home = App.AppHost.Services.GetRequiredService<HomeView>();
                 _mainWindow.POSViewContainer.Content = home;
             };
             ButtonStackPanel.Children.Add(button);
@@ -60,7 +60,7 @@ public partial class POSTenderHome : UserControl
             button.Click += (s, e) =>
             {
                 _controller.CurrentTransaction.VoidTender();
-                POSHome home = App.AppHost.Services.GetRequiredService<POSHome>();
+                HomeView home = App.AppHost.Services.GetRequiredService<HomeView>();
                 _mainWindow.POSViewContainer.Content = home;
             };
             ButtonStackPanel.Children.Add(button);
@@ -77,7 +77,7 @@ public partial class POSTenderHome : UserControl
             button.Content = type.GetTenderExternalName();
             button.Click += (s, e) =>
             {
-                _mainWindow.POSViewContainer.Content = new POSTenderSpecified(type, _controller, _mainWindow);
+                _mainWindow.POSViewContainer.Content = new TenderSpecifiedView(type, _controller, _mainWindow);
             };
 
             ButtonStackPanel.Children.Add(button);

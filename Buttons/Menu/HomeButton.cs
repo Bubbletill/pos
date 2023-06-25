@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BT_POS.Buttons.Menu;
 
-public enum POSMenuButton
+public enum HomeButton
 {
     ADMIN,
     TENDER,

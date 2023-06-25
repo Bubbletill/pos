@@ -3,8 +3,8 @@ using System.Windows.Controls;
 
 namespace BT_POS.Buttons;
 
-public interface IPOSButtonData
+public interface IButtonData
 {
-    Func<MainWindow, string> OnClick { get; set; }
+    Action<MainWindow> OnClick { get; set; }
     string Name { get; set; }
 }

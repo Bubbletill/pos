@@ -2,8 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- General Button Template -->
     <Style x:Key="BTHorizontalButton" TargetType="Button">
-        <Setter Property="FontSize"
-                    Value="30"/>
         <Setter Property="Margin" 
                     Value="10,0,10,0"/>
 
@@ -26,10 +24,9 @@
                             </LinearGradientBrush>
                         </Border.Background>
 
-                        <ContentPresenter
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"/>
+                        <TextBlock Text="{TemplateBinding Content}" FontSize="30" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -60,9 +57,7 @@
                             </LinearGradientBrush>
                         </Border.Background>
 
-                        <ContentPresenter
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"/>
+                        <TextBlock Text="{TemplateBinding Content}" FontSize="30" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

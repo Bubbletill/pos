@@ -22,7 +22,7 @@ public class ButtonRepository : IButtonRepository
         _api = api;
     }
 
-    public async Task<List<POSMenuButton>?> GetHomeButtons()
+    public async Task<List<HomeButton>?> GetHomeButtons()
     {
         var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"home\";", new { });
         if (tables.Count == 0)
@@ -31,11 +31,11 @@ public class ButtonRepository : IButtonRepository
         }
 
         Trace.WriteLine(tables[0]);
-        var buttons = JsonConvert.DeserializeObject<List<POSMenuButton>>(tables[0]);
+        var buttons = JsonConvert.DeserializeObject<List<HomeButton>>(tables[0]);
         return buttons;
     }
 
-    public async Task<List<POSMenuButton>?> GetHomeTransButtons()
+    public async Task<List<HomeButton>?> GetHomeTransButtons()
     {
         var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"home_trans\";", new { });
         if (tables.Count == 0)
@@ -44,7 +44,7 @@ public class ButtonRepository : IButtonRepository
         }
 
         Trace.WriteLine(tables[0]);
-        var buttons = JsonConvert.DeserializeObject<List<POSMenuButton>>(tables[0]);
+        var buttons = JsonConvert.DeserializeObject<List<HomeButton>>(tables[0]);
         return buttons;
     }
 }

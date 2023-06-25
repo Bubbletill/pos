@@ -21,14 +21,14 @@ using System.Windows.Shapes;
 
 namespace BT_POS.Views.Tender;
 
-public partial class POSTenderSpecified : UserControl
+public partial class TenderSpecifiedView : UserControl
 {
     private readonly TransactionTender _tender;
     private readonly POSController _controller;
     private readonly MainWindow _mainWindow;
     private readonly Style _buttonStyle;
 
-    public POSTenderSpecified(TransactionTender tender, POSController controller, MainWindow mainWindow)
+    public TenderSpecifiedView(TransactionTender tender, POSController controller, MainWindow mainWindow)
     {
         _tender = tender;
         _controller = controller;
@@ -51,7 +51,7 @@ public partial class POSTenderSpecified : UserControl
         button.Content = "Back";
         button.Click += (s, e) =>
         {
-            POSTenderHome tenderHome = App.AppHost.Services.GetRequiredService<POSTenderHome>();
+            TenderHomeView tenderHome = App.AppHost.Services.GetRequiredService<TenderHomeView>();
             _mainWindow.POSViewContainer.Content = tenderHome;
         };
         ButtonStackPanel.Children.Add(button);

@@ -19,12 +19,12 @@ using System.Windows.Shapes;
 
 namespace BT_POS.Views;
 
-public partial class POSLogin : UserControl
+public partial class LoginView : UserControl
 {
     private readonly POSController _controller;
     private readonly IOperatorRepository _operatorRepository;
 
-    public POSLogin(POSController controller, IOperatorRepository operatorRepository)
+    public LoginView(POSController controller, IOperatorRepository operatorRepository)
     {
         InitializeComponent();
         _controller = controller;

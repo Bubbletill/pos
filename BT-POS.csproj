@@ -32,4 +32,10 @@
     <Resource Include="Assets\logo.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Views\Menus\TransModMenuView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

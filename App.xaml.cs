@@ -50,6 +50,7 @@ public partial class App : Application
 
                 services.AddSingleton<MainWindow>();
                 services.AddViewFactory<LoginView>();
+                services.AddViewFactory<RegClosedView>();
 
                 services.AddViewFactory<HomeView>();
                 services.AddViewFactory<TenderHomeView>();
@@ -76,13 +77,14 @@ public partial class App : Application
                 string json = r.ReadToEnd();
                 AppConfig config = JsonConvert.DeserializeObject<AppConfig>(json);
 
-                if (config == null || config.Register == null || config.Store == null)
+                if (config == null || config.Register == null || config.Store == null || config.RegisterOpen == null)
                 {
                     throw new Exception();
                 }
 
-                controller.StoreNumber = (int)config!.Store!;
-                controller.RegisterNumber = (int)config!.Store!;
+                controller.StoreNumber = (int)config.Store;
+                controller.RegisterNumber = (int)config.Store;
+                controller.RegisterOpen = (bool)config.RegisterOpen;
             }
         } 
         catch (Exception ex)

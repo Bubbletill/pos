@@ -31,6 +31,7 @@ public class POSController
 
     public int StoreNumber { get; set; }
     public int RegisterNumber { get; set; }
+    public bool RegisterOpen { get; set; }
 
     public Dictionary<TransactionTender, float> TenderHardTotals { get; set; }
     public Dictionary<TransactionType, float> TypeHardTotals { get; set; }
@@ -155,7 +156,59 @@ public class POSController
     public void OpenRegister()
     {
         StartTransaction(TransactionType.REGISTER_OPEN);
+
+        RegisterOpen = true;
+        string json = JsonConvert.SerializeObject(new AppConfig
+        {
+            Store = StoreNumber,
+            Register = RegisterNumber,
+            RegisterOpen = RegisterOpen
+        });
+
+        File.WriteAllText("C:\\bubbletill\\data.json", json);
+
         Submit();
+    }
+
+    public void CloseRegister()
+    {
+        StartTransaction(TransactionType.REGISTER_CLOSE);
+
+        RegisterOpen = false;
+        string dataJson = JsonConvert.SerializeObject(new AppConfig
+        {
+            Store = StoreNumber,
+            Register = RegisterNumber,
+            RegisterOpen = RegisterOpen
+        });
+
+        File.WriteAllText("C:\\bubbletill\\data.json", dataJson);
+
+        // Clear hard totals
+        CurrentTransaction!.Logs.Add("Regiser Close Reading");
+        foreach (KeyValuePair<TransactionTender, float> entry in TenderHardTotals)
+        {
+            CurrentTransaction.Logs.Add(entry.Key.GetTenderInternalName() + ": " + entry.Value);
+        }
+        CurrentTransaction!.Logs.Add(" ");
+        foreach (KeyValuePair<TransactionType, float> entry in TypeHardTotals)
+        {
+            CurrentTransaction.Logs.Add(entry.Key.ToString() + ": " + entry.Value);
+        }
+
+        TenderHardTotals = new Dictionary<TransactionTender, float>();
+        TypeHardTotals = new Dictionary<TransactionType, float>();
+        string json = JsonConvert.SerializeObject(new HardTotals
+        {
+            Tender = TenderHardTotals,
+            Type = TypeHardTotals
+        });
+
+        File.WriteAllText("C:\\bubbletill\\hardtotals.json", json);
+
+        Submit();
+        MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
+        mw.Logout();
     }
 
     public void VoidTransaction()

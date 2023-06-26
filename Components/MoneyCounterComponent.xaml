@@ -1,0 +1,223 @@
+﻿<UserControl x:Class="BT_POS.Components.MoneyCounterComponent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BT_POS.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="850" d:DesignWidth="800" Background="White">
+    <Grid>
+        <Grid.RowDefinitions>
+
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="7*"/>
+
+        </Grid.RowDefinitions>
+
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="0" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Denomination" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBlock Text="# of Coins/Notes" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBlock Text="# of Rolls/Bands" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+            </Grid>
+        </GroupBox>
+
+        <!-- Fifty Pound -->
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="1" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="£50" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBox x:Name="FiftyPoundCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="FiftyPoundRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+            </Grid>
+        </GroupBox>
+
+        <!-- Twenty Pound -->
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="2" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="£20" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBox x:Name="TwentyPoundCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="TwentyPoundRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+            </Grid>
+        </GroupBox>
+
+        <!-- Ten Pound -->
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="3" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="£10" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBox x:Name="TenPoundCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="TenPoundRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+            </Grid>
+        </GroupBox>
+
+        <!-- Five Pound -->
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="4" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="£5" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBox x:Name="FivePoundCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="FivePoundRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+            </Grid>
+        </GroupBox>
+
+        <!-- Two Pound -->
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="5" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="£2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBox x:Name="TwoPoundCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="TwoPoundRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+            </Grid>
+        </GroupBox>
+
+        <!-- One Pound -->
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="6" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="£1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBox x:Name="OnePoundCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="OnePoundRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+            </Grid>
+        </GroupBox>
+
+        <!-- Fifty Pence -->
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="7" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="50p" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBox x:Name="FiftyPenceCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="FiftyPenceRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+            </Grid>
+        </GroupBox>
+
+        <!-- Twenty Pence -->
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="8" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="20p" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBox x:Name="TwentyPenceCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="TwentyPenceRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+            </Grid>
+        </GroupBox>
+
+        <!-- Ten Pence -->
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="9" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="10p" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBox x:Name="TenPenceCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="TenPenceRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+            </Grid>
+        </GroupBox>
+
+        <!-- Five Pence -->
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="10" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="5p" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBox x:Name="FivePenceCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="FivePenceRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+            </Grid>
+        </GroupBox>
+
+        <!-- Two Pence -->
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="11" Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="2p" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBox x:Name="TwoPenceCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="TwoPenceRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+            </Grid>
+        </GroupBox>
+
+        <!-- One Pence -->
+        <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="12" Grid.Column="0" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="1p" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                <TextBox x:Name="OnePenceCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="OnePenceRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

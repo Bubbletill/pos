@@ -39,6 +39,7 @@ public class POSController
     public Operator? CurrentOperator { get; set; }
     public Transaction? CurrentTransaction { get; set; }
     public int CurrentTransId = 0;
+    private bool TransFinishReturnToHome = true;
 
     public POSController(IOperatorRepository operatorRepository, ITransactionRepository transactionRepository)
     {
@@ -158,6 +159,7 @@ public class POSController
         StartTransaction(TransactionType.REGISTER_OPEN);
 
         RegisterOpen = true;
+        TransFinishReturnToHome = false;
         string json = JsonConvert.SerializeObject(new AppConfig
         {
             Store = StoreNumber,
@@ -175,6 +177,7 @@ public class POSController
         StartTransaction(TransactionType.REGISTER_CLOSE);
 
         RegisterOpen = false;
+        TransFinishReturnToHome = false;
         string dataJson = JsonConvert.SerializeObject(new AppConfig
         {
             Store = StoreNumber,
@@ -251,8 +254,13 @@ public class POSController
 
         CurrentTransaction = null;
 
-        MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
-        HomeView home = App.AppHost.Services.GetRequiredService<HomeView>();
-        mainWindow.POSViewContainer.Content = home;
+        if (TransFinishReturnToHome)
+        {
+            MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
+            HomeView home = App.AppHost.Services.GetRequiredService<HomeView>();
+            mainWindow.POSViewContainer.Content = home;
+        }
+
+        TransFinishReturnToHome = true;
     }
 }

@@ -24,8 +24,14 @@ public partial class KeypadComponent : UserControl
 
     public KeypadComponent()
     {
+        EventManager.RegisterClassHandler(typeof(TextBox), TextBox.GotFocusEvent, new RoutedEventHandler(TextBoxSelect));
         SelectedBox = null;
         InitializeComponent();
+    }
+
+    private void TextBoxSelect(object sender, RoutedEventArgs e)
+    {
+        SelectedBox = (TextBox)sender;
     }
 
     private void AddToBox(string toAdd)

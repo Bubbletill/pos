@@ -58,6 +58,7 @@ public partial class App : Application
                 services.AddViewFactory<TransModMenuView>();
 
                 services.AddViewFactory<AdminMenuView>();
+                services.AddViewFactory<EnterFloatView>();
 
                 services.AddSingleton<POSController>();
             }).Build();

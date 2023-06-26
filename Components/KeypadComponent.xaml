@@ -32,8 +32,8 @@
         <Button x:Name="TwoButton" Grid.Row="2" Grid.Column="1" Style="{DynamicResource BTKeypadButton}" Content="2" Click="TwoButton_Click"/>
         <Button x:Name="ThreeButton" Grid.Row="2" Grid.Column="2" Style="{DynamicResource BTKeypadButton}" Content="3" Click="ThreeButton_Click"/>
 
-        <Button x:Name="ZeroButton" Grid.Row="3" Grid.Column="0" Style="{DynamicResource BTKeypadButton}" Content="0" Click="ZeroButton_Click"/>
-        <Button x:Name="PeriodButton" Grid.Row="3" Grid.Column="1" Style="{DynamicResource BTKeypadButton}" Content="." Click="PeriodButton_Click"/>
+        <Button x:Name="PeriodButton" Grid.Row="3" Grid.Column="0" Style="{DynamicResource BTKeypadButton}" Content="." Click="PeriodButton_Click"/>
+        <Button x:Name="ZeroButton" Grid.Row="3" Grid.Column="1" Style="{DynamicResource BTKeypadButton}" Content="0" Click="ZeroButton_Click"/>
         <Button x:Name="BackButton" Grid.Row="3" Grid.Column="2" Style="{DynamicResource BTKeypadButton}" Content="&lt;" Click="BackButton_Click"/>
 
         <Button x:Name="ClearButton" Grid.Row="4" Grid.Column="0" Style="{DynamicResource BTKeypadOKButton}" Content="Clear" Click="ClearButton_Click"/>

@@ -54,6 +54,7 @@ public partial class HomeView : UserControl
         }
 
         Keypad.SelectedBox = ManualCodeEntryBox;
+        ManualCodeEntryBox.Focus();
     }
 
 

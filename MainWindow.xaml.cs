@@ -1,6 +1,9 @@
 ﻿using BT_COMMONS.Helpers;
 using BT_COMMONS.Transactions;
 using BT_POS.Views;
+using BT_POS.Views.Admin;
+using BT_POS.Views.Dialogues;
+using System.Diagnostics;
 using System.Windows;
 
 namespace BT_POS;
@@ -11,8 +14,9 @@ public partial class MainWindow : Window
     private readonly IAbstractFactory<HomeView> _posHome;
     private readonly IAbstractFactory<LoginView> _posLogin;
     private readonly IAbstractFactory<RegClosedView> _posRegClosed;
+    private readonly IAbstractFactory<EnterFloatView> _posEnterFloat;
 
-    public MainWindow(IAbstractFactory<LoginView> posLogin, IAbstractFactory<RegClosedView> posRegClosed, IAbstractFactory<HomeView> posHome, POSController posController)
+    public MainWindow(IAbstractFactory<LoginView> posLogin, IAbstractFactory<RegClosedView> posRegClosed, IAbstractFactory<HomeView> posHome, IAbstractFactory<EnterFloatView> posEnterFloat, POSController posController)
     {
         InitializeComponent();
 
@@ -20,6 +24,7 @@ public partial class MainWindow : Window
         _posHome = posHome;
         _posLogin = posLogin;
         _posRegClosed = posRegClosed;
+        _posEnterFloat = posEnterFloat;
 
         POSParentErrorBox.Visibility = Visibility.Hidden;
 
@@ -54,10 +59,24 @@ public partial class MainWindow : Window
             _posController.OpenRegister();
 
             POSParentHeader_Trans.Text = "Transaction# " + _posController.CurrentTransId;
+
+            POSViewContainer.Content = new YesNoDialogue("Would you like to declare an opening float?", () =>
+            { // Yes
+                Trace.WriteLine("yes select");
+                POSViewContainer.Content = _posEnterFloat.Create();
+            }, () =>
+            { // No
+                Trace.WriteLine("no select");
+                POSViewContainer.Content = posHome;
+            });
+
             _posController.GotInitialControllerData = true; 
         }
-
-        POSViewContainer.Content = posHome;
+        else
+        {
+            Trace.WriteLine("noneed select");
+            POSViewContainer.Content = posHome;
+        }
     }
 
     public void Logout()

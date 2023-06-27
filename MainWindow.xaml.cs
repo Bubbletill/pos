@@ -56,27 +56,32 @@ public partial class MainWindow : Window
 
         if (!_posController.GotInitialControllerData)
         {
-            _posController.OpenRegister();
-
             POSParentHeader_Trans.Text = "Transaction# " + _posController.CurrentTransId;
-
-            POSViewContainer.Content = new YesNoDialogue("Would you like to declare an opening float?", () =>
-            { // Yes
-                Trace.WriteLine("yes select");
-                POSViewContainer.Content = _posEnterFloat.Create();
-            }, () =>
-            { // No
-                Trace.WriteLine("no select");
-                POSViewContainer.Content = posHome;
-            });
 
             _posController.GotInitialControllerData = true; 
         }
+
+        if (!_posController.RegisterOpen)
+        {
+            _posController.OpenRegister();
+        }
+
+        if (!_posController.LoanPrompted)
+        {
+            _posController.LoanPrompted = true;
+            POSViewContainer.Content = new YesNoDialogue("Would you like to declare an opening float?", () =>
+            { // Yes
+                POSViewContainer.Content = _posEnterFloat.Create();
+            }, () =>
+            { // No
+                POSViewContainer.Content = posHome;
+            });
+        } 
         else
         {
-            Trace.WriteLine("noneed select");
             POSViewContainer.Content = posHome;
         }
+        
     }
 
     public void Logout()

@@ -13,7 +13,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel x:Name="ButtonStackPanel" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-            <Button x:Name="BackButton" Style="{DynamicResource BTButton}" Content="Back" Click="BackButton_Click"/>
+            <Button x:Name="BackButton" Style="{DynamicResource BTHorizontalButton}" Content="Back" Click="BackButton_Click"/>
+            <Button x:Name="CloseButton" Style="{DynamicResource BTHorizontalButton}" Content="Close Register" Click="CloseRegister_Click" />
         </StackPanel>
     </Grid>
 </UserControl>

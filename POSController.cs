@@ -39,7 +39,9 @@ public class POSController
     public Operator? CurrentOperator { get; set; }
     public Transaction? CurrentTransaction { get; set; }
     public int CurrentTransId = 0;
+
     private bool TransFinishReturnToHome = true;
+    public bool LoanPrompted = false;
 
     public POSController(IOperatorRepository operatorRepository, ITransactionRepository transactionRepository)
     {
@@ -178,6 +180,7 @@ public class POSController
 
         RegisterOpen = false;
         TransFinishReturnToHome = false;
+        LoanPrompted = false;
         string dataJson = JsonConvert.SerializeObject(new AppConfig
         {
             Store = StoreNumber,
@@ -201,6 +204,15 @@ public class POSController
 
         TenderHardTotals = new Dictionary<TransactionTender, float>();
         TypeHardTotals = new Dictionary<TransactionType, float>();
+        foreach (TransactionTender tender in Enum.GetValues(typeof(TransactionTender)))
+        {
+            TenderHardTotals.Add(tender, 0);
+        }
+
+        foreach (TransactionType type in Enum.GetValues(typeof(TransactionType)))
+        {
+            TypeHardTotals.Add(type, 0);
+        }
         string json = JsonConvert.SerializeObject(new HardTotals
         {
             Tender = TenderHardTotals,

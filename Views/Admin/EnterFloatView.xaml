@@ -23,8 +23,8 @@
 
         <!-- Side buttons -->
         <StackPanel x:Name="ButtonStackPanel" Grid.Row="0" Grid.RowSpan="4" Grid.Column="5" Orientation="Vertical">
-            <Button Style="{DynamicResource BTVerticleButton}" Content="Declare"/>
-            <Button Style="{DynamicResource BTVerticleButton}" Content="Cancel"/>
+            <Button Style="{DynamicResource BTVerticleButton}" Content="Declare" Click="Declare_Click"/>
+            <Button Style="{DynamicResource BTVerticleButton}" Content="Cancel" Click="Cancel_Click"/>
         </StackPanel>
 
         <!-- Enter Box -->

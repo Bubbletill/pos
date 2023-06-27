@@ -16,11 +16,15 @@ using System.Windows.Shapes;
 
 namespace BT_POS.Views.Admin;
 
-public partial class EnterFloatView : UserControl
+public partial class EnterLoanView : UserControl
 {
-    public EnterFloatView()
+    public EnterLoanView(string title, string infoType)
     {
         InitializeComponent();
+        Keypad.DisableButton(Keypad.PeriodButton);
+
+        ViewInfoComponent.Title = title;
+        ViewInfoComponent.Information += infoType + ".";
     }
 
     private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -33,6 +37,8 @@ public partial class EnterFloatView : UserControl
 
     private void Declare_Click(object sender, RoutedEventArgs e)
     {
-
+        var amount = MoneyCounterComponent.CalculateAmount();
+        POSController c = App.AppHost.Services.GetRequiredService<POSController>();
+        c.LoanTransaction(amount);
     }
 }

@@ -226,6 +226,20 @@ public class POSController
         mw.Logout();
     }
 
+    public void LoanTransaction(float loan)
+    {
+        StartTransaction(TransactionType.LOAN);
+        AddItemToBasket(new BasketItem
+        {
+            Code = 0,
+            Description = "Loan",
+            FilePrice = loan,
+            AgeRestricted = false,
+        });
+
+        Submit();
+    }
+
     public void VoidTransaction()
     {
         CurrentTransaction!.UpdateTransactionType(TransactionType.VOID);

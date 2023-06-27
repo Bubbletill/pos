@@ -14,9 +14,8 @@ public partial class MainWindow : Window
     private readonly IAbstractFactory<HomeView> _posHome;
     private readonly IAbstractFactory<LoginView> _posLogin;
     private readonly IAbstractFactory<RegClosedView> _posRegClosed;
-    private readonly IAbstractFactory<EnterFloatView> _posEnterFloat;
 
-    public MainWindow(IAbstractFactory<LoginView> posLogin, IAbstractFactory<RegClosedView> posRegClosed, IAbstractFactory<HomeView> posHome, IAbstractFactory<EnterFloatView> posEnterFloat, POSController posController)
+    public MainWindow(IAbstractFactory<LoginView> posLogin, IAbstractFactory<RegClosedView> posRegClosed, IAbstractFactory<HomeView> posHome, POSController posController)
     {
         InitializeComponent();
 
@@ -24,7 +23,6 @@ public partial class MainWindow : Window
         _posHome = posHome;
         _posLogin = posLogin;
         _posRegClosed = posRegClosed;
-        _posEnterFloat = posEnterFloat;
 
         POSParentErrorBox.Visibility = Visibility.Hidden;
 
@@ -71,7 +69,7 @@ public partial class MainWindow : Window
             _posController.LoanPrompted = true;
             POSViewContainer.Content = new YesNoDialogue("Would you like to declare an opening float?", () =>
             { // Yes
-                POSViewContainer.Content = _posEnterFloat.Create();
+                POSViewContainer.Content = new EnterLoanView("Enter Opening Float", "the opening float");
             }, () =>
             { // No
                 POSViewContainer.Content = posHome;

@@ -29,6 +29,12 @@ public partial class KeypadComponent : UserControl
         InitializeComponent();
     }
 
+    public void DisableButton(Button button)
+    {
+        button.IsEnabled = false;
+        button.Style = FindResource("BTDisabledKeypadButton") as Style;
+    }
+
     private void TextBoxSelect(object sender, RoutedEventArgs e)
     {
         SelectedBox = (TextBox)sender;

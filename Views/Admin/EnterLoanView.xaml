@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="BT_POS.Views.Admin.EnterFloatView"
+﻿<UserControl x:Class="BT_POS.Views.Admin.EnterLoanView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -31,7 +31,7 @@
         <components:MoneyCounterComponent x:Name="MoneyCounterComponent" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Grid.RowSpan="2"/>
 
         <!-- Information Box -->
-        <components:ViewInformationComponent Grid.Row="0" Grid.Column="4" Title="Enter Opening Float" Information="Please enter the amount of coins or notes for each denomination you would like to declare in the opening float."/>
+        <components:ViewInformationComponent x:Name="ViewInfoComponent" Grid.Row="0" Grid.Column="4" Title="" Information="Please enter the amount of coins or notes for each denomination you would like to declare in "/>
 
         <!-- Keypad -->
         <components:KeypadComponent x:Name="Keypad" Grid.Row="1" Grid.Column="4" MaxHeight="700" MaxWidth="500"/>

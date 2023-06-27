@@ -50,8 +50,8 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="£50" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
-                <TextBox x:Name="FiftyPoundCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
-                <TextBox x:Name="FiftyPoundRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="FiftyPoundNotes" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="FiftyPoundBands" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
             </Grid>
         </GroupBox>
 
@@ -65,8 +65,8 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="£20" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
-                <TextBox x:Name="TwentyPoundCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
-                <TextBox x:Name="TwentyPoundRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="TwentyPoundNotes" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="TwentyPoundBands" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
             </Grid>
         </GroupBox>
 
@@ -80,8 +80,8 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="£10" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
-                <TextBox x:Name="TenPoundCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
-                <TextBox x:Name="TenPoundRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="TenPoundNotes" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="TenPoundBands" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
             </Grid>
         </GroupBox>
 
@@ -95,8 +95,8 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="£5" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
-                <TextBox x:Name="FivePoundCoins" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
-                <TextBox x:Name="FivePoundRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="FivePoundNotes" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                <TextBox x:Name="FivePoundBands" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
             </Grid>
         </GroupBox>
 
@@ -219,5 +219,17 @@
                 <TextBox x:Name="OnePenceRolls" PreviewTextInput="PreviewTextInput" Grid.Column="2" Margin="10,10,10,10" FontSize="24" />
             </Grid>
         </GroupBox>
+
+        <Border x:Name="TotalBorder" Grid.Column="0" Grid.Row="13" BorderBrush="Black" Background="#FFE4E4E4" BorderThickness="1" RenderTransformOrigin="0.5,0.5">
+            <Border.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0.95" ScaleY="0.9"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Border.RenderTransform>
+            <TextBlock x:Name="TotalTextBlock" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Text="£0.00"/>
+        </Border>
     </Grid>
 </UserControl>

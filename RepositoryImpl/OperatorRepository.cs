@@ -3,6 +3,9 @@ using BT_COMMONS.Database;
 using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Operators;
 using BT_COMMONS.Operators.API;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BT_POS.RepositoryImpl;
@@ -71,5 +74,11 @@ public class OperatorRepository : IOperatorRepository
             ID = oper.Id,
             Message = string.Empty
         };
+    }
+
+    public async Task<List<OperatorGroup>> GetOperatorGroups()
+    {
+        List<OperatorGroup> operGroups = await _database.LoadData<OperatorGroup, dynamic>("SELECT * FROM `groups`;", new { });
+        return operGroups;
     }
 }

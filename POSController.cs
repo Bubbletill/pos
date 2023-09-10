@@ -37,6 +37,7 @@ public class POSController
     public Dictionary<TransactionType, float> TypeHardTotals { get; set; }
 
     public Operator? CurrentOperator { get; set; }
+    public List<OperatorGroup>? OperatorGroups { get; set; }
     public Transaction? CurrentTransaction { get; set; }
     public int CurrentTransId = 0;
 

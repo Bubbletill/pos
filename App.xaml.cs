@@ -12,6 +12,7 @@ using BT_COMMONS.Helpers;
 using BT_COMMONS.Transactions;
 using BT_POS.Buttons.Menu;
 using BT_POS.RepositoryImpl;
+using BT_POS.Splash;
 using BT_POS.Views;
 using BT_POS.Views.Admin;
 using BT_POS.Views.Menus;
@@ -65,6 +66,9 @@ public partial class App : Application
 
     protected override async void OnStartup(StartupEventArgs e)
     {
+        POSSplashScreen splash = new POSSplashScreen();
+        splash.Show();
+
         await AppHost!.StartAsync();
 
         var controller = AppHost.Services.GetRequiredService<POSController>();
@@ -133,12 +137,20 @@ public partial class App : Application
             File.WriteAllText("C:\\bubbletill\\hardtotals.json", json);
         }
 
+        var operRepo = AppHost.Services.GetRequiredService<IOperatorRepository>();
+        controller.OperatorGroups = await operRepo.GetOperatorGroups();
+        foreach (var group in controller.OperatorGroups)
+        {
+            group.Parse();
+        }
+
         var btnRepo = AppHost.Services.GetRequiredService<IButtonRepository>();
         HomeButtons = await btnRepo.GetHomeButtons();
         HomeTransButtons = await btnRepo.GetHomeTransButtons();
 
         var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();
+        splash.Close();
 
         base.OnStartup(e);
     }

@@ -37,7 +37,7 @@ public class POSController
     public Dictionary<TransactionType, float> TypeHardTotals { get; set; }
 
     public Operator? CurrentOperator { get; set; }
-    public List<OperatorGroup>? OperatorGroups { get; set; }
+    public Dictionary<int, OperatorGroup>? OperatorGroups { get; set; }
     public Transaction? CurrentTransaction { get; set; }
     public int CurrentTransId = 0;
 
@@ -51,6 +51,7 @@ public class POSController
 
         TenderHardTotals = new Dictionary<TransactionTender, float>();
         TypeHardTotals = new Dictionary<TransactionType, float>();
+        OperatorGroups = new Dictionary<int, OperatorGroup>(); 
     }
 
     public void HeaderError(string? error = null)
@@ -63,6 +64,11 @@ public class POSController
     {
         var oper = await _operatorRepository.GetOperator(id);
         if (oper == null)
+        {
+            return false;
+        }
+
+        if (!oper.HasBoolPermission(OperatorBoolPermission.POS_Access))
         {
             return false;
         }

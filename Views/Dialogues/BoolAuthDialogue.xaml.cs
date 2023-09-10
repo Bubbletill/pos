@@ -1,13 +1,9 @@
-﻿using BT_COMMONS.Database;
-using BT_COMMONS.DataRepositories;
+﻿using BT_COMMONS.Operators.API;
 using BT_COMMONS.Operators;
-using BT_COMMONS.Operators.API;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,24 +16,37 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BT_COMMONS.DataRepositories;
+using BT_COMMONS.Operators.PermissionAttributes;
 
-namespace BT_POS.Views;
+namespace BT_POS.Views.Dialogues;
 
-public partial class LoginView : UserControl
+/// <summary>
+/// Interaction logic for AuthDialogue.xaml
+/// </summary>
+public partial class BoolAuthDialogue : UserControl
 {
+    private readonly OperatorBoolPermission _permission;
+    private readonly Action _onAuthentication;
+    private readonly Action _onCancel;
+
     private readonly POSController _controller;
     private readonly IOperatorRepository _operatorRepository;
 
-    public LoginView(POSController controller, IOperatorRepository operatorRepository)
+    public BoolAuthDialogue(OperatorBoolPermission permission, Action onAuthentication, Action onCancel)
     {
         InitializeComponent();
-        VersionText.Text = "POS Version " + FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
-        _controller = controller;
-        _operatorRepository = operatorRepository;
-        UserIdBox.Focus();
+        _permission = permission;
+        _onAuthentication = onAuthentication;
+        _onCancel = onCancel;
+        _controller = App.AppHost.Services.GetRequiredService<POSController>();
+        _operatorRepository = App.AppHost.Services.GetRequiredService<IOperatorRepository>();
+
+        InfoText.Text += permission.GetPromptName();
     }
 
-    private async void LoginButton_Click(object sender, RoutedEventArgs e)
+
+    private async void AuthenticateButton_Click(object sender, RoutedEventArgs e)
     {
         if (UserIdBox.Text == "" || PasswordBox.Password == "")
         {
@@ -63,37 +72,27 @@ public partial class LoginView : UserControl
         if (loginResponse.ID != null)
         {
             var oper = await _operatorRepository.GetOperator((int)loginResponse.ID);
-            if (!_controller.RegisterOpen)
+            if (!oper.HasBoolPermission(_permission))
             {
-                if (!oper.HasBoolPermission(OperatorBoolPermission.POS_Admin_OpenRegister))
-                {
-                    _controller.HeaderError("Insufficient permission to open this register.");
-                    MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
-                    mw.Logout();
-                    return;
-                }
-            }
-
-            var status = await _controller.CompleteLogin((int)loginResponse.ID);
-            if (!status)
-            {
-                _controller.HeaderError("Failed to complete login. Please try again later.");
+                _controller.HeaderError("Insufficient permission.");
                 LoginButton.Content = "Login";
                 return;
+            } 
+            else
+            {
+                _onAuthentication();
             }
-
-            App.LoginComplete();
-        }
+        } 
         else
         {
-            _controller.HeaderError(loginResponse.Message);
+            _controller.HeaderError("Internal error. Please try again later.");
             LoginButton.Content = "Login";
         }
-    } 
+    }
 
-    private void BackOfficeButton_Click(object sender, RoutedEventArgs e)
+    private void CancelButton_Click(object sender, RoutedEventArgs e)
     {
-        
+        _onCancel();
     }
 
     private void UserIdBox_KeyUp(object sender, KeyEventArgs e)
@@ -107,7 +106,7 @@ public partial class LoginView : UserControl
 
     private void PasswordBox_KeyUp(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Enter) 
+        if (e.Key == Key.Enter)
         {
             _controller.HeaderError();
             LoginButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));

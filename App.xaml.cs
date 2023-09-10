@@ -138,10 +138,11 @@ public partial class App : Application
         }
 
         var operRepo = AppHost.Services.GetRequiredService<IOperatorRepository>();
-        controller.OperatorGroups = await operRepo.GetOperatorGroups();
-        foreach (var group in controller.OperatorGroups)
+        var operGroups = await operRepo.GetOperatorGroups();
+        foreach (var group in operGroups)
         {
             group.Parse();
+            controller.OperatorGroups.Add(group.Id, group);
         }
 
         var btnRepo = AppHost.Services.GetRequiredService<IButtonRepository>();

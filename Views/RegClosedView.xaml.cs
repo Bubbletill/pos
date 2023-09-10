@@ -28,6 +28,8 @@ public partial class RegClosedView : UserControl
 
     private void Open_Click(object sender, RoutedEventArgs e)
     {
+        POSController pc = App.AppHost.Services.GetRequiredService<POSController>();
+        pc.HeaderError(null);
         MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
         mw.POSViewContainer.Content = _loginView;
     }

@@ -3,6 +3,7 @@ using BT_COMMONS.Database;
 using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Operators;
 using BT_COMMONS.Operators.API;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,7 +30,8 @@ public class OperatorRepository : IOperatorRepository
             return null;
         }
 
-        var oper = opers[0].parse();
+        var controller = App.AppHost.Services.GetRequiredService<POSController>();
+        var oper = opers[0].Parse(controller.OperatorGroups);
 
         return oper;
     }
@@ -49,7 +51,8 @@ public class OperatorRepository : IOperatorRepository
             };
         }
 
-        var oper = opers[0].parse();
+        var controller = App.AppHost.Services.GetRequiredService<POSController>();
+        var oper = opers[0].Parse(controller.OperatorGroups);
 
         if (!oper.IsActive)
         {

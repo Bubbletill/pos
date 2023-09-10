@@ -26,6 +26,6 @@
         </Image>
         <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="Launching..." />
         
-        <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Text="POS Version 2.0" />
+        <TextBlock x:Name="VersionText" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Text="POS Version 2.0" />
     </Grid>
 </Window>

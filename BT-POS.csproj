@@ -7,6 +7,9 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <UserSecretsId>fd40def0-d52b-4f50-93ac-adbc98a939d0</UserSecretsId>
+
+	  <FileVersion>2.0.0-alpha</FileVersion>
+	  <Version>2.0.0-alpha</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\Dialogues\AuthDialogue.xaml.cs">
+    <Compile Update="Views\Dialogues\BoolAuthDialogue.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Menus\TransModMenuView.xaml.cs">

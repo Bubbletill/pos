@@ -4,8 +4,7 @@ using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Transactions;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace BT_POS.RepositoryImpl;
 
@@ -22,21 +21,29 @@ public class TransactionRepository : ITransactionRepository
 
     public async Task<int?> GetPreviousTransactionId(int store, int register)
     {
-        APIResponse<int> response = await _api.Get<int>("transaction/previous?store=" + store.ToString() + "&register=" + register.ToString());
-        Trace.WriteLine(response.StatusCode);
-        if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            return null;
+        var transactions = await _database.LoadData<Transaction, dynamic>("SELECT transactionid FROM `transactions` WHERE `store`=? AND `register`=? ORDER BY `utid` DESC LIMIT 1;", new { store, register });
+        if (transactions.Count == 0)
+        {
+            return 0;
+        }
 
-        return response.Data;
+        return transactions[0].TransactionId;
     }
 
-    public async Task<bool> SubmitTransaction(Transaction transaction)
+    public async Task<bool> SubmitTransaction(Transaction trans)
     {
-        APIResponse<APIGenericResponse> response = await _api.Post<APIGenericResponse, Transaction>("transaction/submit", transaction);
-        Trace.WriteLine(response.StatusCode);
-        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+        try
+        {
+            await _database.SaveData("INSERT INTO transactions (store, register, datetime, transactionid, type, operator, amount, basket, tenders, logs, posttranstype) " +
+                "VALUES (@Store, @Register, @DateTime, @TransId, @Type, @Oper, @Amount, @Basket, @Tenders, @Logs, @PTT);",
+                new { @Store = trans.Store, @Register = trans.Register, @DateTime = trans.DateTime, @TransId = trans.TransactionId, @Type = trans.Type, @Oper = trans.Operator, @Amount = trans.GetTotal(), @Basket = JsonConvert.SerializeObject(trans.Basket), @Tenders = JsonConvert.SerializeObject(trans.Tenders), @Logs = JsonConvert.SerializeObject(trans.Logs), @PTT = trans.Type });
+            
+            return true;
+        } 
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.StackTrace);
             return false;
-
-        return true;
+        }
     }
 }

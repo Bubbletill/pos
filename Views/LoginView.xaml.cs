@@ -56,10 +56,9 @@ public partial class LoginView : UserControl
             return;
         }
 
-        if (loginResponse.JWT != string.Empty && loginResponse.JWT != null)
+        if (loginResponse.ID != null)
         {
-            _controller.ControllerAuthenticationToken = loginResponse.JWT;
-            var status = await _controller.CompleteLogin();
+            var status = await _controller.CompleteLogin((int)loginResponse.ID);
             if (!status)
             {
                 _controller.HeaderError("Failed to complete login. Please try again later.");

@@ -33,16 +33,15 @@ public class OperatorRepository : IOperatorRepository
 
     public async Task<OperatorLoginResponse> OperatorLogin(OperatorLoginRequest request)
     {
-        APIResponse<OperatorLoginResponse> loginResponse = await _api.Post<OperatorLoginResponse, OperatorLoginRequest>("operator/login", request);
-        return loginResponse.Data;
+        //APIResponse<OperatorLoginResponse> loginResponse = await _api.Post<OperatorLoginResponse, OperatorLoginRequest>("operator/login", request);
+        //return loginResponse.Data;
 
-        // Code when offline to controller
-        /*var opers = await _database.LoadData<Operator, dynamic>("SELECT id, isactive, operatorid, operatorpassword, groupsid FROM `operators` WHERE `operatorid`=?;", new { request.Id });
+        var opers = await _database.LoadData<Operator, dynamic>("SELECT id, isactive, operatorid, operatorpassword, groupsid FROM `operators` WHERE `operatorid`=?;", new { request.Id });
         if (opers.Count == 0)
         {
             return new OperatorLoginResponse
             {
-                JWT = string.Empty,
+                ID = null,
                 Message = "Invalid operator id or password."
             };
         }
@@ -53,7 +52,7 @@ public class OperatorRepository : IOperatorRepository
         {
             return new OperatorLoginResponse
             {
-                JWT = string.Empty,
+                ID = null,
                 Message = "Operator is disabled."
             };
         }
@@ -62,15 +61,15 @@ public class OperatorRepository : IOperatorRepository
         {
             return new OperatorLoginResponse
             {
-                JWT = string.Empty,
+                ID = null,
                 Message = "Invalid operator id or password."
             };
         }
 
         return new OperatorLoginResponse
         {
-            JWT = "Soon",
+            ID = oper.Id,
             Message = string.Empty
-        };*/
+        };
     }
 }

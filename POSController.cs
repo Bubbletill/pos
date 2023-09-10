@@ -58,15 +58,9 @@ public class POSController
         mw.HeaderError(error);
     }
 
-    public async Task<bool> CompleteLogin()
+    public async Task<bool> CompleteLogin(int id)
     {
-        App.SetAPIToken(ControllerAuthenticationToken);
-
-        var handler = new JwtSecurityTokenHandler();
-        var token = handler.ReadJwtToken(ControllerAuthenticationToken);
-        var id = token.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
-
-        var oper = await _operatorRepository.GetOperator(Int32.Parse(id));
+        var oper = await _operatorRepository.GetOperator(id);
         if (oper == null)
         {
             return false;

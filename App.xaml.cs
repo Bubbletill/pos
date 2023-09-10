@@ -41,7 +41,7 @@ public partial class App : Application
 
                 services.AddSingleton<IConfiguration>(provider => config);
 
-                services.AddSingleton<DatabaseAccess>(x => new DatabaseAccess(config["LocalConnectionString"]));
+                services.AddSingleton<DatabaseAccess>(x => new DatabaseAccess(config["LocalConnectionString"], config["ControllerConnectionString"]));
                 services.AddSingleton<APIAccess>(x => new APIAccess(config["ControllerApiUrl"]));
                 services.AddSingleton<IOperatorRepository, OperatorRepository>();
                 services.AddSingleton<ITransactionRepository, TransactionRepository>();

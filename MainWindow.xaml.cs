@@ -1,4 +1,5 @@
 ﻿using BT_COMMONS.Helpers;
+using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
 using BT_POS.Views;
 using BT_POS.Views.Admin;
@@ -69,7 +70,16 @@ public partial class MainWindow : Window
             _posController.LoanPrompted = true;
             POSViewContainer.Content = new YesNoDialogue("Would you like to declare an opening float?", () =>
             { // Yes
-                POSViewContainer.Content = new EnterLoanView("Enter Opening Float", "the opening float");
+                if (_posController.CurrentOperator.HasBoolPermission(OperatorBoolPermission.POS_Admin_Loan))
+                    POSViewContainer.Content = new EnterLoanView("Enter Opening Float", "the opening float");
+                else
+                    POSViewContainer.Content = new BoolAuthDialogue(OperatorBoolPermission.POS_Admin_Loan, () =>
+                    {
+                        POSViewContainer.Content = new EnterLoanView("Enter Opening Float", "the opening float");
+                    }, () =>
+                    {
+                        POSViewContainer.Content = posHome;
+                    });
             }, () =>
             { // No
                 POSViewContainer.Content = posHome;

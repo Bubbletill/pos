@@ -39,6 +39,7 @@ public class POSController
     public Operator? CurrentOperator { get; set; }
     public Dictionary<int, OperatorGroup>? OperatorGroups { get; set; }
     public Transaction? CurrentTransaction { get; set; }
+    public List<string> TransactionLogQueue { get; set; }
     public int CurrentTransId = 0;
 
     private bool TransFinishReturnToHome = true;
@@ -52,6 +53,7 @@ public class POSController
         TenderHardTotals = new Dictionary<TransactionTender, float>();
         TypeHardTotals = new Dictionary<TransactionType, float>();
         OperatorGroups = new Dictionary<int, OperatorGroup>(); 
+        TransactionLogQueue = new List<string>();
     }
 
     public void HeaderError(string? error = null)
@@ -93,9 +95,14 @@ public class POSController
         if (CurrentTransaction != null)
             return;
 
-        CurrentTransId++;
+        if (CurrentTransId != 9999)
+            CurrentTransId++;
+        else
+            CurrentTransId = 1;
         CurrentTransaction = new Transaction();
         CurrentTransaction.Init(StoreNumber, RegisterNumber, CurrentOperator!.OperatorId, DateTime.Now, CurrentTransId, type);
+        TransactionLogQueue.ForEach(log => CurrentTransaction.Logs.Add(log));
+        TransactionLogQueue.Clear();
 
         MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
         mw.POSParentHeader_Trans.Text = "Transaction# " + CurrentTransId;
@@ -200,7 +207,7 @@ public class POSController
         CurrentTransaction!.Logs.Add(" ");
         foreach (KeyValuePair<TransactionType, float> entry in TypeHardTotals)
         {
-            CurrentTransaction.Logs.Add(entry.Key.ToString() + ": " + entry.Value);
+            CurrentTransaction.Logs.Add(entry.Key.GetTenderInternalName() + ": " + entry.Value);
         }
 
         TenderHardTotals = new Dictionary<TransactionTender, float>();
@@ -269,6 +276,8 @@ public class POSController
 
         IncreaseTypeHardTotal(CurrentTransaction.Type, CurrentTransaction.GetTotal());
 
+        TransactionLogQueue.ForEach(log => CurrentTransaction.Logs.Add(log));
+        TransactionLogQueue.Clear();
         CurrentTransaction.Logs.Add("Transaction " + CurrentTransaction.TransactionId + " ended at " + DateTime.Now.ToString());
 
         var success = await _transactionRepository.SubmitTransaction(CurrentTransaction);

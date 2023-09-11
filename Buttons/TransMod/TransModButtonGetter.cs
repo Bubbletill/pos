@@ -1,4 +1,5 @@
-﻿using BT_COMMONS.Transactions;
+﻿using BT_COMMONS.Operators;
+using BT_COMMONS.Transactions;
 using BT_POS.Views;
 using BT_POS.Views.Admin;
 using BT_POS.Views.Dialogues;
@@ -40,7 +41,16 @@ public class TransModButtonGetter
                             w.POSViewContainer.Content = new YesNoDialogue("Are you sure you want to void this transaction?", () =>
                             {
                                 // Yes
-                                controller.VoidTransaction();
+                                if (controller.CurrentOperator.HasBoolPermission(OperatorBoolPermission.POS_TransMod_TransVoid))
+                                    controller.VoidTransaction();
+                                else
+                                    w.POSViewContainer.Content = new BoolAuthDialogue(OperatorBoolPermission.POS_TransMod_TransVoid, () =>
+                                    {
+                                        controller.VoidTransaction();
+                                    }, () =>
+                                    {
+                                        w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<TransModMenuView>();
+                                    });
                             }, () =>
                             {
                                 // No

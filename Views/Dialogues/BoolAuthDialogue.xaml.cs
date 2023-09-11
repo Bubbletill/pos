@@ -64,8 +64,8 @@ public partial class BoolAuthDialogue : UserControl
 
         if (loginResponse == null)
         {
-            _controller.HeaderError("Internal error. Please try again later.");
-            LoginButton.Content = "Login";
+            _controller.HeaderError("Internal error. Please try again later. (LN)");
+            LoginButton.Content = "Approve";
             return;
         }
 
@@ -75,18 +75,22 @@ public partial class BoolAuthDialogue : UserControl
             if (!oper.HasBoolPermission(_permission))
             {
                 _controller.HeaderError("Insufficient permission.");
-                LoginButton.Content = "Login";
+                LoginButton.Content = "Approve";
                 return;
             } 
             else
             {
+                if (_controller.CurrentTransaction == null)
+                    _controller.TransactionLogQueue.Add(_permission.GetPromptName() + " approved by ID " + oper.OperatorId);
+                else
+                    _controller.CurrentTransaction.Logs.Add(_permission.GetPromptName() + " approved by ID " + oper.OperatorId);
                 _onAuthentication();
             }
         } 
         else
         {
-            _controller.HeaderError("Internal error. Please try again later.");
-            LoginButton.Content = "Login";
+            _controller.HeaderError("Internal error. Please try again later. (IN)");
+            LoginButton.Content = "Approve";
         }
     }
 

@@ -207,7 +207,7 @@ public class POSController
         CurrentTransaction!.Logs.Add(" ");
         foreach (KeyValuePair<TransactionType, float> entry in TypeHardTotals)
         {
-            CurrentTransaction.Logs.Add(entry.Key.GetTenderInternalName() + ": " + entry.Value);
+            CurrentTransaction.Logs.Add(entry.Key.ToString() + ": " + entry.Value);
         }
 
         TenderHardTotals = new Dictionary<TransactionTender, float>();

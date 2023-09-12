@@ -1,4 +1,5 @@
-﻿using BT_COMMONS.Transactions;
+﻿using BT_COMMONS.Operators;
+using BT_COMMONS.Transactions;
 using BT_POS.Views;
 using BT_POS.Views.Admin;
 using BT_POS.Views.Menus;
@@ -22,6 +23,7 @@ public class HomeButtonGetter
                     return new ButtonData
                     {
                         Name = "Admin",
+                        Permission = null,
                         OnClick = w =>
                         {
                             if (controller.CurrentTransaction != null)
@@ -41,6 +43,7 @@ public class HomeButtonGetter
                     return new ButtonData
                     {
                         Name = "Tender",
+                        Permission = null,
                         OnClick = w =>
                         {
                             if (controller.CurrentTransaction == null)
@@ -60,6 +63,7 @@ public class HomeButtonGetter
                     return new ButtonData
                     {
                         Name = "Return",
+                        Permission = OperatorBoolPermission.POS_Return_Access,
                         OnClick = w =>
                         {
                             return;
@@ -72,6 +76,7 @@ public class HomeButtonGetter
                     return new ButtonData
                     {
                         Name = "Hotshot",
+                        Permission = OperatorBoolPermission.POS_Hotshot_Access,
                         OnClick = w =>
                         {
 
@@ -85,6 +90,7 @@ public class HomeButtonGetter
                     return new ButtonData
                     {
                         Name = "Item Mod",
+                        Permission = OperatorBoolPermission.POS_ItemMod_Access,
                         OnClick = w =>
                         {
                             if (controller.CurrentTransaction == null)
@@ -103,6 +109,7 @@ public class HomeButtonGetter
                     return new ButtonData
                     {
                         Name = "Trans Mod",
+                        Permission = OperatorBoolPermission.POS_TransMod_Access,
                         OnClick = w =>
                         {
                             if (controller.CurrentTransaction == null)
@@ -122,6 +129,7 @@ public class HomeButtonGetter
                     return new ButtonData
                     {
                         Name = "Sign-out",
+                        Permission = null,
                         OnClick = w =>
                         {
                             if (controller.CurrentTransaction != null)
@@ -141,6 +149,7 @@ public class HomeButtonGetter
                     return new ButtonData
                     {
                         Name = "Suspend",
+                        Permission = null,
                         OnClick = w =>
                         {
                             if (controller.CurrentTransaction == null)
@@ -159,6 +168,7 @@ public class HomeButtonGetter
                     return new ButtonData
                     {
                         Name = "Resume",
+                        Permission = null,
                         OnClick = w =>
                         {
                             if (controller.CurrentTransaction != null)

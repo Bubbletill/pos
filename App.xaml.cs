@@ -52,6 +52,7 @@ public partial class App : Application
                 services.AddSingleton<MainWindow>();
                 services.AddViewFactory<LoginView>();
                 services.AddViewFactory<RegClosedView>();
+                services.AddViewFactory<BasketOnlyView>();
 
                 services.AddViewFactory<HomeView>();
                 services.AddViewFactory<TenderHomeView>();

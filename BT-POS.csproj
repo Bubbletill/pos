@@ -45,6 +45,9 @@
     <Compile Update="Views\RegClosedView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\BasketOnlyView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

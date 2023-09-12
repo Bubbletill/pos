@@ -42,6 +42,10 @@ public partial class TenderHomeView : UserControl
             {
                 localBasket.Add(new BasketItem(0, entry.Key.GetTenderExternalName(), entry.Value, false));
             }
+            if (_controller.CurrentTransaction.Change != 0)
+            {
+                localBasket.Add(new BasketItem(0, "Change", _controller.CurrentTransaction.Change, false));
+            }
         }
 
         UpdateTotals();

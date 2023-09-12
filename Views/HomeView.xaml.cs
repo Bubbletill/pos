@@ -1,8 +1,10 @@
 ﻿using BT_COMMONS.DataRepositories;
+using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Menu;
 using BT_POS.RepositoryImpl;
+using BT_POS.Views.Dialogues;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -69,7 +71,14 @@ public partial class HomeView : UserControl
             button.Content = data.Name;
             button.Click += (s, e) =>
             {
-                data.OnClick(_mainWindow);
+                if (_posController.CurrentOperator.HasBoolPermission(data.Permission))
+                {
+                    data.OnClick(_mainWindow);
+                } 
+                else
+                {
+                    _mainWindow.POSViewContainer.Content = new BoolAuthDialogue((OperatorBoolPermission)data.Permission, () => { data.OnClick(_mainWindow); }, () => { _mainWindow.POSViewContainer.Content = this; });
+                }
             };
 
             ButtonStackPanel.Children.Add(button);

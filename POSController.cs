@@ -3,6 +3,8 @@ using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
 using BT_COMMONS.Transactions.TenderAttributes;
+using BT_COMMONS.Transactions.TypeAttributes;
+using BT_POS.Components;
 using BT_POS.Views;
 using BT_POS.Views.Tender;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,10 +41,9 @@ public class POSController
     public Operator? CurrentOperator { get; set; }
     public Dictionary<int, OperatorGroup>? OperatorGroups { get; set; }
     public Transaction? CurrentTransaction { get; set; }
-    public List<string> TransactionLogQueue { get; set; }
+    public List<TransactionLog> TransactionLogQueue { get; set; }
     public int CurrentTransId = 0;
 
-    private bool TransFinishReturnToHome = true;
     public bool LoanPrompted = false;
 
     public POSController(IOperatorRepository operatorRepository, ITransactionRepository transactionRepository)
@@ -53,7 +54,7 @@ public class POSController
         TenderHardTotals = new Dictionary<TransactionTender, float>();
         TypeHardTotals = new Dictionary<TransactionType, float>();
         OperatorGroups = new Dictionary<int, OperatorGroup>(); 
-        TransactionLogQueue = new List<string>();
+        TransactionLogQueue = new List<TransactionLog>();
     }
 
     public void HeaderError(string? error = null)
@@ -169,7 +170,6 @@ public class POSController
         StartTransaction(TransactionType.REGISTER_OPEN);
 
         RegisterOpen = true;
-        TransFinishReturnToHome = false;
         string json = JsonConvert.SerializeObject(new AppConfig
         {
             Store = StoreNumber,
@@ -187,7 +187,6 @@ public class POSController
         StartTransaction(TransactionType.REGISTER_CLOSE);
 
         RegisterOpen = false;
-        TransFinishReturnToHome = false;
         LoanPrompted = false;
         string dataJson = JsonConvert.SerializeObject(new AppConfig
         {
@@ -199,15 +198,15 @@ public class POSController
         File.WriteAllText("C:\\bubbletill\\data.json", dataJson);
 
         // Clear hard totals
-        CurrentTransaction!.Logs.Add("Regiser Close Reading");
+        CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, "Regiser Close Reading"));
         foreach (KeyValuePair<TransactionTender, float> entry in TenderHardTotals)
         {
-            CurrentTransaction.Logs.Add(entry.Key.GetTenderInternalName() + ": " + entry.Value);
+            CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, entry.Key.GetTenderInternalName() + ": " + entry.Value));
         }
-        CurrentTransaction!.Logs.Add(" ");
+        CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, " "));
         foreach (KeyValuePair<TransactionType, float> entry in TypeHardTotals)
         {
-            CurrentTransaction.Logs.Add(entry.Key.ToString() + ": " + entry.Value);
+            CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, entry.Key.ToString() + ": " + entry.Value));
         }
 
         TenderHardTotals = new Dictionary<TransactionTender, float>();
@@ -238,6 +237,7 @@ public class POSController
     {
         StartTransaction(TransactionType.LOAN);
         AddItemToBasket(new BasketItem(0, "Loan", loan, false));
+        CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, "Loan: £" + loan));
 
         Submit();
     }
@@ -246,6 +246,7 @@ public class POSController
     {
         CurrentTransaction!.UpdateTransactionType(TransactionType.VOID);
         CurrentTransaction.VoidTender();
+        CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, "Transaction Voided"));
         Submit();
     }
 
@@ -255,6 +256,13 @@ public class POSController
         if (CurrentTransaction == null)
             return;
 
+        MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
+
+        if (CurrentTransaction.Type.GetReturnHome())
+        {
+            BasketOnlyView basketOnly = App.AppHost.Services.GetRequiredService<BasketOnlyView>();
+            mainWindow.POSViewContainer.Content = basketOnly;
+        }
 
         // Update hard totals
         foreach (KeyValuePair<TransactionTender, float> entry in CurrentTransaction.Tenders)
@@ -272,25 +280,31 @@ public class POSController
 
         TransactionLogQueue.ForEach(log => CurrentTransaction.Logs.Add(log));
         TransactionLogQueue.Clear();
-        CurrentTransaction.Logs.Add("Transaction " + CurrentTransaction.TransactionId + " ended at " + DateTime.Now.ToString());
+        CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Transaction " + CurrentTransaction.TransactionId + " ended at " + DateTime.Now.ToString()));
 
         var success = await _transactionRepository.SubmitTransaction(CurrentTransaction);
         if (!success)
         {
-            CurrentTransaction.Logs.Add("Transaction failed to submit to controller.");
+            CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Transaction failed to submit to controller."));
             // Store on disk?
+            return;
+        }
+
+        if (CurrentTransaction.Change != 0)
+        {
+            InfoPopup popup = new InfoPopup("Amount Tendered: £" + CurrentTransaction.Tenders[CurrentTransaction.GetChangeTender()] + "\nChange: £" + CurrentTransaction.Change);
+            popup.ShowDialog();
+        }
+
+        if (!CurrentTransaction.Type.GetReturnHome())
+        {
+            CurrentTransaction = null;
             return;
         }
 
         CurrentTransaction = null;
 
-        if (TransFinishReturnToHome)
-        {
-            MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
-            HomeView home = App.AppHost.Services.GetRequiredService<HomeView>();
-            mainWindow.POSViewContainer.Content = home;
-        }
-
-        TransFinishReturnToHome = true;
+        HomeView home = App.AppHost.Services.GetRequiredService<HomeView>();
+        mainWindow.POSViewContainer.Content = home;
     }
 }

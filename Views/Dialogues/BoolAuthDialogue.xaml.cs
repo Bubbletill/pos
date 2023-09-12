@@ -18,6 +18,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Operators.PermissionAttributes;
+using BT_COMMONS.Transactions;
 
 namespace BT_POS.Views.Dialogues;
 
@@ -81,9 +82,9 @@ public partial class BoolAuthDialogue : UserControl
             else
             {
                 if (_controller.CurrentTransaction == null)
-                    _controller.TransactionLogQueue.Add(_permission.GetPromptName() + " approved by " + oper.ReducedName() + ", ID " + oper.OperatorId);
+                    _controller.TransactionLogQueue.Add(new TransactionLog(TransactionLogType.NSGeneral, _permission.GetPromptName() + " approved by " + oper.ReducedName() + ", ID " + oper.OperatorId));
                 else
-                    _controller.CurrentTransaction.Logs.Add(_permission.GetPromptName() + " approved by " + oper.ReducedName() + ", ID " + oper.OperatorId);
+                    _controller.CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, _permission.GetPromptName() + " approved by " + oper.ReducedName() + ", ID " + oper.OperatorId));
                 _onAuthentication();
             }
         } 

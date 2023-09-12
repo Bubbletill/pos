@@ -1,8 +1,10 @@
-﻿using BT_COMMONS.Transactions;
+﻿using BT_COMMONS.Operators;
+using BT_COMMONS.Transactions;
 using BT_COMMONS.Transactions.TenderAttributes;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Menu;
 using BT_POS.Buttons.TransMod;
+using BT_POS.Views.Dialogues;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -63,7 +65,14 @@ public partial class TransModMenuView : UserControl
             button.Content = data.Name;
             button.Click += (s, e) =>
             {
-                data.OnClick(_mainWindow);
+                if (_controller.CurrentOperator.HasBoolPermission(data.Permission))
+                {
+                    data.OnClick(_mainWindow);
+                }
+                else
+                {
+                    _mainWindow.POSViewContainer.Content = new BoolAuthDialogue((OperatorBoolPermission)data.Permission, () => { data.OnClick(_mainWindow); }, () => { _mainWindow.POSViewContainer.Content = this; });
+                }
             };
 
             ButtonStackPanel.Children.Add(button);

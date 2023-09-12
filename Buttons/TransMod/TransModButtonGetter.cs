@@ -24,6 +24,7 @@ public class TransModButtonGetter
                     return new ButtonData
                     {
                         Name = "Discount Transaction",
+                        Permission = null,
                         OnClick = w =>
                         {
                             return;
@@ -36,21 +37,13 @@ public class TransModButtonGetter
                     return new ButtonData
                     {
                         Name = "Void Transaction",
+                        Permission = OperatorBoolPermission.POS_TransMod_TransVoid,
                         OnClick = w =>
                         {
                             w.POSViewContainer.Content = new YesNoDialogue("Are you sure you want to void this transaction?", () =>
                             {
                                 // Yes
-                                if (controller.CurrentOperator.HasBoolPermission(OperatorBoolPermission.POS_TransMod_TransVoid))
-                                    controller.VoidTransaction();
-                                else
-                                    w.POSViewContainer.Content = new BoolAuthDialogue(OperatorBoolPermission.POS_TransMod_TransVoid, () =>
-                                    {
-                                        controller.VoidTransaction();
-                                    }, () =>
-                                    {
-                                        w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<TransModMenuView>();
-                                    });
+                                controller.VoidTransaction();
                             }, () =>
                             {
                                 // No

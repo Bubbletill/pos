@@ -2,6 +2,7 @@
 using BT_COMMONS.Transactions.TenderAttributes;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Menu;
+using BT_POS.Components;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,16 @@ public partial class TenderSpecifiedView : UserControl
 
         InitializeComponent();
 
-        BasketComponent.BasketGrid.ItemsSource = _controller.CurrentTransaction!.Basket;
+        List<BasketItem> localBasket = new List<BasketItem>(_controller.CurrentTransaction!.Basket);
+        BasketComponent.BasketGrid.ItemsSource = localBasket;
+        if (_controller.CurrentTransaction.Tenders.Count != 0)
+        {
+            localBasket.Add(new BasketItem(0, " ", 0, false));
+            foreach (KeyValuePair<TransactionTender, float> entry in _controller.CurrentTransaction.Tenders)
+            {
+                localBasket.Add(new BasketItem(0, entry.Key.GetTenderExternalName(), entry.Value, false));
+            }
+        }
 
         _buttonStyle = FindResource("BTVerticleButton") as Style;
         UpdateTotals();

@@ -100,7 +100,7 @@ public class POSController
         else
             CurrentTransId = 1;
         CurrentTransaction = new Transaction();
-        CurrentTransaction.Init(StoreNumber, RegisterNumber, CurrentOperator!.OperatorId, DateTime.Now, CurrentTransId, type);
+        CurrentTransaction.Init(StoreNumber, RegisterNumber, CurrentOperator!, DateTime.Now, CurrentTransId, type);
         TransactionLogQueue.ForEach(log => CurrentTransaction.Logs.Add(log));
         TransactionLogQueue.Clear();
 
@@ -237,13 +237,7 @@ public class POSController
     public void LoanTransaction(float loan)
     {
         StartTransaction(TransactionType.LOAN);
-        AddItemToBasket(new BasketItem
-        {
-            Code = 0,
-            Description = "Loan",
-            FilePrice = loan,
-            AgeRestricted = false,
-        });
+        AddItemToBasket(new BasketItem(0, "Loan", loan, false));
 
         Submit();
     }

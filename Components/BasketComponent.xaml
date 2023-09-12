@@ -17,11 +17,11 @@
                 </TransformGroup>
             </DataGrid.RenderTransform>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Code" Binding="{Binding Code}"/>
+                <DataGridTextColumn Header="Code" Binding="{Binding Code}" CellStyle="{StaticResource BTBasketCodeZeroHider}"/>
                 <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
-                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}"/>
-                <DataGridTextColumn Header="File Price" Binding="{Binding FilePrice}"/>
-                <DataGridTextColumn Header="Sale Price" Binding="{Binding SalePrice}"/>
+                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" CellStyle="{StaticResource BTBasketCodeZeroHider}"/>
+                <DataGridTextColumn Header="File Price" Binding="{Binding FilePrice}" CellStyle="{StaticResource BTBasketCodeZeroHider}"/>
+                <DataGridTextColumn Header="Sale Price" Binding="{Binding SalePrice}" CellStyle="{StaticResource BTBasketNoDescHider}"/>
             </DataGrid.Columns>
             <DataGrid.DataContext>
                 <Transactions:BasketItem/>

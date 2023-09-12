@@ -217,4 +217,23 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
+    <!-- Basket Component Code 0 Hider -->
+    <Style x:Key="BTBasketCodeZeroHider"  TargetType="DataGridCell">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Code}" Value="0">
+                <Setter Property="TextBlock.Foreground" Value="White" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Basket Component No Desc Hider -->
+    <Style x:Key="BTBasketNoDescHider"  TargetType="DataGridCell">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Description}" Value=" ">
+                <Setter Property="TextBlock.Foreground" Value="White" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
 </ResourceDictionary>    

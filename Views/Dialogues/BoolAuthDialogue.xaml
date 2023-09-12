@@ -21,7 +21,14 @@
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Row="2" Grid.Column="1" BorderThickness="0,0,0,0" Background="#FFABDFFF">
-            <TextBlock x:Name="InfoText" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="Please sign-in to approve " FontSize="24" FontWeight="Bold"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="39*"/>
+                    <RowDefinition Height="38*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Manager Approval Required" FontSize="24" FontWeight="Bold" Margin="0,6,0,0"/>
+                <TextBlock x:Name="InfoText" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Please sign-in to approve " FontSize="24" FontWeight="Bold" Margin="0,6,0,0"/>
+            </Grid>
         </GroupBox>
 
         <GroupBox Grid.Row="3" Grid.Column="1" BorderThickness="0,0,0,0" Background="#FFABDFFF">
@@ -36,8 +43,8 @@
                     <RowDefinition Height="76*"/>
                     <RowDefinition Height="92*"/>
                 </Grid.RowDefinitions>
-                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" Text="User ID" VerticalAlignment="Center" FontSize="30" Height="40" Width="97"/>
-                <TextBlock HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" Text="Password" VerticalAlignment="Center" FontSize="30" Height="40" Width="124"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" Text="Manager ID" VerticalAlignment="Center" FontSize="30" Height="40" />
+                <TextBlock HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" Text="Password" VerticalAlignment="Center" FontSize="30" Height="40" />
                 <TextBox x:Name="UserIdBox" Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="30" Width="Auto" KeyUp="UserIdBox_KeyUp" />
                 <PasswordBox x:Name="PasswordBox" Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="2" VerticalAlignment="Center" FontSize="30" Width="Auto" KeyUp="PasswordBox_KeyUp" />
                 <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">

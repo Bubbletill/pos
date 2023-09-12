@@ -81,15 +81,15 @@ public partial class BoolAuthDialogue : UserControl
             else
             {
                 if (_controller.CurrentTransaction == null)
-                    _controller.TransactionLogQueue.Add(_permission.GetPromptName() + " approved by ID " + oper.OperatorId);
+                    _controller.TransactionLogQueue.Add(_permission.GetPromptName() + " approved by " + oper.ReducedName() + ", ID " + oper.OperatorId);
                 else
-                    _controller.CurrentTransaction.Logs.Add(_permission.GetPromptName() + " approved by ID " + oper.OperatorId);
+                    _controller.CurrentTransaction.Logs.Add(_permission.GetPromptName() + " approved by " + oper.ReducedName() + ", ID " + oper.OperatorId);
                 _onAuthentication();
             }
         } 
         else
         {
-            _controller.HeaderError("Internal error. Please try again later. (IN)");
+            _controller.HeaderError("Invalid operator id or password.");
             LoginButton.Content = "Approve";
         }
     }

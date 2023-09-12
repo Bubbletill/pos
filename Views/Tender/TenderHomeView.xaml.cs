@@ -33,7 +33,16 @@ public partial class TenderHomeView : UserControl
 
         InitializeComponent();
 
-        BasketComponent.BasketGrid.ItemsSource = _controller.CurrentTransaction!.Basket;
+        List<BasketItem> localBasket = new List<BasketItem>(_controller.CurrentTransaction!.Basket);
+        BasketComponent.BasketGrid.ItemsSource = localBasket;
+        if (_controller.CurrentTransaction.Tenders.Count != 0)
+        {
+            localBasket.Add(new BasketItem(0, " ", 0, false));
+            foreach (KeyValuePair<TransactionTender, float> entry in _controller.CurrentTransaction.Tenders)
+            {
+                localBasket.Add(new BasketItem(0, entry.Key.GetTenderExternalName(), entry.Value, false));
+            }
+        }
 
         UpdateTotals();
         LoadButtons(new List<TransactionTender>

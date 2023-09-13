@@ -4,17 +4,22 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Markup;
 using BT_COMMONS;
 using BT_COMMONS.App;
 using BT_COMMONS.Database;
 using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Helpers;
+using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
+using BT_POS.Buttons;
 using BT_POS.Buttons.Menu;
 using BT_POS.RepositoryImpl;
 using BT_POS.Splash;
 using BT_POS.Views;
 using BT_POS.Views.Admin;
+using BT_POS.Views.Dialogues;
 using BT_POS.Views.Menus;
 using BT_POS.Views.Tender;
 using Microsoft.Extensions.Configuration;
@@ -175,5 +180,27 @@ public partial class App : Application
         var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
         var home = AppHost.Services.GetRequiredService<HomeView>();
         mainWindow.LoginComplete(home);
+    }
+
+    public static Button CreateButton(IButtonData buttonData, Style buttonStyle, UserControl permissionCancelView)
+    {
+        var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
+        var posController = AppHost.Services.GetRequiredService<POSController>();
+        Button button = new Button();
+        button.Style = buttonStyle;
+        button.Content = buttonData.Name;
+        button.Click += (s, e) =>
+        {
+            if (posController.CurrentOperator.HasBoolPermission(buttonData.Permission))
+            {
+                buttonData.OnClick(mainWindow);
+            }
+            else
+            {
+                mainWindow.POSViewContainer.Content = new BoolAuthDialogue((OperatorBoolPermission)buttonData.Permission, () => { buttonData.OnClick(mainWindow); }, () => { mainWindow.POSViewContainer.Content = permissionCancelView; });
+            }
+        };
+
+        return button;
     }
 }

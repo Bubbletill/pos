@@ -5,6 +5,7 @@ using BT_COMMONS.Transactions;
 using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace BT_POS.RepositoryImpl;
 
@@ -43,6 +44,12 @@ public class TransactionRepository : ITransactionRepository
         catch (Exception ex)
         {
             Console.WriteLine(ex.StackTrace);
+
+            trans.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Transaction failed to submit to controller: " + ex.Message));
+
+            string json = JsonConvert.SerializeObject(trans);
+            File.WriteAllText("C:\\bubbletill\\offlinetransactions\\" + trans.TransactionId + ".json", json);
+
             return false;
         }
     }

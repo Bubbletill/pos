@@ -78,12 +78,20 @@ public class POSController
 
         if (!GotInitialControllerData)
         {
-            int? prevTrans = await _transactionRepository.GetPreviousTransactionId(StoreNumber, RegisterNumber);
+            //int? prevTrans = await _transactionRepository.GetPreviousTransactionId(StoreNumber, RegisterNumber);
+            int? prevTrans = GetLocalTransactionNumber();
 
             if (prevTrans == null)
-                return false;
+            {
+                prevTrans = await _transactionRepository.GetPreviousTransactionId(StoreNumber, RegisterNumber);
+                if (prevTrans == null)
+                {
+                    return false;
+                }
+            }
 
             CurrentTransId = prevTrans.Value;
+            UpdateLocalTransactionNumber();
         }
 
         CurrentOperator = oper;
@@ -100,6 +108,7 @@ public class POSController
             CurrentTransId++;
         else
             CurrentTransId = 1;
+        UpdateLocalTransactionNumber();
         CurrentTransaction = new Transaction();
         CurrentTransaction.Init(StoreNumber, RegisterNumber, CurrentOperator!, DateTime.Now, CurrentTransId, type);
         TransactionLogQueue.ForEach(log => CurrentTransaction.Logs.Add(log));
@@ -182,7 +191,7 @@ public class POSController
         Submit();
     }
 
-    public void CloseRegister()
+    public async void CloseRegister()
     {
         StartTransaction(TransactionType.REGISTER_CLOSE);
 
@@ -228,7 +237,7 @@ public class POSController
 
         File.WriteAllText("C:\\bubbletill\\hardtotals.json", json);
 
-        Submit();
+        await Submit();
         MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
         mw.Logout();
     }
@@ -251,7 +260,7 @@ public class POSController
     }
 
     // Submits current transaction to the database.
-    private async void Submit()
+    private async Task Submit()
     {
         if (CurrentTransaction == null)
             return;
@@ -282,18 +291,19 @@ public class POSController
         TransactionLogQueue.Clear();
         CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Transaction " + CurrentTransaction.TransactionId + " ended at " + DateTime.Now.ToString()));
 
-        var success = await _transactionRepository.SubmitTransaction(CurrentTransaction);
-        if (!success)
-        {
-            CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Transaction failed to submit to controller."));
-            // Store on disk?
-            return;
-        }
-
         if (CurrentTransaction.Change != 0)
         {
             InfoPopup popup = new InfoPopup("Amount Tendered: £" + CurrentTransaction.Tenders[CurrentTransaction.GetChangeTender()] + "\nChange: £" + CurrentTransaction.Change);
             popup.ShowDialog();
+        }
+
+        var success = await _transactionRepository.SubmitTransaction(CurrentTransaction);
+        if (!success)
+        {
+            ControllerOffline();
+        } else
+        {
+            await ControllerOnline();
         }
 
         if (!CurrentTransaction.Type.GetReturnHome())
@@ -306,5 +316,61 @@ public class POSController
 
         HomeView home = App.AppHost.Services.GetRequiredService<HomeView>();
         mainWindow.POSViewContainer.Content = home;
+    }
+
+    public void UpdateLocalTransactionNumber()
+    {
+        File.WriteAllText("C:\\bubbletill\\transid.txt", CurrentTransId.ToString());
+    }
+
+    public int? GetLocalTransactionNumber()
+    {
+        try
+        {
+            using (StreamReader r = new StreamReader("C:\\bubbletill\\transid.txt"))
+            {
+                int id = Int32.Parse(r.ReadToEnd());
+                return id;
+            }
+        } catch (Exception ex) {
+            Trace.WriteLine(ex);
+            return null;
+        }
+    }
+
+    public void ControllerOffline()
+    {
+        MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
+        mainWindow.POSParentHeader_Status.Text = "Offline";
+    }
+
+    public async Task ControllerOnline()
+    {
+        string[] files = Directory.GetFiles("C:\\bubbletill\\offlinetransactions", "*.json");
+        foreach (var item in files)
+        {
+            var success = false;
+            using (StreamReader r = new StreamReader(item))
+            {
+                string json = r.ReadToEnd();
+                Trace.WriteLine(json);
+                Transaction trans = JsonConvert.DeserializeObject<Transaction>(json);
+
+                if (trans == null)
+                {
+                    throw new Exception();
+                }
+
+                trans.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Reattempting transaction submission at " + DateTime.Now));
+                success = await _transactionRepository.SubmitTransaction(trans);
+            }
+            if (success)
+            {
+                File.Delete(item);
+            }
+        }
+
+        MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
+        mainWindow.POSParentHeader_Status.Text = "Online";
     }
 }

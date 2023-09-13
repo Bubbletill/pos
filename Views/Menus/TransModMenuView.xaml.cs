@@ -59,23 +59,7 @@ public partial class TransModMenuView : UserControl
         ButtonStackPanel.Children.Clear();
         buttons.ForEach(type =>
         {
-            IButtonData data = TransModButtonGetter.Get(type);
-            Button button = new Button();
-            button.Style = _buttonStyle;
-            button.Content = data.Name;
-            button.Click += (s, e) =>
-            {
-                if (_controller.CurrentOperator.HasBoolPermission(data.Permission))
-                {
-                    data.OnClick(_mainWindow);
-                }
-                else
-                {
-                    _mainWindow.POSViewContainer.Content = new BoolAuthDialogue((OperatorBoolPermission)data.Permission, () => { data.OnClick(_mainWindow); }, () => { _mainWindow.POSViewContainer.Content = this; });
-                }
-            };
-
-            ButtonStackPanel.Children.Add(button);
+            ButtonStackPanel.Children.Add(App.CreateButton(TransModButtonGetter.Get(type), _buttonStyle, this));
         });
         ButtonStackPanel.InvalidateVisual();
         ButtonStackPanel.UpdateLayout();

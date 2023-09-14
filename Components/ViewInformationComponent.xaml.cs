@@ -35,7 +35,6 @@ public partial class ViewInformationComponent : UserControl
         set { SetValue(InformationProperty, value); }
     }
 
-    
     public static readonly DependencyProperty InformationProperty =
         DependencyProperty.Register("Information", typeof(string), typeof(ViewInformationComponent), new PropertyMetadata(default(string)));
 

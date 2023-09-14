@@ -3,18 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BT_POS.Views.Admin"
+             xmlns:local="clr-namespace:BT_POS.Views.Admin" xmlns:components="clr-namespace:BT_POS.Components"
              mc:Ignorable="d" 
              d:DesignHeight="995" d:DesignWidth="1920" Background="White">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1299*"/>
+            <ColumnDefinition Width="377*"/>
+            <ColumnDefinition Width="244*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="171*"/>
-            <RowDefinition Height="28*"/>
+            <RowDefinition Height="241*"/>
+            <RowDefinition Height="754*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel x:Name="ButtonStackPanel" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-            <Button x:Name="BackButton" Style="{DynamicResource BTHorizontalButton}" Content="Back" Click="BackButton_Click"/>
-            <Button x:Name="CloseButton" Style="{DynamicResource BTHorizontalButton}" Content="Close Register" Click="CloseRegister_Click" />
-        </StackPanel>
+        <!-- Side buttons -->
+        <StackPanel x:Name="ButtonStackPanel" Grid.Column="2" Orientation="Vertical" Grid.RowSpan="2"/>
+
+        <!-- Information Box -->
+        <components:ViewInformationComponent x:Name="InfoComponent"  Grid.Row="0" Title="Administration" Information="Please select an option." />
     </Grid>
 </UserControl>

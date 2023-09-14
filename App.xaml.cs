@@ -14,6 +14,7 @@ using BT_COMMONS.Helpers;
 using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
 using BT_POS.Buttons;
+using BT_POS.Buttons.Admin;
 using BT_POS.Buttons.Menu;
 using BT_POS.RepositoryImpl;
 using BT_POS.Splash;
@@ -35,6 +36,7 @@ public partial class App : Application
 
     public static List<HomeButton> HomeButtons;
     public static List<HomeButton> HomeTransButtons;
+    public static List<AdminButton> AdminButtons;
 
     public App()
     {
@@ -154,6 +156,7 @@ public partial class App : Application
         var btnRepo = AppHost.Services.GetRequiredService<IButtonRepository>();
         HomeButtons = await btnRepo.GetHomeButtons();
         HomeTransButtons = await btnRepo.GetHomeTransButtons();
+        AdminButtons = await btnRepo.GetAdminButtons();
 
         var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();

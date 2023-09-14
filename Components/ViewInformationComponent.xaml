@@ -8,7 +8,7 @@
              x:Name="VICRoot"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <GroupBox BorderThickness="0,0,0,0" Background="#FFABDFFF" RenderTransformOrigin="0.5,0.5">
+        <GroupBox x:Name="MainBox"  BorderThickness="0,0,0,0" Background="#FFABDFFF" RenderTransformOrigin="0.5,0.5">
             <GroupBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleX="0.95" ScaleY="0.95"/>

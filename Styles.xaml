@@ -24,7 +24,7 @@
                             </LinearGradientBrush>
                         </Border.Background>
 
-                        <TextBlock Text="{TemplateBinding Content}" FontSize="30" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="{TemplateBinding Content}" FontSize="30" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
 
                 </ControlTemplate>
@@ -57,7 +57,7 @@
                             </LinearGradientBrush>
                         </Border.Background>
 
-                        <TextBlock Text="{TemplateBinding Content}" FontSize="30" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="{TemplateBinding Content}" FontSize="30" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

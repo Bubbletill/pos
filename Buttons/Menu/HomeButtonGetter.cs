@@ -90,7 +90,7 @@ public class HomeButtonGetter
                     return new ButtonData
                     {
                         Name = "Item Mod",
-                        Permission = OperatorBoolPermission.POS_ItemMod_Access,
+                        Permission = null,
                         OnClick = w =>
                         {
                             if (controller.CurrentTransaction == null)
@@ -109,7 +109,7 @@ public class HomeButtonGetter
                     return new ButtonData
                     {
                         Name = "Trans Mod",
-                        Permission = OperatorBoolPermission.POS_TransMod_Access,
+                        Permission = null,
                         OnClick = w =>
                         {
                             if (controller.CurrentTransaction == null)

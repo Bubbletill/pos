@@ -1,4 +1,5 @@
-﻿using BT_POS.Buttons.Menu;
+﻿using BT_POS.Buttons.Admin;
+using BT_POS.Buttons.Menu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,4 +12,5 @@ public interface IButtonRepository
 {
     Task<List<HomeButton>?> GetHomeButtons();
     Task<List<HomeButton>?> GetHomeTransButtons();
+    Task<List<AdminButton>?> GetAdminButtons();
 }

@@ -70,10 +70,10 @@ public partial class MainWindow : Window
             _posController.LoanPrompted = true;
             POSViewContainer.Content = new YesNoDialogue("Would you like to declare an opening float?", () =>
             { // Yes
-                if (_posController.CurrentOperator.HasBoolPermission(OperatorBoolPermission.POS_Admin_Loan))
+                if (_posController.CurrentOperator.HasBoolPermission(OperatorBoolPermission.POS_Admin_CashManagement_Loan))
                     POSViewContainer.Content = new EnterLoanView("Enter Opening Float", "the opening float");
                 else
-                    POSViewContainer.Content = new BoolAuthDialogue(OperatorBoolPermission.POS_Admin_Loan, () =>
+                    POSViewContainer.Content = new BoolAuthDialogue(OperatorBoolPermission.POS_Admin_CashManagement_Loan, () =>
                     {
                         POSViewContainer.Content = new EnterLoanView("Enter Opening Float", "the opening float");
                     }, () =>

@@ -31,13 +31,13 @@ public class TransactionRepository : ITransactionRepository
         return transactions[0].TransactionId;
     }
 
-    public async Task<bool> SubmitTransaction(Transaction trans)
+    public async Task<bool> SubmitTransaction(Transaction trans, TransactionType? postTrans = null)
     {
         try
         {
             await _database.SaveData("INSERT INTO transactions (store, register, datetime, transactionid, type, operator, amount, basket, tenders, logs, posttranstype) " +
                 "VALUES (@Store, @Register, @DateTime, @TransId, @Type, @Oper, @Amount, @Basket, @Tenders, @Logs, @PTT);",
-                new { @Store = trans.Store, @Register = trans.Register, @DateTime = trans.DateTime, @TransId = trans.TransactionId, @Type = trans.Type, @Oper = trans.Operator.OperatorId, @Amount = trans.GetTotal(), @Basket = JsonConvert.SerializeObject(trans.Basket), @Tenders = JsonConvert.SerializeObject(trans.Tenders), @Logs = JsonConvert.SerializeObject(trans.Logs), @PTT = trans.Type });
+                new { @Store = trans.Store, @Register = trans.Register, @DateTime = trans.DateTime, @TransId = trans.TransactionId, @Type = trans.Type, @Oper = trans.Operator.OperatorId, @Amount = trans.GetTotal(), @Basket = JsonConvert.SerializeObject(trans.Basket), @Tenders = JsonConvert.SerializeObject(trans.Tenders), @Logs = JsonConvert.SerializeObject(trans.Logs), @PTT = (postTrans == null ? trans.Type : postTrans) });
             
             return true;
         } 

@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace BT_POS;
@@ -43,6 +44,7 @@ public class POSController
     public Transaction? CurrentTransaction { get; set; }
     public List<TransactionLog> TransactionLogQueue { get; set; }
     public int CurrentTransId = 0;
+    public bool TrainingMode = false;
 
     public bool LoanPrompted = false;
 
@@ -191,8 +193,29 @@ public class POSController
         Submit();
     }
 
+    public async void RegisterXRead()
+    {
+        StartTransaction(TransactionType.X_READ);
+
+        CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, "Regiser X Reading"));
+        foreach (KeyValuePair<TransactionTender, float> entry in TenderHardTotals)
+        {
+            CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, entry.Key.GetTenderInternalName() + ": " + entry.Value));
+        }
+        CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, " "));
+        foreach (KeyValuePair<TransactionType, float> entry in TypeHardTotals)
+        {
+            CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, entry.Key.ToString() + ": " + entry.Value));
+        }
+
+        await Submit();
+    }
+
     public async void CloseRegister()
     {
+        if (TrainingMode)
+            return;
+
         StartTransaction(TransactionType.REGISTER_CLOSE);
 
         RegisterOpen = false;
@@ -251,6 +274,19 @@ public class POSController
         Submit();
     }
 
+    public void TrainingModeToggleTransaction()
+    {
+        bool status = !TrainingMode;
+        TrainingMode = status;
+        StartTransaction(status ? TransactionType.TRAINING_ON : TransactionType.TRAINING_OFF);
+
+        MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
+        mw.POSParentHeader_TrainingStatus.Visibility = status ? Visibility.Visible : Visibility.Hidden;
+        var converter = new BrushConverter();
+        mw.POSParentHeader.Style = status ? (Style)mw.FindResource("BTParentHeaderTraining") : (Style)mw.FindResource("BTParentHeader");
+        Submit();
+    }
+
     public void VoidTransaction()
     {
         CurrentTransaction!.UpdateTransactionType(TransactionType.VOID);
@@ -276,6 +312,9 @@ public class POSController
         // Update hard totals
         foreach (KeyValuePair<TransactionTender, float> entry in CurrentTransaction.Tenders)
         {
+            if (TrainingMode)
+                break;
+
             if (CurrentTransaction.GetChangeTender() == entry.Key)
             {
                 IncreaseTenderHardTotal(entry.Key, entry.Value - CurrentTransaction.Change);
@@ -285,7 +324,8 @@ public class POSController
             IncreaseTenderHardTotal(entry.Key, entry.Value);
         }
 
-        IncreaseTypeHardTotal(CurrentTransaction.Type, CurrentTransaction.GetTotal());
+        if (!TrainingMode)
+            IncreaseTypeHardTotal(CurrentTransaction.Type, CurrentTransaction.GetTotal());
 
         TransactionLogQueue.ForEach(log => CurrentTransaction.Logs.Add(log));
         TransactionLogQueue.Clear();
@@ -297,7 +337,7 @@ public class POSController
             popup.ShowDialog();
         }
 
-        var success = await _transactionRepository.SubmitTransaction(CurrentTransaction);
+        var success = await _transactionRepository.SubmitTransaction(CurrentTransaction, TrainingMode ? TransactionType.TRAINING_TRANS : null);
         if (!success)
         {
             ControllerOffline();

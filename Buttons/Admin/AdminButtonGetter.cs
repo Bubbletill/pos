@@ -101,6 +101,7 @@ public class AdminButtonGetter
                             return;
                         }
 
+                        controller.TrainingModeToggleTransaction();
                         return;
                     }
                 };
@@ -118,7 +119,7 @@ public class AdminButtonGetter
                             return;
                         }
 
-                        return;
+                        controller.RegisterXRead();
                     }
                 };
 
@@ -132,6 +133,12 @@ public class AdminButtonGetter
                         if (controller.CurrentTransaction != null)
                         {
                             w.HeaderError("Action not allowed. Please suspend the current transaction.");
+                            return;
+                        }
+
+                        if (controller.TrainingMode)
+                        {
+                            w.HeaderError("Action not allowed. Please disable training mode.");
                             return;
                         }
 

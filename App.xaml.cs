@@ -95,7 +95,7 @@ public partial class App : Application
                 }
 
                 controller.StoreNumber = (int)config.Store;
-                controller.RegisterNumber = (int)config.Store;
+                controller.RegisterNumber = (int)config.Register;
                 controller.RegisterOpen = (bool)config.RegisterOpen;
             }
         } 

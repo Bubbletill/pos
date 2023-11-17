@@ -187,6 +187,25 @@
         </Setter>
     </Style>
 
+    <Style x:Key="BTParentHeaderTraining" TargetType="GroupBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GroupBox">
+                    <Border 
+                            BorderBrush="#FFC8ABFF" 
+                        Background="#FFC8ABFF" 
+                        BorderThickness="0,0,0,0" 
+                        CornerRadius="0,0,0,0">
+
+                        <ContentPresenter
+                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Stretch"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Money Counter Component -->
     <Style x:Key="BTMoneyCounterBox" TargetType="GroupBox">
 

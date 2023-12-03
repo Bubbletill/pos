@@ -33,6 +33,7 @@ public class AdminButtonGetter
                                 return;
                             }
 
+                            w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<AdminCashManagementMenuView>();
                             return;
                         }
                     };

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using BT_POS.Buttons.Admin;
+using BT_POS.Buttons.Admin.CashMngt;
 
 namespace BT_POS.RepositoryImpl;
 
@@ -59,6 +60,19 @@ public class ButtonRepository : IButtonRepository
 
         Trace.WriteLine(tables[0]);
         var buttons = JsonConvert.DeserializeObject<List<AdminButton>>(tables[0]);
+        return buttons;
+    }
+
+    public async Task<List<CashManagementButton>?> GetAdminCashManagementButtons()
+    {
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"admincashmngt\";", new { });
+        if (tables.Count == 0)
+        {
+            return null;
+        }
+
+        Trace.WriteLine(tables[0]);
+        var buttons = JsonConvert.DeserializeObject<List<CashManagementButton>>(tables[0]);
         return buttons;
     }
 }

@@ -337,7 +337,7 @@ public class POSController
             popup.ShowDialog();
         }
 
-        var success = await _transactionRepository.SubmitTransaction(CurrentTransaction, TrainingMode ? TransactionType.TRAINING_TRANS : null);
+        var success = await _transactionRepository.SubmitTransaction(CurrentTransaction, TrainingMode && CurrentTransaction.Type != TransactionType.TRAINING_ON ? TransactionType.TRAINING_TRANS : null);
         if (!success)
         {
             ControllerOffline();

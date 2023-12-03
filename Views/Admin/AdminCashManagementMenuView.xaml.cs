@@ -1,4 +1,5 @@
 ﻿using BT_POS.Buttons.Admin;
+using BT_POS.Buttons.Admin.CashMngt;
 using BT_POS.Buttons.Menu;
 using BT_POS.Components;
 using BT_POS.Views.Dialogues;
@@ -20,14 +21,14 @@ using System.Windows.Shapes;
 
 namespace BT_POS.Views.Admin;
 
-public partial class AdminMenuView : UserControl
+public partial class AdminCashManagementMenuView : UserControl
 {
     private readonly MainWindow _mainWindow;
     private readonly POSController _controller;
 
     private readonly Style _buttonStyle;
 
-    public AdminMenuView(MainWindow mainWindow, POSController controller)
+    public AdminCashManagementMenuView(MainWindow mainWindow, POSController controller)
     {
         InitializeComponent();
         _mainWindow = mainWindow;
@@ -37,23 +38,23 @@ public partial class AdminMenuView : UserControl
 
         _buttonStyle = FindResource("BTVerticleButton") as Style;
 
-        LoadButtons(App.AdminButtons);
+        LoadButtons(App.AdminCashManagementButtons);
         Button button = new Button();
         button.Style = _buttonStyle;
         button.Content = "Back";
         button.Click += (s, e) =>
         {
-            _mainWindow.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<HomeView>();
+            _mainWindow.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<AdminMenuView>(); ;
         };
         ButtonStackPanel.Children.Add(button);
     }
 
-    public void LoadButtons(List<AdminButton> buttons)
+    public void LoadButtons(List<CashManagementButton> buttons)
     {
         ButtonStackPanel.Children.Clear();
         buttons.ForEach(type =>
         {
-            ButtonStackPanel.Children.Add(App.CreateButton(AdminButtonGetter.Get(type), _buttonStyle, this));
+            ButtonStackPanel.Children.Add(App.CreateButton(CashManagementButtonGetter.Get(type), _buttonStyle, this));
         });
         ButtonStackPanel.InvalidateVisual();
         ButtonStackPanel.UpdateLayout();

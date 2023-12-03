@@ -39,6 +39,12 @@ public partial class EnterLoanView : UserControl
     {
         var amount = MoneyCounterComponent.CalculateAmount();
         POSController c = App.AppHost.Services.GetRequiredService<POSController>();
+
+        if (amount == 0)
+        {
+            c.HeaderError("Please enter a value to declare.");
+            return;
+        }
         c.LoanTransaction(amount);
     }
 }

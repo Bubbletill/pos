@@ -31,13 +31,19 @@ public class TransactionRepository : ITransactionRepository
         return transactions[0].TransactionId;
     }
 
+    public async Task<Transaction?> GetTransaction(int store, int register, int transId, DateOnly date)
+    {
+        var transactions = await _database.LoadData<Transaction, dynamic>("SELECT * FROM `transactions` WHERE `store`=? AND `register`=? AND `transactionid`=? AND `date`=? LIMIT 1;", new { store, register, transId, date });
+        return null;
+    }
+
     public async Task<bool> SubmitTransaction(Transaction trans, TransactionType? postTrans = null)
     {
         try
         {
-            await _database.SaveData("INSERT INTO transactions (store, register, datetime, transactionid, type, operator, amount, basket, tenders, logs, posttranstype) " +
-                "VALUES (@Store, @Register, @DateTime, @TransId, @Type, @Oper, @Amount, @Basket, @Tenders, @Logs, @PTT);",
-                new { @Store = trans.Store, @Register = trans.Register, @DateTime = trans.DateTime, @TransId = trans.TransactionId, @Type = trans.Type, @Oper = trans.Operator.OperatorId, @Amount = trans.GetTotal(), @Basket = JsonConvert.SerializeObject(trans.Basket), @Tenders = JsonConvert.SerializeObject(trans.Tenders), @Logs = JsonConvert.SerializeObject(trans.Logs), @PTT = (postTrans == null ? trans.Type : postTrans) });
+            await _database.SaveData("INSERT INTO transactions (store, register, date, time, transactionid, type, operator, amount, basket, tenders, logs, posttranstype) " +
+                "VALUES (@Store, @Register, @Date, @Time, @TransId, @Type, @Oper, @Amount, @Basket, @Tenders, @Logs, @PTT);",
+                new { @Store = trans.Store, @Register = trans.Register, @Date = trans.DateTime.Date, @Time = trans.DateTime.ToLongTimeString(), @TransId = trans.TransactionId, @Type = trans.Type, @Oper = trans.Operator.OperatorId, @Amount = trans.GetTotal(), @Basket = JsonConvert.SerializeObject(trans.Basket), @Tenders = JsonConvert.SerializeObject(trans.Tenders), @Logs = JsonConvert.SerializeObject(trans.Logs), @PTT = (postTrans == null ? trans.Type : postTrans) });
             
             return true;
         } 

@@ -4,7 +4,11 @@ using BT_COMMONS.Transactions;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Menu;
 using BT_POS.RepositoryImpl;
+using BT_POS.Views.Admin;
 using BT_POS.Views.Dialogues;
+using BT_POS.Views.Menus;
+using BT_POS.Views.Tender;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,7 +32,7 @@ namespace BT_POS.Views;
 public partial class HomeView : UserControl
 {
     private readonly MainWindow _mainWindow;
-    private readonly POSController _posController;
+    private readonly POSController _controller;
     private readonly IStockRepository _stockRepository;
     private readonly IButtonRepository _buttonRepository;
 
@@ -37,18 +41,18 @@ public partial class HomeView : UserControl
     public HomeView(MainWindow mainWindow, POSController posController, IStockRepository stockRepository, IButtonRepository buttonRepository)
     {
         _mainWindow = mainWindow;
-        _posController = posController;
+        _controller = posController;
         _stockRepository = stockRepository;
         _buttonRepository = buttonRepository;
 
         InitializeComponent();
         _buttonStyle = FindResource("BTVerticleButton") as Style;
 
-        if (_posController.CurrentTransaction != null )
+        if (_controller.CurrentTransaction != null )
         {
-            BasketComponent.BasketGrid.ItemsSource = _posController.CurrentTransaction.Basket;
+            BasketComponent.BasketGrid.ItemsSource = _controller.CurrentTransaction.Basket;
             LoadButtons(App.HomeTransButtons);
-            TotalTextBlock.Text = "£" + _posController.CurrentTransaction!.GetTotal();
+            TotalTextBlock.Text = "£" + _controller.CurrentTransaction!.GetTotal();
         } 
         else
         {
@@ -65,10 +69,191 @@ public partial class HomeView : UserControl
         ButtonStackPanel.Children.Clear();
         buttons.ForEach(type =>
         {
-            ButtonStackPanel.Children.Add(App.CreateButton(HomeButtonGetter.Get(type), _buttonStyle, this));
+            ButtonStackPanel.Children.Add(App.CreateButton(GetButtonFunction(type), _buttonStyle, this));
         });
         ButtonStackPanel.InvalidateVisual();
         ButtonStackPanel.UpdateLayout();
+    }
+
+    public IButtonData GetButtonFunction(HomeButton button)
+    {
+        switch (button)
+        {
+            case HomeButton.ADMIN:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Admin",
+                        Permission = null,
+                        OnClick = w =>
+                        {
+                            if (_controller.CurrentTransaction != null)
+                            {
+                                w.HeaderError("Action not allowed. Please suspend the current transaction to access this menu.");
+                                return;
+                            }
+
+                            w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<AdminMenuView>();
+                            return;
+                        }
+                    };
+                }
+
+            case HomeButton.TENDER:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Tender",
+                        Permission = null,
+                        OnClick = w =>
+                        {
+                            if (_controller.CurrentTransaction == null)
+                            {
+                                w.HeaderError("Action not allowed. There is no active transaction.");
+                                return;
+                            }
+
+                            if (_controller.CurrentTransaction.Basket.Count == 0)
+                            {
+                                w.HeaderError("Action not allowed. The basket is empty.");
+                                return;
+                            }
+
+                            w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<TenderHomeView>();
+                            return;
+                        }
+                    };
+                }
+
+            case HomeButton.RETURN:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Return",
+                        Permission = OperatorBoolPermission.POS_Return_Access,
+                        OnClick = w =>
+                        {
+                            return;
+                        }
+                    };
+                }
+
+            case HomeButton.HOTSHOT:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Hotshot",
+                        Permission = OperatorBoolPermission.POS_Hotshot_Access,
+                        OnClick = w =>
+                        {
+
+                            return;
+                        }
+                    };
+                }
+
+            case HomeButton.ITEM_MOD:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Item Mod",
+                        Permission = null,
+                        OnClick = w =>
+                        {
+                            if (_controller.CurrentTransaction == null)
+                            {
+                                w.HeaderError("Action not allowed. There is no active transaction.");
+                                return;
+                            }
+
+                            w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<ItemModMenuView>();
+                            return;
+                        }
+                    };
+                }
+
+            case HomeButton.TRANS_MOD:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Trans Mod",
+                        Permission = null,
+                        OnClick = w =>
+                        {
+                            if (_controller.CurrentTransaction == null)
+                            {
+                                w.HeaderError("Action not allowed. There is no active transaction.");
+                                return;
+                            }
+
+                            w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<TransModMenuView>();
+                            return;
+                        }
+                    };
+                }
+
+            case HomeButton.LOGOUT:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Sign-out",
+                        Permission = null,
+                        OnClick = w =>
+                        {
+                            if (_controller.CurrentTransaction != null)
+                            {
+                                w.HeaderError("Action not allowed. Please suspend the current transaction to sign-out.");
+                                return;
+                            }
+
+                            w.Logout();
+                            return;
+                        }
+                    };
+                }
+
+            case HomeButton.SUSPEND:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Suspend",
+                        Permission = null,
+                        OnClick = w =>
+                        {
+                            if (_controller.CurrentTransaction == null)
+                            {
+                                w.HeaderError("Action not allowed. There is no transaction to suspend.");
+                                return;
+                            }
+
+                            return;
+                        }
+                    };
+                }
+
+            case HomeButton.RESUME:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Resume",
+                        Permission = null,
+                        OnClick = w =>
+                        {
+                            if (_controller.CurrentTransaction != null)
+                            {
+                                w.HeaderError("Action not allowed. Please suspend the current transaction to resume another.");
+                                return;
+                            }
+
+                            return;
+                        }
+                    };
+                }
+            default:
+                {
+                    return null;
+                }
+        }
     }
 
     private async void ManualCodeEntryBox_KeyDown(object sender, KeyEventArgs e)
@@ -96,13 +281,13 @@ public partial class HomeView : UserControl
         }
 
         _mainWindow.HeaderError();
-        if (_posController.CurrentTransaction == null)
+        if (_controller.CurrentTransaction == null)
         {
             LoadButtons(App.HomeTransButtons);
         }
-        _posController.AddItemToBasket(item);
-        TotalTextBlock.Text = "£" + _posController.CurrentTransaction!.GetTotal();
-        BasketComponent.BasketGrid.ItemsSource = _posController.CurrentTransaction!.Basket;
+        _controller.AddItemToBasket(item);
+        TotalTextBlock.Text = "£" + _controller.CurrentTransaction!.GetTotal();
+        BasketComponent.BasketGrid.ItemsSource = _controller.CurrentTransaction!.Basket;
         BasketComponent.BasketGrid.Items.Refresh();
         ManualCodeEntryBox.Clear();
     }

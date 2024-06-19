@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -110,7 +109,6 @@ public class POSController
             CurrentTransId++;
         else
             CurrentTransId = 1;
-        UpdateLocalTransactionNumber();
         CurrentTransaction = new Transaction();
         CurrentTransaction.Init(StoreNumber, RegisterNumber, CurrentOperator!, DateTime.Now, CurrentTransId, type);
         TransactionLogQueue.ForEach(log => CurrentTransaction.Logs.Add(log));
@@ -128,6 +126,7 @@ public class POSController
         }
 
         CurrentTransaction!.AddToBasket(item);
+        CurrentTransaction!.SelectedItem = item;
     }
 
     public void AddTender(TransactionTender tender, float amount)
@@ -345,6 +344,7 @@ public class POSController
         {
             await ControllerOnline();
         }
+        UpdateLocalTransactionNumber();
 
         if (!CurrentTransaction.Type.GetReturnHome())
         {

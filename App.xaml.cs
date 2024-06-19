@@ -16,7 +16,9 @@ using BT_COMMONS.Transactions;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Admin;
 using BT_POS.Buttons.Admin.CashMngt;
+using BT_POS.Buttons.ItemMod;
 using BT_POS.Buttons.Menu;
+using BT_POS.Buttons.TransMod;
 using BT_POS.RepositoryImpl;
 using BT_POS.Splash;
 using BT_POS.Views;
@@ -37,6 +39,8 @@ public partial class App : Application
 
     public static List<HomeButton> HomeButtons;
     public static List<HomeButton> HomeTransButtons;
+    public static List<ItemModButton> ItemModButtons;
+    public static List<TransModButton> TransModButtons;
     public static List<AdminButton> AdminButtons;
     public static List<CashManagementButton> AdminCashManagementButtons;
 
@@ -66,6 +70,7 @@ public partial class App : Application
                 services.AddViewFactory<HomeView>();
                 services.AddViewFactory<TenderHomeView>();
 
+                services.AddViewFactory<ItemModMenuView>();
                 services.AddViewFactory<TransModMenuView>();
 
                 services.AddViewFactory<AdminMenuView>();
@@ -77,96 +82,106 @@ public partial class App : Application
 
     protected override async void OnStartup(StartupEventArgs e)
     {
-        POSSplashScreen splash = new POSSplashScreen();
-        splash.Show();
-
-        await AppHost!.StartAsync();
-
-        var controller = AppHost.Services.GetRequiredService<POSController>();
-
-        // Load data.json
         try
         {
-            using (StreamReader r = new StreamReader("C:\\bubbletill\\data.json"))
-            {
-                string json = r.ReadToEnd();
-                AppConfig config = JsonConvert.DeserializeObject<AppConfig>(json);
+            POSSplashScreen splash = new POSSplashScreen();
+            splash.Show();
 
-                if (config == null || config.Register == null || config.Store == null || config.RegisterOpen == null)
+            await AppHost!.StartAsync();
+
+            var controller = AppHost.Services.GetRequiredService<POSController>();
+
+            // Load data.json
+            try
+            {
+                using (StreamReader r = new StreamReader("C:\\bubbletill\\data.json"))
                 {
-                    throw new Exception();
+                    string json = r.ReadToEnd();
+                    AppConfig config = JsonConvert.DeserializeObject<AppConfig>(json);
+
+                    if (config == null || config.Register == null || config.Store == null || config.RegisterOpen == null)
+                    {
+                        throw new Exception();
+                    }
+
+                    controller.StoreNumber = (int)config.Store;
+                    controller.RegisterNumber = (int)config.Register;
+                    controller.RegisterOpen = (bool)config.RegisterOpen;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Bubbletill failed to launch:\nFailed to load data.json", "Bubbletill POS", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+                Shutdown();
+                return;
+            }
+
+            // Load hard totals
+            try
+            {
+                using (StreamReader r = new StreamReader("C:\\bubbletill\\hardtotals.json"))
+                {
+                    string json = r.ReadToEnd();
+                    HardTotals totals = JsonConvert.DeserializeObject<HardTotals>(json);
+
+                    if (totals == null || totals.Tender == null || totals.Type == null)
+                    {
+                        throw new Exception();
+                    }
+
+                    controller.TenderHardTotals = totals.Tender;
+                    controller.TypeHardTotals = totals.Type;
+                }
+            }
+            catch (Exception ex)
+            {
+                HardTotals ht = new HardTotals();
+                ht.Tender = new Dictionary<TransactionTender, float>();
+                ht.Type = new Dictionary<TransactionType, float>();
+                foreach (TransactionTender tender in Enum.GetValues(typeof(TransactionTender)))
+                {
+                    ht.Tender.Add(tender, 0);
                 }
 
-                controller.StoreNumber = (int)config.Store;
-                controller.RegisterNumber = (int)config.Register;
-                controller.RegisterOpen = (bool)config.RegisterOpen;
+                foreach (TransactionType type in Enum.GetValues(typeof(TransactionType)))
+                {
+                    ht.Type.Add(type, 0);
+                }
+
+                controller.TenderHardTotals = ht.Tender;
+                controller.TypeHardTotals = ht.Type;
+
+                string json = JsonConvert.SerializeObject(ht);
+                File.WriteAllText("C:\\bubbletill\\hardtotals.json", json);
             }
-        } 
-        catch (Exception ex)
+
+            var operRepo = AppHost.Services.GetRequiredService<IOperatorRepository>();
+            var operGroups = await operRepo.GetOperatorGroups();
+            foreach (var group in operGroups)
+            {
+                group.Parse();
+                controller.OperatorGroups.Add(group.Id, group);
+            }
+
+            var btnRepo = AppHost.Services.GetRequiredService<IButtonRepository>();
+            HomeButtons = await btnRepo.GetHomeButtons();
+            HomeTransButtons = await btnRepo.GetHomeTransButtons();
+            ItemModButtons = await btnRepo.GetItemModButtons();
+            TransModButtons = await btnRepo.GetTransModButtons();
+            AdminButtons = await btnRepo.GetAdminButtons();
+            AdminCashManagementButtons = await btnRepo.GetAdminCashManagementButtons();
+
+            var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
+            mainWindow.Show();
+            splash.Close();
+
+            base.OnStartup(e);
+        } catch (Exception ex)
         {
-            MessageBox.Show("Failed to load data.json", "Bubbletill POS", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+            MessageBox.Show("Bubbletill failed to launch:\n" + ex, "Bubbletill POS", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
             Shutdown();
             return;
         }
-
-        // Load hard totals
-        try
-        {
-            using (StreamReader r = new StreamReader("C:\\bubbletill\\hardtotals.json"))
-            {
-                string json = r.ReadToEnd();
-                HardTotals totals = JsonConvert.DeserializeObject<HardTotals>(json);
-
-                if (totals == null || totals.Tender == null || totals.Type == null)
-                {
-                    throw new Exception();
-                }
-
-                controller.TenderHardTotals = totals.Tender;
-                controller.TypeHardTotals = totals.Type;
-            }
-        }
-        catch (Exception ex)
-        {
-            HardTotals ht = new HardTotals();
-            ht.Tender = new Dictionary<TransactionTender, float>();
-            ht.Type = new Dictionary<TransactionType, float>();
-            foreach (TransactionTender tender in Enum.GetValues(typeof(TransactionTender)))
-            {
-                ht.Tender.Add(tender, 0);
-            }
-
-            foreach (TransactionType type in Enum.GetValues(typeof(TransactionType)))
-            {
-                ht.Type.Add(type, 0);
-            }
-
-            controller.TenderHardTotals = ht.Tender;
-            controller.TypeHardTotals = ht.Type;
-
-            string json = JsonConvert.SerializeObject(ht);
-            File.WriteAllText("C:\\bubbletill\\hardtotals.json", json);
-        }
-
-        var operRepo = AppHost.Services.GetRequiredService<IOperatorRepository>();
-        var operGroups = await operRepo.GetOperatorGroups();
-        foreach (var group in operGroups)
-        {
-            group.Parse();
-            controller.OperatorGroups.Add(group.Id, group);
-        }
-
-        var btnRepo = AppHost.Services.GetRequiredService<IButtonRepository>();
-        HomeButtons = await btnRepo.GetHomeButtons();
-        HomeTransButtons = await btnRepo.GetHomeTransButtons();
-        AdminButtons = await btnRepo.GetAdminButtons();
-        AdminCashManagementButtons = await btnRepo.GetAdminCashManagementButtons();
-
-        var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
-        mainWindow.Show();
-        splash.Close();
-
-        base.OnStartup(e);
     }
 
     protected override async void OnExit(ExitEventArgs e)

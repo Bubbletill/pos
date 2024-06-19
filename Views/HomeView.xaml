@@ -24,7 +24,7 @@
         </Grid.RowDefinitions>
 
         <!-- Side buttons -->
-        <StackPanel x:Name="ButtonStackPanel" Grid.Row="0" Grid.RowSpan="4" Grid.Column="5" Orientation="Vertical"/>
+        <StackPanel x:Name="ButtonStackPanel" Grid.Row="0" Grid.RowSpan="4" Grid.Column="5" Orientation="Vertical" FocusManager.IsFocusScope="True"/>
 
 
         <!-- Basket -->

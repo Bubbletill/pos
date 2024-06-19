@@ -1,4 +1,6 @@
-﻿using BT_POS.Buttons.Admin;
+﻿using BT_COMMONS.Operators;
+using BT_POS.Buttons;
+using BT_POS.Buttons.Admin;
 using BT_POS.Buttons.Admin.CashMngt;
 using BT_POS.Buttons.Menu;
 using BT_POS.Components;
@@ -54,9 +56,75 @@ public partial class AdminCashManagementMenuView : UserControl
         ButtonStackPanel.Children.Clear();
         buttons.ForEach(type =>
         {
-            ButtonStackPanel.Children.Add(App.CreateButton(CashManagementButtonGetter.Get(type), _buttonStyle, this));
+            ButtonStackPanel.Children.Add(App.CreateButton(GetButtonFunction(type), _buttonStyle, this));
         });
         ButtonStackPanel.InvalidateVisual();
         ButtonStackPanel.UpdateLayout();
+    }
+
+    public IButtonData GetButtonFunction(CashManagementButton button)
+    {
+        switch (button)
+        {
+            case CashManagementButton.LOAN:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Loan",
+                        Permission = OperatorBoolPermission.POS_Admin_CashManagement_Loan,
+                        OnClick = w =>
+                        {
+                            if (_controller.CurrentTransaction != null)
+                            {
+                                w.HeaderError("Action not allowed. Please suspend the current transaction.");
+                                return;
+                            }
+
+                            w.POSViewContainer.Content = new EnterLoanView("Loan", "the loan");
+                        }
+                    };
+                }
+            case CashManagementButton.SPOT_CHECK:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Spot Check",
+                        Permission = OperatorBoolPermission.POS_Admin_CashManagement_Spotcheck,
+                        OnClick = w =>
+                        {
+                            if (_controller.CurrentTransaction != null)
+                            {
+                                w.HeaderError("Action not allowed. Please suspend the current transaction.");
+                                return;
+                            }
+
+                            return;
+                        }
+                    };
+                }
+            case CashManagementButton.PICKUP:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Pickup",
+                        Permission = OperatorBoolPermission.POS_Admin_CashManagement_Pickup,
+                        OnClick = w =>
+                        {
+                            if (_controller.CurrentTransaction != null)
+                            {
+                                w.HeaderError("Action not allowed. Please suspend the current transaction.");
+                                return;
+                            }
+
+                            return;
+                        }
+                    };
+                };
+
+            default:
+                {
+                    return null;
+                }
+        }
     }
 }

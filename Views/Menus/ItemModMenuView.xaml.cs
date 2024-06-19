@@ -2,12 +2,14 @@
 using BT_COMMONS.Transactions;
 using BT_COMMONS.Transactions.TenderAttributes;
 using BT_POS.Buttons;
+using BT_POS.Buttons.ItemMod;
 using BT_POS.Buttons.Menu;
 using BT_POS.Buttons.TransMod;
 using BT_POS.Views.Dialogues;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,13 +25,13 @@ using System.Windows.Shapes;
 
 namespace BT_POS.Views.Menus;
 
-public partial class TransModMenuView : UserControl
+public partial class ItemModMenuView : UserControl
 {
     private readonly POSController _controller;
     private readonly MainWindow _mainWindow;
     private readonly Style _buttonStyle;
 
-    public TransModMenuView(POSController controller, MainWindow mainWindow)
+    public ItemModMenuView(POSController controller, MainWindow mainWindow)
     {
         _controller = controller;
         _mainWindow = mainWindow;
@@ -39,7 +41,7 @@ public partial class TransModMenuView : UserControl
 
         BasketComponent.BasketGrid.ItemsSource = _controller.CurrentTransaction!.Basket;
 
-        LoadButtons(App.TransModButtons);
+        LoadButtons(App.ItemModButtons);
 
         // Back 
         Button button = new Button();
@@ -53,7 +55,7 @@ public partial class TransModMenuView : UserControl
         ButtonStackPanel.Children.Add(button);
     }
 
-    private void LoadButtons(List<TransModButton> buttons)
+    private void LoadButtons(List<ItemModButton> buttons)
     {
         ButtonStackPanel.Children.Clear();
         buttons.ForEach(type =>
@@ -64,15 +66,15 @@ public partial class TransModMenuView : UserControl
         ButtonStackPanel.UpdateLayout();
     }
 
-    public IButtonData GetButtonFunction(TransModButton button)
+    public IButtonData GetButtonFunction(ItemModButton button)
     {
         switch (button)
         {
-            case TransModButton.DISCOUNT:
+            case ItemModButton.DISCOUNT:
                 {
                     return new ButtonData
                     {
-                        Name = "Discount Transaction",
+                        Name = "Discount Item",
                         Permission = null,
                         OnClick = w =>
                         {
@@ -81,23 +83,22 @@ public partial class TransModMenuView : UserControl
                     };
                 }
 
-            case TransModButton.VOID:
+            case ItemModButton.VOID:
                 {
                     return new ButtonData
                     {
-                        Name = "Void Transaction",
-                        Permission = OperatorBoolPermission.POS_TransMod_TransVoid,
+                        Name = "Void Item",
+                        Permission = OperatorBoolPermission.POS_ItemMod_ItemVoid,
                         OnClick = w =>
                         {
-                            w.POSViewContainer.Content = new YesNoDialogue("Are you sure you want to void this transaction?", () =>
+                            BasketItem bi = _controller.CurrentTransaction!.SelectedItem;
+                            if (!_controller.CurrentTransaction.VoidBasketItem(bi))
                             {
-                                // Yes
-                                _controller.VoidTransaction();
-                            }, () =>
-                            {
-                                // No
-                                w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<TransModMenuView>();
-                            });
+                                _controller.HeaderError("Invalid item to void.");
+                            }
+
+                            w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<HomeView>();
+
                             return;
                         }
                     };

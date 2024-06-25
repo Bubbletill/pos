@@ -6,6 +6,7 @@ using BT_COMMONS.Transactions.TenderAttributes;
 using BT_COMMONS.Transactions.TypeAttributes;
 using BT_POS.Components;
 using BT_POS.Views;
+using BT_POS.Views.Dialogues;
 using BT_POS.Views.Tender;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -123,6 +124,13 @@ public class POSController
         if (CurrentTransaction == null)
         {
             StartTransaction(TransactionType.SALE);
+        }
+
+        if (item.AgeRestricted > CurrentTransaction!.CustomerAge)
+        {
+            MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
+            mw.POSViewContainer.Content = new AgeRestrictedDialogue(this, item);
+            return;
         }
 
         CurrentTransaction!.AddToBasket(item);
@@ -267,7 +275,7 @@ public class POSController
     public void LoanTransaction(float loan)
     {
         StartTransaction(TransactionType.LOAN);
-        AddItemToBasket(new BasketItem(0, "Loan", loan, false));
+        AddItemToBasket(new BasketItem(0, "Loan", loan, 0));
         CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, "Loan: £" + loan));
 
         Submit();

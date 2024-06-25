@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="BT_POS.Views.Dialogues.AgeRestrictedDialogue"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BT_POS.Views.Dialogues"
+             xmlns:Transactions="clr-namespace:BT_COMMONS.Transactions;assembly=BT-COMMONS" xmlns:components="clr-namespace:BT_POS.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="995" d:DesignWidth="1920" Background="White">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="222*"/>
+            <ColumnDefinition Width="222*"/>
+            <ColumnDefinition Width="222*"/>
+            <ColumnDefinition Width="204*"/>
+            <ColumnDefinition Width="803*"/>
+            <ColumnDefinition Width="244*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="186*"/>
+            <RowDefinition Height="669*"/>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Side buttons -->
+        <StackPanel x:Name="ButtonStackPanel" Grid.Row="0" Grid.RowSpan="4" Grid.Column="5" Orientation="Vertical" FocusManager.IsFocusScope="True">
+            <Button Content="Approve" Style="{DynamicResource BTVerticleButton}" Click="Approve_Click"/>
+            <Button Content="Refuse" Style="{DynamicResource BTVerticleButton}" Click="Refuse_Click"/>
+        </StackPanel>
+
+
+        <!-- Basket -->
+        <components:BasketComponent x:Name="BasketComponent" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Grid.RowSpan="2"/>
+       
+
+        <!-- Information Box -->
+        <components:ViewInformationComponent Grid.Row="0" Grid.Column="4" Title="STOP. AGE RESTRICTED ITEM." Information="Is the customer over 18? Please confirm with a valid, physical photo ID: passport, driving license, PASS card. Please either approve or refuse the item."/>
+    </Grid>
+</UserControl>

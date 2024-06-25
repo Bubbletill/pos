@@ -36,14 +36,14 @@ public partial class BasketOnlyView : UserControl
         BasketComponent.BasketGrid.ItemsSource = localBasket;
         if (_controller.CurrentTransaction.Tenders.Count != 0)
         {
-            localBasket.Add(new BasketItem(0, " ", 0, false));
+            localBasket.Add(new BasketItem(0, " ", 0, 0));
             foreach (KeyValuePair<TransactionTender, float> entry in _controller.CurrentTransaction.Tenders)
             {
-                localBasket.Add(new BasketItem(0, entry.Key.GetTenderExternalName(), entry.Value, false));
+                localBasket.Add(new BasketItem(0, entry.Key.GetTenderExternalName(), entry.Value, 0));
             }
             if (_controller.CurrentTransaction.Change != 0)
             {
-                localBasket.Add(new BasketItem(0, "Change", _controller.CurrentTransaction.Change, false));
+                localBasket.Add(new BasketItem(0, "Change", _controller.CurrentTransaction.Change, 0));
             }
         }
     }

@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
 
         <!-- Logo -->
-        <Image Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Source="/Assets/logo.png" RenderTransformOrigin="0.5,0.5" Stretch="None" Margin="0,56,0,0" Grid.Row="1">
+        <Image Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Source="/Assets/logo.png" RenderTransformOrigin="0.5,0.5" Margin="0,56,0,0" Grid.Row="1" Stretch="UniformToFill">
             <Image.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleX="0.75" ScaleY="0.75"/>
@@ -41,12 +41,12 @@
                     <RowDefinition Height="76*"/>
                     <RowDefinition Height="92*"/>
                 </Grid.RowDefinitions>
-                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" Text="User ID" VerticalAlignment="Center" FontSize="30" Height="40" Width="97"/>
-                <TextBlock HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" Text="Password" VerticalAlignment="Center" FontSize="30" Height="40" Width="124"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" Text="User ID" VerticalAlignment="Center" FontSize="30"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="2" Text="Password" VerticalAlignment="Center" FontSize="30" TextWrapping="WrapWithOverflow"/>
                 <TextBox x:Name="UserIdBox" Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="30" Width="Auto" KeyUp="UserIdBox_KeyUp" />
                 <PasswordBox x:Name="PasswordBox" Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="2" VerticalAlignment="Center" FontSize="30" Width="Auto" KeyUp="PasswordBox_KeyUp" />
                 <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-                    <Button x:Name="LoginButton" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Login" Style="{DynamicResource BTHorizontalButton}" Click="LoginButton_Click"/>
+                    <Button x:Name="LoginButton" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Login" Style="{DynamicResource BTHorizontalButton}" Click="LoginButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                     <Button x:Name="BackOfficeButton" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="Back Office" Style="{DynamicResource BTHorizontalButton}" Click="BackOfficeButton_Click"/>
                 </StackPanel>
             </Grid>

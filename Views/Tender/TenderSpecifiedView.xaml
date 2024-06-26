@@ -80,7 +80,7 @@
 
 
         <!-- Manual Amount -->
-        <TextBlock Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" Margin="10,10,0,0" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Amount Given"/>
+        <TextBlock x:Name="ManualAmountLabel" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" Margin="10,10,0,0" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Amount Given"/>
         <TextBox x:Name="ManualAmountEntryBox" Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="3" MaxHeight="40" MinWidth="500" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,6,0,0" FontSize="24" KeyDown="ManualAmountEntryBox_KeyDown" PreviewTextInput="ManualAmountEntryBox_PreviewTextInput"/>
     </Grid>
 </UserControl>

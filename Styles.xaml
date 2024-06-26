@@ -30,6 +30,13 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+
+
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="#FF737373"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="BTVerticleButton" TargetType="Button">
@@ -62,6 +69,12 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="#FF737373"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <!-- Keypad Button Template -->

@@ -89,7 +89,41 @@ public partial class TenderSpecifiedView : UserControl
 
     private void AddTender(float amount)
     {
-        _controller.AddTender(_tender, amount);
+        switch (_tender)
+        {
+            case TransactionTender.WORLDPAY_CARD:
+                {
+                    // temp until logic
+                    _controller.AddTender(_tender, amount);
+                    return;
+
+                    ToggleReadOnly(true);
+                    ViewInfoComponent.Information = "Please follow the instructions in the pop-up window.";
+                    return;
+                }
+
+            default:
+                {
+                    _controller.AddTender(_tender, amount);
+                    return;
+                }
+        }
+    }
+
+    private void ToggleButtons(bool status)
+    {
+        foreach (Button item in ButtonStackPanel.Children)
+        {
+            item.IsEnabled = status;
+        }
+    }
+
+    private void ToggleReadOnly(bool status)
+    {
+        ToggleButtons(!status);
+        Keypad.Visibility = !status ? Visibility.Visible : Visibility.Hidden;
+        ManualAmountEntryBox.Visibility = !status ? Visibility.Visible : Visibility.Hidden;
+        ManualAmountLabel.Visibility = !status ? Visibility.Visible : Visibility.Hidden;
     }
 
     private async void ManualAmountEntryBox_KeyDown(object sender, KeyEventArgs e)

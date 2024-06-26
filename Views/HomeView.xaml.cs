@@ -226,6 +226,13 @@ public partial class HomeView : UserControl
                                 return;
                             }
 
+                            if (_controller.CurrentTransaction.Tenders.Count != 0)
+                            {
+                                w.HeaderError("Action not allowed. Please void tender before continuing.");
+                                return;
+                            }
+
+                            _controller.Suspend();
                             return;
                         }
                     };

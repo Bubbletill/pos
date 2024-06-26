@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Windows.ApplicationModel.VoiceCommands;
 
 namespace BT_POS;
 
@@ -27,6 +28,7 @@ public class POSController
 
     private readonly IOperatorRepository _operatorRepository;
     private readonly ITransactionRepository _transactionRepository;
+    private readonly ISuspendRepository _suspendRepository;
     public string? ControllerAuthenticationToken { get; set; }
     public bool GotInitialControllerData { get; set; } = false;
 
@@ -48,10 +50,11 @@ public class POSController
 
     public bool LoanPrompted = false;
 
-    public POSController(IOperatorRepository operatorRepository, ITransactionRepository transactionRepository)
+    public POSController(IOperatorRepository operatorRepository, ITransactionRepository transactionRepository, ISuspendRepository suspendRepository)
     {
         _operatorRepository = operatorRepository;
         _transactionRepository = transactionRepository;
+        _suspendRepository = suspendRepository;
 
         TenderHardTotals = new Dictionary<TransactionTender, float>();
         TypeHardTotals = new Dictionary<TransactionType, float>();
@@ -359,6 +362,40 @@ public class POSController
             CurrentTransaction = null;
             return;
         }
+
+        CurrentTransaction = null;
+
+        HomeView home = App.AppHost.Services.GetRequiredService<HomeView>();
+        mainWindow.POSViewContainer.Content = home;
+    }
+
+    // Suspend transaction
+    public async void Suspend()
+    {
+        if (CurrentTransaction == null)
+            return;
+
+        MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
+
+        BasketOnlyView basketOnly = App.AppHost.Services.GetRequiredService<BasketOnlyView>();
+        mainWindow.POSViewContainer.Content = basketOnly;
+
+        CurrentTransaction.UpdateTransactionType(TransactionType.SUSPEND);
+        TransactionLogQueue.ForEach(log => CurrentTransaction.Logs.Add(log));
+        TransactionLogQueue.Clear();
+        CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Transaction " + CurrentTransaction.TransactionId + " suspended at " + DateTime.Now.ToString()));
+
+        var suspendSuccess = await _suspendRepository.Suspend(CurrentTransaction);
+        var submitSuccess = await _transactionRepository.SubmitTransaction(CurrentTransaction, TransactionType.SUSPEND);
+        if (!suspendSuccess || !submitSuccess)
+        {
+            ControllerOffline();
+        }
+        else
+        {
+            await ControllerOnline();
+        }
+        UpdateLocalTransactionNumber();
 
         CurrentTransaction = null;
 

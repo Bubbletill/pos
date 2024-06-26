@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Markup;
 using BT_COMMONS;
 using BT_COMMONS.App;
+using HardTotals = BT_COMMONS.App.HardTotals;
 using BT_COMMONS.Database;
 using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Helpers;
@@ -30,12 +31,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using Windows.Devices.PointOfService;
 
 namespace BT_POS;
 
 public partial class App : Application
 {
     public static IHost? AppHost { get; private set; }
+
+    public static List<TransactionTender> TenderTypes;
 
     public static List<HomeButton> HomeButtons;
     public static List<HomeButton> HomeTransButtons;
@@ -61,6 +65,7 @@ public partial class App : Application
                 services.AddSingleton<ITransactionRepository, TransactionRepository>();
                 services.AddSingleton<IStockRepository, StockRepository>();
                 services.AddSingleton<IButtonRepository, ButtonRepository>();
+                services.AddSingleton<ISuspendRepository, SuspendRepository>();
 
                 services.AddSingleton<MainWindow>();
                 services.AddViewFactory<LoginView>();
@@ -164,12 +169,44 @@ public partial class App : Application
             }
 
             var btnRepo = AppHost.Services.GetRequiredService<IButtonRepository>();
+
+            TenderTypes = await btnRepo.GetTenderTypes();
+            if (TenderTypes == null || TenderTypes.Count == 0)
+            {
+                MessageBox.Show("Bubbletill failed to launch:\nThere are no tenders configured.", "Bubbletill POS", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+                Shutdown();
+                return;
+            }
+
             HomeButtons = await btnRepo.GetHomeButtons();
             HomeTransButtons = await btnRepo.GetHomeTransButtons();
             ItemModButtons = await btnRepo.GetItemModButtons();
             TransModButtons = await btnRepo.GetTransModButtons();
             AdminButtons = await btnRepo.GetAdminButtons();
             AdminCashManagementButtons = await btnRepo.GetAdminCashManagementButtons();
+
+            // TODO: load pos peripherals
+
+
+            // Load required services
+            if (TenderTypes!.Contains(TransactionTender.WORLDPAY_CARD))
+            {
+                ProcessStartInfo processInfo;
+                Process process;
+
+                processInfo = new ProcessStartInfo("cmd.exe", "/c " + "C:\\YESEFT\\StartPOSServer.bat");
+                processInfo.CreateNoWindow = true;
+                processInfo.UseShellExecute = false;
+                process = Process.Start(processInfo);
+                process.WaitForExit();
+
+                int exitCode = process.ExitCode;
+                if (exitCode != 0)
+                {
+                    MessageBox.Show("Tender Worldpay Card failed to initalise (code " + exitCode + "). This option has been removed.", "Bubbletill POS", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.None);
+                    TenderTypes.Remove(TransactionTender.WORLDPAY_CARD);
+                }
+            }
 
             var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();

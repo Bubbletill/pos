@@ -49,8 +49,7 @@ public partial class TenderHomeView : UserControl
         }
 
         UpdateTotals();
-        LoadButtons(new List<TransactionTender>
-        { TransactionTender.CASH, TransactionTender.EXTERNAL_CARD });
+        LoadButtons(App.TenderTypes);
 
         // Back 
         if (_controller.CurrentTransaction!.Tenders.Count == 0)

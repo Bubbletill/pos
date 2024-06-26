@@ -12,6 +12,7 @@ using BT_POS.Buttons.Admin;
 using BT_POS.Buttons.Admin.CashMngt;
 using BT_POS.Buttons.ItemMod;
 using BT_POS.Buttons.TransMod;
+using BT_COMMONS.Transactions;
 
 namespace BT_POS.RepositoryImpl;
 
@@ -24,6 +25,19 @@ public class ButtonRepository : IButtonRepository
     {
         _database = database;
         _api = api;
+    }
+
+    public async Task<List<TransactionTender>?> GetTenderTypes()
+    {
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"tender\";", new { });
+        if (tables.Count == 0)
+        {
+            return null;
+        }
+
+        Trace.WriteLine(tables[0]);
+        var buttons = JsonConvert.DeserializeObject<List<TransactionTender>>(tables[0]);
+        return buttons;
     }
 
     public async Task<List<HomeButton>?> GetHomeButtons()

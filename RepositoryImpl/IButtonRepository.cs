@@ -1,4 +1,5 @@
-﻿using BT_POS.Buttons.Admin;
+﻿using BT_COMMONS.Transactions;
+using BT_POS.Buttons.Admin;
 using BT_POS.Buttons.Admin.CashMngt;
 using BT_POS.Buttons.ItemMod;
 using BT_POS.Buttons.Menu;
@@ -13,6 +14,8 @@ namespace BT_POS.RepositoryImpl;
 
 public interface IButtonRepository
 {
+    Task<List<TransactionTender>?> GetTenderTypes();
+
     Task<List<HomeButton>?> GetHomeButtons();
     Task<List<HomeButton>?> GetHomeTransButtons();
     Task<List<ItemModButton>?> GetItemModButtons();

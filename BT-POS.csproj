@@ -44,6 +44,9 @@
     <Compile Update="Views\Dialogues\AgeRestrictedDialogue.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Menus\ItemMod\ItemModChangeQty.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Menus\ItemModMenuView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

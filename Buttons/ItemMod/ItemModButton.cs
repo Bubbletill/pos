@@ -8,6 +8,7 @@ namespace BT_POS.Buttons.ItemMod;
 
 public enum ItemModButton
 {
+    QUANTITY,
     DISCOUNT,
     VOID
 }

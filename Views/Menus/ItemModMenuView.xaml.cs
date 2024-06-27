@@ -6,6 +6,7 @@ using BT_POS.Buttons.ItemMod;
 using BT_POS.Buttons.Menu;
 using BT_POS.Buttons.TransMod;
 using BT_POS.Views.Dialogues;
+using BT_POS.Views.Menus.ItemMod;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -70,6 +71,28 @@ public partial class ItemModMenuView : UserControl
     {
         switch (button)
         {
+            case ItemModButton.QUANTITY:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Edit Qty",
+                        Permission = OperatorBoolPermission.POS_ItemMod_ItemVoid,
+                        OnClick = w =>
+                        {
+                            BasketItem bi = _controller.CurrentTransaction!.SelectedItem;
+                            if (bi == null)
+                            {
+                                _controller.HeaderError("Invalid item to edit quantity.");
+                                return;
+                            }
+
+                            w.POSViewContainer.Content = new ItemModChangeQty(_controller, _mainWindow);
+
+                            return;
+                        }
+                    };
+                }
+
             case ItemModButton.DISCOUNT:
                 {
                     return new ButtonData
@@ -95,6 +118,7 @@ public partial class ItemModMenuView : UserControl
                             if (!_controller.CurrentTransaction.VoidBasketItem(bi))
                             {
                                 _controller.HeaderError("Invalid item to void.");
+                                return;
                             }
 
                             w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<HomeView>();

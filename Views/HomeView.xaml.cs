@@ -252,6 +252,7 @@ public partial class HomeView : UserControl
                                 return;
                             }
 
+                            w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<ResumeView>();
                             return;
                         }
                     };

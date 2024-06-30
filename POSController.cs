@@ -380,12 +380,13 @@ public class POSController
         BasketOnlyView basketOnly = App.AppHost.Services.GetRequiredService<BasketOnlyView>();
         mainWindow.POSViewContainer.Content = basketOnly;
 
-        CurrentTransaction.UpdateTransactionType(TransactionType.SUSPEND);
         TransactionLogQueue.ForEach(log => CurrentTransaction.Logs.Add(log));
         TransactionLogQueue.Clear();
         CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Transaction " + CurrentTransaction.TransactionId + " suspended at " + DateTime.Now.ToString()));
 
         var suspendSuccess = await _suspendRepository.Suspend(CurrentTransaction);
+
+        CurrentTransaction.UpdateTransactionType(TransactionType.SUSPEND);
         var submitSuccess = await _transactionRepository.SubmitTransaction(CurrentTransaction, TransactionType.SUSPEND);
         if (!suspendSuccess || !submitSuccess)
         {

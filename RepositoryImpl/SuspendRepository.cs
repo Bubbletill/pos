@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -26,11 +27,18 @@ public class SuspendRepository : ISuspendRepository
     {
         try
         {
-            var transactions = await _database.LoadData<Transaction, dynamic>("SELECT * FROM suspends WHERE store=?;", new { store });
+            var transactions = await _database.LoadData<string, dynamic>("SELECT data FROM suspends WHERE store=?;", new { store });
             if (transactions == null)
                 return new List<Transaction>();
 
-            return transactions;
+            List<Transaction> result = new List<Transaction>();
+            foreach (var item in transactions)
+            {
+                Transaction trans = JsonConvert.DeserializeObject<Transaction>(item);
+                result.Add(trans);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {

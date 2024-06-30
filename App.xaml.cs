@@ -74,6 +74,7 @@ public partial class App : Application
 
                 services.AddViewFactory<HomeView>();
                 services.AddViewFactory<TenderHomeView>();
+                services.AddViewFactory<ResumeView>();
 
                 services.AddViewFactory<ItemModMenuView>();
                 services.AddViewFactory<TransModMenuView>();

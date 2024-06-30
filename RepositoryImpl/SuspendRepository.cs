@@ -23,19 +23,20 @@ public class SuspendRepository : ISuspendRepository
         _database = database;
     }
 
-    public async Task<List<Transaction>?> List(int store)
+    public async Task<List<SuspendEntry>?> List(int store)
     {
         try
         {
-            var transactions = await _database.LoadData<string, dynamic>("SELECT data FROM suspends WHERE store=?;", new { store });
+            var transactions = await _database.LoadData<SuspendEntry, dynamic>("SELECT sid, data FROM suspends WHERE store=?;", new { store });
             if (transactions == null)
-                return new List<Transaction>();
+                return new List<SuspendEntry>();
 
-            List<Transaction> result = new List<Transaction>();
+            List<SuspendEntry> result = new List<SuspendEntry>();
             foreach (var item in transactions)
             {
-                Transaction trans = JsonConvert.DeserializeObject<Transaction>(item);
-                result.Add(trans);
+                Transaction trans = JsonConvert.DeserializeObject<Transaction>(item.Data);
+                item.Transaction = trans;
+                result.Add(item);
             }
 
             return result;
@@ -43,24 +44,22 @@ public class SuspendRepository : ISuspendRepository
         catch (Exception ex)
         {
             Console.WriteLine(ex.StackTrace);
-            return new List<Transaction>();
+            return new List<SuspendEntry>();
         }
     }
 
-    public async Task<Transaction?> Resume(int suspendId)
+    public async Task<bool> Delete(int suspendId)
     {
         try
         {
-            var transactions = await _database.LoadData<Transaction, dynamic>("SELECT * FROM suspends WHERE sid=? LIMIT 1;", new { suspendId });
-            if (transactions == null || transactions[0] == null)
-                return null;
+            await _database.SaveData("DELETE FROM suspends WHERE sid=?", new { suspendId });
 
-            return transactions[0];
+            return true;
         } 
         catch (Exception ex)
         {
             Console.WriteLine(ex.StackTrace);
-            return null;
+            return false;
         }
     }
 

@@ -404,6 +404,33 @@ public class POSController
         mainWindow.POSViewContainer.Content = home;
     }
 
+    public async void Resume(Transaction transaction, int sid)
+    {
+        if (CurrentTransaction != null)
+            return;
+
+        if (CurrentTransId != 9999)
+            CurrentTransId++;
+        else
+            CurrentTransId = 1;
+        int oldTid = transaction.TransactionId;
+        CurrentTransaction = transaction;
+        //CurrentTransaction.Init(StoreNumber, RegisterNumber, CurrentOperator!, DateTime.Now, CurrentTransId, type);
+        CurrentTransaction.TransactionId = CurrentTransId;
+        CurrentTransaction.Register = RegisterNumber;
+        CurrentTransaction.DateTime = DateTime.Now;
+        CurrentTransaction.Operator = CurrentOperator!;
+        CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Transaction " + oldTid + " (now " + CurrentTransId + ") resumed at " + DateTime.Now.ToString() + " by " + CurrentOperator!.ReducedName() + ", ID " + CurrentOperator.OperatorId));
+        TransactionLogQueue.ForEach(log => CurrentTransaction.Logs.Add(log));
+        TransactionLogQueue.Clear();
+
+        MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
+        mw.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<HomeView>();
+        mw.POSParentHeader_Trans.Text = "Transaction# " + CurrentTransId;
+
+        await _suspendRepository.Delete(sid);
+    }
+
     public void UpdateLocalTransactionNumber()
     {
         File.WriteAllText("C:\\bubbletill\\transid.txt", CurrentTransId.ToString());

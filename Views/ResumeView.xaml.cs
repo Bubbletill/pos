@@ -35,7 +35,7 @@ public partial class ResumeView : UserControl
     private readonly POSController _controller;
     private readonly ISuspendRepository _suspendRepository;
 
-    private readonly Style _buttonStyle;
+    private SuspendEntry _selectedTransaction;
 
     public ResumeView(MainWindow mainWindow, POSController posController, ISuspendRepository suspendRepository)
     {
@@ -50,21 +50,41 @@ public partial class ResumeView : UserControl
 
     public async void LoadResumes()
     {
-        List<Transaction> trans = await _suspendRepository.List(_controller.StoreNumber);
+        List<SuspendEntry> trans = await _suspendRepository.List(_controller.StoreNumber);
         this.Dispatcher.Invoke(() =>
         {
             ResumeGrid.ItemsSource = trans;
             InfoBox.Information = "Please select the transaction you would like to resume then press Resume.";
+            if (trans == null || trans.Count == 0)
+            {
+                _controller.HeaderError("No suspended transactions found.");
+                ResumeButton.IsEnabled = false;
+            }
         });
     }
 
     private void Resume_Click(object sender, RoutedEventArgs e)
     {
+        if (_selectedTransaction == null)
+        {
+            _controller.HeaderError("Please select a transaction to resume.");
+            return;
+        }
 
+        _controller.Resume(_selectedTransaction.Transaction, _selectedTransaction.Sid);
     }
 
     private void Back_Click(object sender, RoutedEventArgs e)
     {
+        _controller.HeaderError();
         _mainWindow.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<HomeView>();
+    }
+
+    private void Grid_Change(object sender, SelectionChangedEventArgs e)
+    {
+        if (ResumeGrid.SelectedItem == null) 
+            return;
+
+        _selectedTransaction = ResumeGrid.SelectedItem as SuspendEntry;
     }
 }

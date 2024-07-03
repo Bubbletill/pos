@@ -1,11 +1,13 @@
 ﻿using BT_COMMONS.Helpers;
 using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
+using BT_POS.Components;
 using BT_POS.Views;
 using BT_POS.Views.Admin;
 using BT_POS.Views.Dialogues;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace BT_POS;
 
@@ -29,6 +31,8 @@ public partial class MainWindow : Window
 
         POSParentHeader_Register.Text = "Register# " + _posController.RegisterNumber;
 
+        POSViewContainer.ContentChanged += ViewContentChanged;
+
         if (posController.RegisterOpen)
             POSViewContainer.Content = posLogin.Create();
         else
@@ -47,6 +51,11 @@ public partial class MainWindow : Window
 
         POSParentErrorBoxText.Text = error;
         POSParentErrorBox.Visibility = Visibility.Visible;
+    }
+
+    private void ViewContentChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        HeaderError();
     }
 
     public void LoginComplete(HomeView posHome)

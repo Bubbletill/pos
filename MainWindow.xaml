@@ -3,9 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BT_POS"
+        xmlns:local="clr-namespace:BT_POS" xmlns:src="clr-namespace:BT_COMMONS.Helpers;assembly=BT-COMMONS"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:components="clr-namespace:BT_POS.Components"
         mc:Ignorable="d"
         Title="Bubbletill POS" Height="1080" Width="1920" Icon="/Assets/icon.png" WindowStyle="None" WindowState="Maximized">
+    <Window.Resources>
+        <src:Ticker x:Key="ticker" />
+    </Window.Resources>
     <Grid x:Name="POSParentGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40*"/>
@@ -46,13 +50,13 @@
                 </GroupBox>
 
                 <TextBlock x:Name="POSParentHeader_TrainingStatus" Grid.Column="1" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30" Text="TRAINING MODE" Visibility="Hidden" />
-                <TextBlock x:Name="POSParentHeader_DateTime" Grid.Column="2" TextWrapping="Wrap" Text="" VerticalAlignment="Center" FontSize="20"/>
+                <Label x:Name="POSParentHeader_DateTime" Grid.Column="2" VerticalAlignment="Center" FontSize="20" Content="{Binding Source={StaticResource ticker} ,Path=Now, Mode=OneWay}" ContentStringFormat="dd/MM/yyyy HH:mm"/>
                 <TextBlock x:Name="POSParentHeader_Status" Grid.Column="3" TextWrapping="Wrap" Text="Online" VerticalAlignment="Center" FontSize="20"/>
                 <TextBlock x:Name="POSParentHeader_Register" Grid.Column="4" TextWrapping="Wrap" Text="Register# " VerticalAlignment="Center" FontSize="20"/>
                 <TextBlock x:Name="POSParentHeader_Trans" Grid.Column="5" TextWrapping="Wrap" Text="Transaction# " VerticalAlignment="Center" FontSize="20"/>
                 <TextBlock x:Name="POSParentHeader_Operator" Grid.Column="6" TextWrapping="Wrap" Text="Operator# " VerticalAlignment="Center" FontSize="20"/>
             </Grid>
         </GroupBox>
-        <ContentControl x:Name="POSViewContainer" Grid.Row="1" Content="Loading..." HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <components:ActionableContentPresenter x:Name="POSViewContainer" Grid.Row="1" Content="Loading..." HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
     </Grid>
 </Window>

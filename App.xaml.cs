@@ -32,6 +32,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Windows.Devices.PointOfService;
+using BT_POS.Views.Return;
 
 namespace BT_POS;
 
@@ -75,6 +76,8 @@ public partial class App : Application
                 services.AddViewFactory<HomeView>();
                 services.AddViewFactory<TenderHomeView>();
                 services.AddViewFactory<ResumeView>();
+
+                services.AddViewFactory<EnterReturnView>();
 
                 services.AddViewFactory<ItemModMenuView>();
                 services.AddViewFactory<TransModMenuView>();

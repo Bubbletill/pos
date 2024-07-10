@@ -10,6 +10,13 @@
 
 	  <FileVersion>2.0.0-alpha</FileVersion>
 	  <Version>2.0.0-alpha</Version>
+	  <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+	  <Title>Bubbletill POS</Title>
+	  <Authors>George Hotten</Authors>
+	  <Company>Bubbletill</Company>
+	  <PackageProjectUrl>https://bubbletill.com</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/bubbletill/pos</RepositoryUrl>
+	  <AssemblyName>Bubbletill-POS</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,9 +26,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Assets\icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-preview.5.23280.8" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0-preview.5.23280.8" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.6.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-preview.5.24306.7" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +72,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\BasketOnlyView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Return\EnterReturnView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Return\ReturnSelectionView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

@@ -67,9 +67,9 @@ public partial class LoginView : UserControl
             {
                 if (!oper.HasBoolPermission(OperatorBoolPermission.POS_Admin_OpenRegister))
                 {
-                    _controller.HeaderError("Insufficient permission to open this register.");
                     MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
                     mw.Logout();
+                    _controller.HeaderError("Insufficient permission to open this register.");
                     return;
                 }
             }

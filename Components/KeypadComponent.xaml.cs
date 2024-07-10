@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Xceed.Wpf.Toolkit;
 
 namespace BT_POS.Components;
 
@@ -20,12 +21,15 @@ public partial class KeypadComponent : UserControl
 {
 
     public TextBox? SelectedBox { get; set; }
+    public MaskedTextBox? SelectedMaskedBox { get; set; }
 
 
     public KeypadComponent()
     {
         EventManager.RegisterClassHandler(typeof(TextBox), TextBox.GotFocusEvent, new RoutedEventHandler(TextBoxSelect));
+        EventManager.RegisterClassHandler(typeof(MaskedTextBox), TextBox.GotFocusEvent, new RoutedEventHandler(MaskedTextBoxSelect));
         SelectedBox = null;
+        SelectedMaskedBox = null;
         InitializeComponent();
     }
 
@@ -38,69 +42,81 @@ public partial class KeypadComponent : UserControl
     private void TextBoxSelect(object sender, RoutedEventArgs e)
     {
         SelectedBox = (TextBox)sender;
+        SelectedMaskedBox = null;
     }
 
-    private void AddToBox(string toAdd)
+    private void MaskedTextBoxSelect(object sender, RoutedEventArgs e)
     {
-        if (SelectedBox == null)
-            return;
+        SelectedMaskedBox = (MaskedTextBox)sender;
+        SelectedBox = null;
+    }
 
-        SelectedBox.Text += toAdd;
+    private void AddToBox(char toAdd)
+    {
+        if (SelectedBox == null && SelectedMaskedBox != null)
+        {
+            SelectedMaskedBox.PromptChar += toAdd;
+        }
+        else if (SelectedMaskedBox == null && SelectedBox != null)
+        {
+             SelectedBox.Text += toAdd;
+        }
+        
     }
 
     private void SevenButton_Click(object sender, RoutedEventArgs e)
     {
-        AddToBox("7");
+        AddToBox('7');
     }
 
     private void EightButton_Click(object sender, RoutedEventArgs e)
     {
-        AddToBox("8");
+        AddToBox('8');
     }
 
     private void NineButton_Click(object sender, RoutedEventArgs e)
     {
-        AddToBox("9");
+        AddToBox('9');
     }
 
     private void FourButton_Click(object sender, RoutedEventArgs e)
     {
-        AddToBox("4");
+        AddToBox('4');
     }
 
     private void FiveButton_Click(object sender, RoutedEventArgs e)
     {
-        AddToBox("5");
+        AddToBox('5');
     }
 
     private void SixButton_Click(object sender, RoutedEventArgs e)
     {
-        AddToBox("6");
+        AddToBox('6');
     }
 
     private void OneButton_Click(object sender, RoutedEventArgs e)
     {
-        AddToBox("1");
+        AddToBox('1');
     }
 
     private void TwoButton_Click(object sender, RoutedEventArgs e)
     {
-        AddToBox("2");
+        AddToBox('2');
     }
 
     private void ThreeButton_Click(object sender, RoutedEventArgs e)
     {
-        AddToBox("3");
+        AddToBox('3');
     }
 
     private void ZeroButton_Click(object sender, RoutedEventArgs e)
     {
-        AddToBox("0");
+        AddToBox('0');
     }
 
     private void PeriodButton_Click(object sender, RoutedEventArgs e)
     {
-        AddToBox(".");
+        AddToBox('.');
     }
 
     private void BackButton_Click(object sender, RoutedEventArgs e)

@@ -24,6 +24,7 @@
         <!-- Side buttons -->
         <StackPanel x:Name="ButtonStackPanel" Grid.Row="0" Grid.RowSpan="4" Grid.Column="5" Orientation="Vertical">
             <Button Style="{DynamicResource BTVerticleButton}" Content="Accept" Click="Accept_Click"/>
+            <Button Style="{DynamicResource BTVerticleButton}" Content="No Receipt Available" Click="NoInfo_Click"/>
             <Button Style="{DynamicResource BTVerticleButton}" Content="Back" Click="Cancel_Click"/>
         </StackPanel>
 

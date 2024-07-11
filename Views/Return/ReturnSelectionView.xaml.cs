@@ -36,16 +36,18 @@ public partial class ReturnSelectionView : UserControl
     private readonly MainWindow _mainWindow;
     private readonly POSController _controller;
     private readonly ITransactionRepository _transactionRepository;
+    private readonly IStockRepository _stockRepository;
     private ReturnEntry _returnEntry;
 
     private readonly Style _buttonStyle;
 
-    public ReturnSelectionView(MainWindow mainWindow, POSController posController, ITransactionRepository transactionRepository, ReturnEntry entry)
+    public ReturnSelectionView(MainWindow mainWindow, POSController posController, ITransactionRepository transactionRepository, IStockRepository stockRepository, ReturnEntry entry)
     {
         _mainWindow = mainWindow;
         _controller = posController;
         _returnEntry = entry;
         _transactionRepository = transactionRepository;
+        _stockRepository = stockRepository;
 
         InitializeComponent();
 
@@ -73,10 +75,18 @@ public partial class ReturnSelectionView : UserControl
         }
 
         _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Return Details:"));
-        _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Store: " + _returnEntry.Store));
-        _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Register: " + _returnEntry.Register));
-        _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Transaction ID: " + _returnEntry.TransactionId));
-        _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Date: " + _returnEntry.Date));
+        if (!_returnEntry.IsNoInfo)
+        {
+            _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Store: " + _returnEntry.Store));
+            _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Register: " + _returnEntry.Register));
+            _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Transaction ID: " + _returnEntry.TransactionId));
+            _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Date: " + _returnEntry.Date));
+        } else
+        {
+            _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Performing return with no receipt."));
+            ViewInfo.Title = "Return without Receipt";
+            ViewInfo.Information = "You are returning without a receipt. Please carefully check all items against their description. Scan or enter the item code, then once all items are selected press Finish.";
+        }
     }
 
     private void Finish_Click(object sender, RoutedEventArgs e)
@@ -93,7 +103,7 @@ public partial class ReturnSelectionView : UserControl
             }
         }
 
-        if (returnedItems != 0)
+        if (returnedItems != 0 && !_returnEntry.IsNoInfo)
         {
             if (!_controller.CurrentTransaction!.ReturnBasket.ContainsKey(_returnEntry.Urid))
                 _controller.CurrentTransaction!.ReturnBasket.Add(_returnEntry.Urid, _returnEntry);
@@ -109,7 +119,7 @@ public partial class ReturnSelectionView : UserControl
 
     private void ReturnHome()
     {
-        if (!_controller.CurrentTransaction!.ReturnBasket.ContainsKey(_returnEntry.Urid))
+        if (!_controller.CurrentTransaction!.ReturnBasket.ContainsKey(_returnEntry.Urid) && !_returnEntry.IsNoInfo)
             _transactionRepository.ToggleReturnLock(_returnEntry.Urid, false);
 
         if (_controller.CurrentTransaction!.Basket.Count == 0)
@@ -142,20 +152,37 @@ public partial class ReturnSelectionView : UserControl
             return;
         }
 
+        if (!_returnEntry.IsNoInfo)
+        {
+            List<BasketItem> potentialItems = _returnEntry.ParsedBasket.FindAll(b => code == b.Code && !b.Returned && !b.Refund);
+            if (potentialItems.Count == 0)
+            {
+                _controller.HeaderError("Item not found on this receipt. Do not return this item.");
+            }
+            else if (potentialItems.Count > 1)
+            {
+                _controller.HeaderError("Multiple items found. Please select item manually.");
+            }
+            else if (potentialItems.Count == 1)
+            {
+                potentialItems[0].Refund = true;
+                _controller.HeaderError();
+            }
+        } else 
+        {
+            BasketItem? item = await _stockRepository.GetItem(code);
+            if (item == null)
+            {
+                ManualCodeEntryBox.Clear();
+                _mainWindow.HeaderError("Invalid item code.");
+                return;
+            }
 
-        List<BasketItem> potentialItems = _returnEntry.ParsedBasket.FindAll(b => code == b.Code && !b.Returned && !b.Refund);
-        if (potentialItems.Count == 0)
-        {
-            _controller.HeaderError("Item not found on this receipt. Do not return this item.");
-        } 
-        else if (potentialItems.Count > 1) 
-        {
-            _controller.HeaderError("Multiple items found. Please select item manually.");
-        }
-        else if (potentialItems.Count == 1)
-        {
-            potentialItems[0].Refund = true;
-            _controller.HeaderError();
+            _mainWindow.HeaderError();
+
+            _returnEntry.ParsedBasket.Add(item);
+            BasketGrid.ItemsSource = _returnEntry.ParsedBasket;
+            item.Refund = true;
         }
 
         // Has to run twice, can't tell you why

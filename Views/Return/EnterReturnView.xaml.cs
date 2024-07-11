@@ -1,6 +1,9 @@
 ﻿using BT_COMMONS.DataRepositories;
+using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
 using BT_COMMONS.Transactions.TypeAttributes;
+using BT_POS.Buttons;
+using BT_POS.Views.Dialogues;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -18,27 +21,30 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Windows.Devices.Pwm;
 
 namespace BT_POS.Views.Return;
 
 public partial class EnterReturnView : UserControl
 {
-    private readonly ITransactionRepository _transactionRepository;
     private readonly POSController _controller;
+    private readonly ITransactionRepository _transactionRepository;
+    private readonly IStockRepository _stockRepository;
 
-    public EnterReturnView(ITransactionRepository transactionRepository, POSController controller)
+    public EnterReturnView(POSController controller, ITransactionRepository transactionRepository, IStockRepository stockRepository)
     {
+        _controller = controller;
+        _transactionRepository = transactionRepository;
+        _stockRepository = stockRepository;
+
         InitializeComponent();
         Keypad.DisableButton(Keypad.PeriodButton);
-        _transactionRepository = transactionRepository;
-        _controller = controller;
     }
 
     private void Cancel_Click(object sender, RoutedEventArgs e)
     {
         MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
         HomeView hv = App.AppHost.Services.GetRequiredService<HomeView>();
-
         mw.POSViewContainer.Content = hv;
     }
 
@@ -69,7 +75,7 @@ public partial class EnterReturnView : UserControl
             returnEntry.Urid = urid;
 
             MainWindow main = App.AppHost.Services.GetRequiredService<MainWindow>();
-            main.POSViewContainer.Content = new ReturnSelectionView(main, _controller, _transactionRepository, returnEntry);
+            main.POSViewContainer.Content = new ReturnSelectionView(main, _controller, _transactionRepository, _stockRepository, returnEntry);
             return;
         }
 
@@ -88,11 +94,34 @@ public partial class EnterReturnView : UserControl
         LoadTransaction(returnEntry);
     }
 
+    private void NoInfo_Click(object sender, RoutedEventArgs e)
+    {
+        MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
+
+        if (_controller.CurrentOperator!.HasBoolPermission(OperatorBoolPermission.POS_Return_NoInform))
+        {
+            LoadTransaction(new ReturnEntry(_controller.StoreNumber, _controller.RegisterNumber, _controller.CurrentTransId, true));
+        }
+        else
+        {
+            mw.POSViewContainer.Content = new BoolAuthDialogue(OperatorBoolPermission.POS_Return_NoInform, () => 
+            // Yes
+            {
+                LoadTransaction(new ReturnEntry(_controller.StoreNumber, _controller.RegisterNumber, _controller.CurrentTransId, true));
+            }, 
+            () => 
+            { 
+                mw.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<EnterReturnView>(); 
+            });
+        }
+    }
+
     private async void LoadTransaction(ReturnEntry returnEntry)
     {
-        await _transactionRepository.ToggleReturnLock(returnEntry.Urid, true);
+        if (!returnEntry.IsNoInfo)
+            await _transactionRepository.ToggleReturnLock(returnEntry.Urid, true);
         MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
-        mw.POSViewContainer.Content = new ReturnSelectionView(mw, _controller, _transactionRepository, returnEntry);
+        mw.POSViewContainer.Content = new ReturnSelectionView(mw, _controller, _transactionRepository, _stockRepository, returnEntry);
     }
 
     private void PreviewTextInput(object sender, TextCompositionEventArgs e)

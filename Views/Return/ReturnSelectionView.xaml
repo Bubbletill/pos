@@ -78,7 +78,7 @@
         </DataGrid>
 
         <!-- Information Box -->
-        <components:ViewInformationComponent Grid.Row="0" Grid.Column="3" Title="Return Selection" Information="Please scan or select items the customer wishes to return. When all items are selected, press Finish." Grid.ColumnSpan="3" Margin="204,0,244,0"/>
+        <components:ViewInformationComponent x:Name="ViewInfo" Grid.Row="0" Grid.Column="3" Title="Return Selection" Information="Please scan or select items the customer wishes to return. When all items are selected, press Finish." Grid.ColumnSpan="3" Margin="204,0,244,0"/>
 
         <!-- Keypad -->
         <components:KeypadComponent x:Name="Keypad" Grid.Row="1" Grid.Column="3" MaxHeight="700" MaxWidth="500" Grid.ColumnSpan="3" Margin="204,0,244,0" Grid.RowSpan="3"/>

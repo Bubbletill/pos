@@ -1,6 +1,7 @@
 ﻿using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
+using BT_COMMONS.Transactions.TypeAttributes;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Menu;
 using BT_POS.RepositoryImpl;
@@ -54,6 +55,8 @@ public partial class HomeView : UserControl
             BasketComponent.BasketGrid.ItemsSource = _controller.CurrentTransaction.Basket;
             LoadButtons(App.HomeTransButtons);
             TotalTextBlock.Text = "£" + _controller.CurrentTransaction!.GetTotal();
+
+            ViewInformation.Title = _controller.CurrentTransaction.Type.FriendlyName();
         } 
         else
         {
@@ -117,6 +120,12 @@ public partial class HomeView : UserControl
                             if (_controller.CurrentTransaction.Basket.Count == 0)
                             {
                                 w.HeaderError("Action not allowed. The basket is empty.");
+                                return;
+                            }
+
+                            if (_controller.CurrentTransaction.GetTotal() == 0.00 && _controller.CurrentTransaction.Type == TransactionType.EXCHANGE)
+                            {
+                                _controller.Submit();
                                 return;
                             }
 
@@ -296,6 +305,7 @@ public partial class HomeView : UserControl
             LoadButtons(App.HomeTransButtons);
         }
         _controller.AddItemToBasket(item);
+        ViewInformation.Title = _controller.CurrentTransaction!.Type.FriendlyName();
         TotalTextBlock.Text = "£" + _controller.CurrentTransaction!.GetTotal();
         BasketComponent.BasketGrid.ItemsSource = _controller.CurrentTransaction!.Basket;
         BasketComponent.BasketGrid.Items.Refresh();

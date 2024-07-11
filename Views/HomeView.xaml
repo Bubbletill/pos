@@ -74,7 +74,7 @@
         </Border>-->
 
         <!-- Information Box -->
-        <components:ViewInformationComponent Grid.Row="0" Grid.Column="4" Title="Sale" Information="Scan or key-in the item code for each item presented. Once all items have been scanned, proceed to collect payment by pressing Tender."/>
+        <components:ViewInformationComponent x:Name="ViewInformation" Grid.Row="0" Grid.Column="4" Title="Sale" Information="Scan or key-in the item code for each item presented. Once all items have been scanned, proceed to collect payment by pressing Tender."/>
 
         <!-- Keypad -->
         <components:KeypadComponent x:Name="Keypad" Grid.Row="1" Grid.Column="4" MaxHeight="700" MaxWidth="500"/>

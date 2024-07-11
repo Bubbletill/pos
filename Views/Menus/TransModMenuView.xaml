@@ -29,21 +29,6 @@
         <!-- Basket -->
         <components:BasketComponent x:Name="BasketComponent" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Grid.RowSpan="2"/>
 
-        <!-- Totals -->
-        <!-- Total -->
-        <TextBlock x:Name="TotalTitle" Grid.Column="0" Grid.Row="2" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Total"/>
-        <Border x:Name="TotalBorder" Grid.Column="0" Grid.Row="3" BorderBrush="Black" Background="#FFE4E4E4" BorderThickness="1" RenderTransformOrigin="0.5,0.5">
-            <Border.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleX="0.95" ScaleY="0.9"/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Border.RenderTransform>
-            <TextBlock x:Name="TotalTextBlock" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" Text="£0.00"/>
-        </Border>
-
         <!-- Information Box -->
         <components:ViewInformationComponent Grid.Row="0" Grid.Column="4" Title="Trans Mod" Information="Actions from this menu modify the entire transaction. To modify a specific item, please select back and then Item Mod."/>
 

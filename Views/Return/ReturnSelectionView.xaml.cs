@@ -49,7 +49,17 @@ public partial class ReturnSelectionView : UserControl
 
         InitializeComponent();
 
-        BasketGrid.ItemsSource = _returnEntry.ParsedBasket;
+        List<BasketItem> returnAllowed = new List<BasketItem>();
+        List<BasketItem> returnDisallowed = new List<BasketItem>();
+        _returnEntry.ParsedBasket.ForEach(b =>
+        {
+            if (!b.Returned)
+                returnAllowed.Add(b);
+            else
+                returnDisallowed.Add(b);
+        });
+        BasketGrid.ItemsSource = returnAllowed;
+        ExpiredGrid.ItemsSource = returnDisallowed;
 
         Keypad.SelectedBox = ManualCodeEntryBox;
         ManualCodeEntryBox.Focus();
@@ -69,8 +79,46 @@ public partial class ReturnSelectionView : UserControl
         _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Date: " + _returnEntry.Date));
     }
 
+    private void Finish_Click(object sender, RoutedEventArgs e)
+    {
+        int returnedItems = 0;
+        foreach (BasketItem item in _returnEntry.ParsedBasket)
+        {
+            if (item.Refund && !item.Returned)
+            {
+                item.Returned = true;
+                item.PartOfReturnId = _returnEntry.Urid;
+                _controller.AddItemToBasket(item);
+                returnedItems++;
+            }
+        }
+
+        if (returnedItems != 0)
+        {
+            if (!_controller.CurrentTransaction!.ReturnBasket.ContainsKey(_returnEntry.Urid))
+                _controller.CurrentTransaction!.ReturnBasket.Add(_returnEntry.Urid, _returnEntry);
+        }
+
+        ReturnHome();
+    }
+
     private void Cancel_Click(object sender, RoutedEventArgs e)
     {
+        ReturnHome();
+    }
+
+    private void ReturnHome()
+    {
+        if (!_controller.CurrentTransaction!.ReturnBasket.ContainsKey(_returnEntry.Urid))
+            _transactionRepository.ToggleReturnLock(_returnEntry.Urid, false);
+
+        if (_controller.CurrentTransaction!.Basket.Count == 0)
+        {
+            _controller.CancelTransaction();
+        }
+
+        _controller.CheckTransactionType();
+
         MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
         HomeView hv = App.AppHost.Services.GetRequiredService<HomeView>();
 
@@ -93,25 +141,29 @@ public partial class ReturnSelectionView : UserControl
             _mainWindow.HeaderError("Invalid item code.");
             return;
         }
-        
-/*        BasketItem? item = await _stockRepository.GetItem(code);
-        if (item == null)
-        {
-            ManualCodeEntryBox.Clear();
-            _mainWindow.HeaderError("Invalid item code.");
-            return;
-        }*/
 
-/*        _mainWindow.HeaderError();
-        if (_controller.CurrentTransaction == null)
+
+        List<BasketItem> potentialItems = _returnEntry.ParsedBasket.FindAll(b => code == b.Code && !b.Returned && !b.Refund);
+        if (potentialItems.Count == 0)
         {
-            LoadButtons(App.HomeTransButtons);
+            _controller.HeaderError("Item not found on this receipt. Do not return this item.");
+        } 
+        else if (potentialItems.Count > 1) 
+        {
+            _controller.HeaderError("Multiple items found. Please select item manually.");
         }
-        _controller.AddItemToBasket(item);
-        TotalTextBlock.Text = "£" + _controller.CurrentTransaction!.GetTotal();
-        BasketComponent.BasketGrid.ItemsSource = _controller.CurrentTransaction!.Basket;
-        BasketComponent.BasketGrid.Items.Refresh();
-        ManualCodeEntryBox.Clear();*/
+        else if (potentialItems.Count == 1)
+        {
+            potentialItems[0].Refund = true;
+            _controller.HeaderError();
+        }
+
+        // Has to run twice, can't tell you why
+        BasketGrid.CommitEdit();
+        BasketGrid.CommitEdit();
+
+        BasketGrid.Items.Refresh();
+        ManualCodeEntryBox.Clear();
     }
 
     private void ManualCodeEntryBox_PreviewTextInput(object sender, TextCompositionEventArgs e)

@@ -139,7 +139,7 @@ public partial class TenderSpecifiedView : UserControl
         catch (Exception ex)
         {
             ManualAmountEntryBox.Clear();
-            _mainWindow.HeaderError("Invalid price.");
+            _mainWindow.HeaderError("Invalid amount.");
             return;
         }
 

@@ -55,12 +55,18 @@ public partial class EnterReturnView : UserControl
 
             if (!transaction.Type.CanReturn() || !transaction.PostTransType.CanReturn())
             {
-                _controller.HeaderError("This transaction's type does not permit returns. (" + transaction.Type + ")");
+                _controller.HeaderError("This transaction's type of " + transaction.Type.FriendlyName() + " does not permit returns.");
                 return;
             }
 
             returnEntry = new ReturnEntry(transaction);
-            await _transactionRepository.SubmitReturnEntry(returnEntry);
+            int urid = await _transactionRepository.SubmitReturnEntry(returnEntry);
+            if (urid == -1)
+            {
+                _controller.HeaderError("Failed to retrieve transaction data. Please try again.");
+                return;
+            }
+            returnEntry.Urid = urid;
 
             MainWindow main = App.AppHost.Services.GetRequiredService<MainWindow>();
             main.POSViewContainer.Content = new ReturnSelectionView(main, _controller, _transactionRepository, returnEntry);
@@ -69,10 +75,21 @@ public partial class EnterReturnView : UserControl
 
         if (returnEntry.Locked)
         {
+            if (_controller.CurrentTransaction != null && _controller.CurrentTransaction.ReturnBasket.ContainsKey(returnEntry.Urid))
+            {
+                LoadTransaction(_controller.CurrentTransaction.ReturnBasket[returnEntry.Urid]);
+                return;
+            }
+
             _controller.HeaderError("This transaction is in-use and currently locked.");
             return;
         }
 
+        LoadTransaction(returnEntry);
+    }
+
+    private async void LoadTransaction(ReturnEntry returnEntry)
+    {
         await _transactionRepository.ToggleReturnLock(returnEntry.Urid, true);
         MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
         mw.POSViewContainer.Content = new ReturnSelectionView(mw, _controller, _transactionRepository, returnEntry);

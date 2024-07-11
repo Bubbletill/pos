@@ -122,6 +122,35 @@ public class POSController
         mw.POSParentHeader_Trans.Text = "Transaction# " + CurrentTransId;
     }
 
+    public void CheckTransactionType()
+    {
+        if (CurrentTransaction == null)
+            return;
+
+        int saleItems = 0;
+        int returnItems = 0;
+        CurrentTransaction.Basket.ForEach(b =>
+        {
+            if (b.Refund)
+                returnItems++;
+            else
+                saleItems++;
+        });
+
+        if ((saleItems == 0 && returnItems == 0) || (saleItems > 0 && returnItems == 0))
+        {
+            CurrentTransaction.UpdateTransactionType(TransactionType.SALE);
+        } 
+        else if (saleItems == 0 && returnItems > 0)
+        {
+            CurrentTransaction.UpdateTransactionType(TransactionType.RETURN);
+        } 
+        else if (saleItems > 0 && returnItems > 0)
+        {
+            CurrentTransaction.UpdateTransactionType(TransactionType.EXCHANGE);
+        }
+    }
+
     public void AddItemToBasket(BasketItem item)
     {
         if (CurrentTransaction == null)
@@ -129,7 +158,7 @@ public class POSController
             StartTransaction(TransactionType.SALE);
         }
 
-        if (item.AgeRestricted > CurrentTransaction!.CustomerAge)
+        if (item.AgeRestricted > CurrentTransaction!.CustomerAge && !item.Refund)
         {
             MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
             mw.POSViewContainer.Content = new AgeRestrictedDialogue(this, item);
@@ -138,6 +167,7 @@ public class POSController
 
         CurrentTransaction!.AddToBasket(item);
         CurrentTransaction!.SelectedItem = item;
+        CheckTransactionType();
     }
 
     public void AddTender(TransactionTender tender, float amount)
@@ -305,8 +335,25 @@ public class POSController
         Submit();
     }
 
+    // If an empty transaction started, rather than voiding it, it can be cancelled.
+    public void CancelTransaction()
+    {
+        if (CurrentTransaction == null)
+            return;
+
+        TransactionLogQueue.Clear();
+        CurrentTransaction = null;
+
+        CurrentTransId--;
+        if (CurrentTransId == 0)
+            CurrentTransId = 9999;
+
+        MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
+        mw.POSParentHeader_Trans.Text = "Transaction# " + CurrentTransId;
+    }
+
     // Submits current transaction to the database.
-    private async Task Submit()
+    public async Task Submit()
     {
         if (CurrentTransaction == null)
             return;
@@ -345,6 +392,15 @@ public class POSController
         {
             InfoPopup popup = new InfoPopup("Amount Tendered: £" + CurrentTransaction.Tenders[CurrentTransaction.GetChangeTender()] + "\nChange: £" + CurrentTransaction.Change);
             popup.ShowDialog();
+        }
+
+        if (CurrentTransaction.Type == TransactionType.VOID)
+        {
+            foreach (var item in CurrentTransaction.ReturnBasket)
+            {
+                await _transactionRepository.ToggleReturnLock(item.Key, false);
+            }
+            CurrentTransaction.ReturnBasket.Clear();
         }
 
         var success = await _transactionRepository.SubmitTransaction(CurrentTransaction, TrainingMode && CurrentTransaction.Type != TransactionType.TRAINING_ON ? TransactionType.TRAINING_TRANS : null);

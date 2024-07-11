@@ -18,14 +18,16 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="186*"/>
-            <RowDefinition Height="669*"/>
+            <RowDefinition Height="338*"/>
+            <RowDefinition Height="49*"/>
+            <RowDefinition Height="282*"/>
             <RowDefinition Height="40*"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
 
         <!-- Side buttons -->
-        <StackPanel x:Name="ButtonStackPanel" Grid.Row="0" Grid.RowSpan="4" Grid.Column="5" Orientation="Vertical" FocusManager.IsFocusScope="True">
-            <Button Style="{DynamicResource BTVerticleButton}" Content="Finish"/>
+        <StackPanel x:Name="ButtonStackPanel" Grid.Row="0" Grid.RowSpan="6" Grid.Column="5" Orientation="Vertical" FocusManager.IsFocusScope="True">
+            <Button Style="{DynamicResource BTVerticleButton}" Content="Finish" Click="Finish_Click"/>
             <Button Style="{DynamicResource BTVerticleButton}" Content="Cancel" Click="Cancel_Click"/>
         </StackPanel>
 
@@ -41,12 +43,34 @@
                 </TransformGroup>
             </DataGrid.RenderTransform>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Code" Binding="{Binding Code}" CellStyle="{StaticResource BTBasketCodeZeroHider}" Width="*"/>
+                <DataGridTextColumn Header="Code" Binding="{Binding Code}" IsReadOnly="True" Width="*"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}" IsReadOnly="True" Width="*"/>
+                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" IsReadOnly="True" Width="*"/>
+                <DataGridTextColumn Header="File Price" Binding="{Binding FilePrice}" IsReadOnly="True" Width="*"/>
+                <DataGridTextColumn Header="Sale Price" Binding="{Binding SalePrice}" IsReadOnly="True" Width="*"/>
+                <DataGridCheckBoxColumn Header="Return?" Binding="{Binding Refund, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" Width="*" />
+            </DataGrid.Columns>
+            <DataGrid.DataContext>
+                <Transactions:BasketItem/>
+            </DataGrid.DataContext>
+        </DataGrid>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,9,0,0" FontSize="24" VerticalAlignment="Top" HorizontalAlignment="Left" Text="Items Previously Returned"/>
+        <DataGrid x:Name="ExpiredGrid" AutoGenerateColumns="False" FontSize="20" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" IsReadOnly="true" RenderTransformOrigin="0.5,0.5" FocusManager.IsFocusScope="True" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="3">
+            <DataGrid.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0.99" ScaleY="0.99"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </DataGrid.RenderTransform>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="*"/>
                 <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
-                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" CellStyle="{StaticResource BTBasketCodeZeroHider}" Width="*"/>
-                <DataGridTextColumn Header="File Price" Binding="{Binding FilePrice}" CellStyle="{StaticResource BTBasketCodeZeroHider}" Width="*"/>
-                <DataGridTextColumn Header="Sale Price" Binding="{Binding SalePrice}" CellStyle="{StaticResource BTBasketNoDescHider}" Width="*"/>
-                <DataGridTextColumn Header="Return?" CellStyle="{StaticResource BTBasketNoDescHider}" Width="*"/>
+                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="*"/>
+                <DataGridTextColumn Header="File Price" Binding="{Binding FilePrice}" Width="*"/>
+                <DataGridTextColumn Header="Sale Price" Binding="{Binding SalePrice}" Width="*"/>
             </DataGrid.Columns>
             <DataGrid.DataContext>
                 <Transactions:BasketItem/>
@@ -54,13 +78,13 @@
         </DataGrid>
 
         <!-- Information Box -->
-        <components:ViewInformationComponent Grid.Row="0" Grid.Column="4" Title="Return Selection" Information="Please scan or select items the customer wishes to return. When all items are selected, press Finish."/>
+        <components:ViewInformationComponent Grid.Row="0" Grid.Column="3" Title="Return Selection" Information="Please scan or select items the customer wishes to return. When all items are selected, press Finish." Grid.ColumnSpan="3" Margin="204,0,244,0"/>
 
         <!-- Keypad -->
-        <components:KeypadComponent x:Name="Keypad" Grid.Row="1" Grid.Column="4" MaxHeight="700" MaxWidth="500"/>
+        <components:KeypadComponent x:Name="Keypad" Grid.Row="1" Grid.Column="3" MaxHeight="700" MaxWidth="500" Grid.ColumnSpan="3" Margin="204,0,244,0" Grid.RowSpan="3"/>
 
         <!-- Manual Entry -->
-        <TextBlock Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Margin="10,10,0,0" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Product Code"/>
-        <TextBox x:Name="ManualCodeEntryBox" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="3" MaxHeight="40" MinWidth="500" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,6,0,0" FontSize="24" KeyDown="ManualCodeEntryBox_KeyDown" PreviewTextInput="ManualCodeEntryBox_PreviewTextInput"/>
+        <TextBlock Grid.Row="4" Grid.Column="2" Margin="10,9,0,0" FontSize="24" VerticalAlignment="Top" HorizontalAlignment="Left" Text="Product Code" Grid.RowSpan="2"/>
+        <TextBox x:Name="ManualCodeEntryBox" Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="3" MaxHeight="40" MinWidth="500" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,6,0,0" FontSize="24" KeyDown="ManualCodeEntryBox_KeyDown" PreviewTextInput="ManualCodeEntryBox_PreviewTextInput"/>
     </Grid>
 </UserControl>

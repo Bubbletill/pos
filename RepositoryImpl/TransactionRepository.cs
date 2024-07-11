@@ -66,6 +66,12 @@ public class TransactionRepository : ITransactionRepository
     "VALUES (@Store, @Register, @Date, @TransId, @Data);",
     new { @Store = trans.Store, @Register = trans.Register, @Date = trans.DateTime.Date, @TransId = trans.TransactionId, @Data = JsonConvert.SerializeObject(trans.Logs) });
 
+            foreach (var item in trans.ReturnBasket)
+            {
+                item.Value.Locked = false;
+                await UpdateReturnEntry(item.Value);
+            }
+
             return true;
         } 
         catch (Exception ex)
@@ -99,7 +105,25 @@ public class TransactionRepository : ITransactionRepository
         }
     }
 
-    public async Task<bool> SubmitReturnEntry(ReturnEntry entry)
+    public async Task<ReturnEntry?> GetReturnEntry(int urid)
+    {
+        try
+        {
+            var transaction = await _database.LoadData<ReturnEntry, dynamic>("SELECT * FROM `returns` WHERE `urid`=? LIMIT 1;", new { urid });
+            if (transaction == null || transaction.Count == 0)
+                return null;
+
+            transaction[0].ParsedBasket = JsonConvert.DeserializeObject<List<BasketItem>>(transaction[0].Basket);
+            return transaction[0];
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+            return null;
+        }
+    }
+
+    public async Task<int> SubmitReturnEntry(ReturnEntry entry)
     {
         try
         {
@@ -107,13 +131,19 @@ public class TransactionRepository : ITransactionRepository
                 "VALUES (@Store, @Register, @Date, @TransId, @Basket, @Locked);",
                 new { @Store = entry.Store, @Register = entry.Register, @Date = entry.Date.ToString("yyyy-MM-dd"), @TransId = entry.TransactionId, @Basket = JsonConvert.SerializeObject(entry.ParsedBasket), @Locked = entry.Locked});
 
-            return true;
+            ReturnEntry? addedEntry = await GetReturnEntry(entry.Store, entry.Register, entry.TransactionId, DateOnly.FromDateTime(entry.Date));
+            if (addedEntry == null)
+            {
+                return -1;
+            }
+
+            return addedEntry.Urid;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.StackTrace);
 
-            return false;
+            return -1;
         }
     }
 
@@ -139,7 +169,7 @@ public class TransactionRepository : ITransactionRepository
         try
         {
             await _database.SaveData("UPDATE returns SET basket=@Basket, locked=@Locked WHERE urid=@Urid",
-                new { @Basket = JsonConvert.SerializeObject(entry.Basket), @Locked = entry.Locked, @Urid = entry.Urid });
+                new { @Basket = JsonConvert.SerializeObject(entry.ParsedBasket), @Locked = entry.Locked, @Urid = entry.Urid });
 
             return true;
         }

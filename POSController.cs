@@ -187,6 +187,9 @@ public class POSController
 
     private void IncreaseTenderHardTotal(TransactionTender tender, float amount)
     {
+        if (CurrentTransaction!.GetTotal() < 0)
+            amount *= -1;
+
         var current = TenderHardTotals.GetValueOrDefault(tender, 0);
         current += amount;
         TenderHardTotals[tender] = current;
@@ -245,7 +248,8 @@ public class POSController
         CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, " "));
         foreach (KeyValuePair<TransactionType, float> entry in TypeHardTotals)
         {
-            CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, entry.Key.ToString() + ": " + entry.Value));
+            if (entry.Key.ShowOnXRead())
+                CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, entry.Key.ToString() + ": " + entry.Value));
         }
 
         await Submit();
@@ -278,7 +282,8 @@ public class POSController
         CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, " "));
         foreach (KeyValuePair<TransactionType, float> entry in TypeHardTotals)
         {
-            CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, entry.Key.ToString() + ": " + entry.Value));
+            if (entry.Key.ShowOnXRead())
+                CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, entry.Key.ToString() + ": " + entry.Value));
         }
 
         TenderHardTotals = new Dictionary<TransactionTender, float>();

@@ -143,6 +143,13 @@ public partial class TenderSpecifiedView : UserControl
             return;
         }
 
+        if (_controller.CurrentTransaction!.GetTotal() < 0 && amount > _controller.CurrentTransaction!.GetRemainingTender())
+        {
+            ManualAmountEntryBox.Clear();
+            _mainWindow.HeaderError("You cannot give back more money than the amount being returned.");
+            return;
+        }
+
         if (!_tender.AllowHigherTender() && amount > _controller.CurrentTransaction!.GetRemainingTender())
         {
             ManualAmountEntryBox.Clear();

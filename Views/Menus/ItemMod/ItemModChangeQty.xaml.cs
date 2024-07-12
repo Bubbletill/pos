@@ -74,7 +74,9 @@ public partial class ItemModChangeQty : UserControl
         }
 
         _mainWindow.HeaderError(null);
-        _controller.CurrentTransaction!.SelectedItem.Quantity = qty;
+        BasketItem selected = _controller.CurrentTransaction!.SelectedItem;
+        selected.Quantity = qty;
+        _controller.CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Quantity for item " + selected.Code + " - " + selected.Description + " updated to " + qty));
         _mainWindow.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<HomeView>();
     }
 

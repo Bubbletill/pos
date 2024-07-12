@@ -86,6 +86,12 @@ public partial class ItemModMenuView : UserControl
                                 return;
                             }
 
+                            if (bi.Refund)
+                            {
+                                _controller.HeaderError("Cannot edit the quantity of a returned item.");
+                                return;
+                            }
+
                             w.POSViewContainer.Content = new ItemModChangeQty(_controller, _mainWindow);
 
                             return;

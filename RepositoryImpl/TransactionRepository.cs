@@ -66,10 +66,13 @@ public class TransactionRepository : ITransactionRepository
     "VALUES (@Store, @Register, @Date, @TransId, @Data);",
     new { @Store = trans.Store, @Register = trans.Register, @Date = trans.DateTime.Date, @TransId = trans.TransactionId, @Data = JsonConvert.SerializeObject(trans.Logs) });
 
-            foreach (var item in trans.ReturnBasket)
+            if (trans.Type == TransactionType.RETURN || trans.Type == TransactionType.EXCHANGE)
             {
-                item.Value.Locked = false;
-                await UpdateReturnEntry(item.Value);
+                foreach (var item in trans.ReturnBasket)
+                {
+                    item.Value.Locked = false;
+                    await UpdateReturnEntry(item.Value);
+                }
             }
 
             return true;

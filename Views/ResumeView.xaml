@@ -39,9 +39,10 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" Binding="{Binding Transaction.DateTime}" Width="*"/>
                 <DataGridTextColumn Header="Register" Binding="{Binding Transaction.Register}" Width="*"/>
+                <DataGridTextColumn Header="Trxn Number" Binding="{Binding Transaction.TransactionId}" Width="*"/>
                 <DataGridTextColumn Header="Operator" Binding="{Binding Transaction.Operator.OperatorId}" Width="*"/>
-                <DataGridTextColumn Header="Trxn Amount" Binding="{Binding Transaction.GetTotal}" Width="*"/>
-                <DataGridTextColumn Header="Trxn Type" Binding="{Binding Transaction.Type}" Width="*"/>
+                <DataGridTextColumn Header="Trxn Amount" Binding="{Binding Transaction.Total}" Width="*"/>
+                <DataGridTextColumn Header="Trxn Type" Binding="{Binding Transaction.FriendlyType}" Width="*"/>
             </DataGrid.Columns>
             <DataGrid.DataContext>
                 <Transactions:SuspendEntry/>

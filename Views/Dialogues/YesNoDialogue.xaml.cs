@@ -23,13 +23,16 @@ public partial class YesNoDialogue : UserControl
     private readonly Action _onYes;
     private readonly Action _onNo;
 
-    public YesNoDialogue(string text, Action onYes, Action onNo)
+    public YesNoDialogue(string text, Action onYes, Action onNo, bool admin = false)
     {
         InitializeComponent();
         _onYes = onYes;
         _onNo = onNo;
 
-        ViewInfo.VICRoot.Information = text;
+        ViewInfo.Information = text;
+
+        if (admin)
+            ViewInfo.SetAdminColour();
     }
 
 

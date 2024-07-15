@@ -1,0 +1,101 @@
+﻿<UserControl x:Class="BT_POS.Views.Dialogues.TransactionInformationDialouge"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BT_POS.Views.Dialogues" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:components="clr-namespace:BT_POS.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="995" d:DesignWidth="1920" Background="White">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="222*"/>
+            <ColumnDefinition Width="222*"/>
+            <ColumnDefinition Width="222*"/>
+            <ColumnDefinition Width="204*"/>
+            <ColumnDefinition Width="803*"/>
+            <ColumnDefinition Width="244*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="186*"/>
+            <RowDefinition Height="709*"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Side buttons -->
+        <StackPanel x:Name="ButtonStackPanel" Grid.Row="0" Grid.RowSpan="4" Grid.Column="5" Orientation="Vertical">
+            <Button Style="{DynamicResource BTVerticleButton}" Content="Accept" Click="Accept_Click"/>
+            <Button Style="{DynamicResource BTVerticleButton}" Content="Cancel" Click="Cancel_Click"/>
+        </StackPanel>
+
+        <!-- Enter Box -->
+        <!--<components:MoneyCounterComponent x:Name="MoneyCounterComponent" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Grid.RowSpan="2"/>-->
+        <Grid Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="75"/>
+                <RowDefinition Height="75"/>
+                <RowDefinition Height="75"/>
+                <RowDefinition Height="75"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Store -->
+            <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="0" Grid.Column="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Store" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                    <TextBox x:Name="StoreNumber" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                </Grid>
+            </GroupBox>
+
+            <!-- Register -->
+            <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="1" Grid.Column="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Register" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                    <TextBox x:Name="RegisterNumber" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                </Grid>
+            </GroupBox>
+
+            <!-- Transaction -->
+            <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="2" Grid.Column="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Transaction" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                    <TextBox x:Name="TransactionNumber" PreviewTextInput="PreviewTextInput" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                </Grid>
+            </GroupBox>
+
+            <!-- Date -->
+            <GroupBox Style="{DynamicResource BTMoneyCounterBox}" Grid.Row="3" Grid.Column="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Date" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+                    <xctk:MaskedTextBox x:Name="Date" Mask="00/00/0000" Grid.Column="1" Margin="10,10,10,10" FontSize="24" />
+                </Grid>
+            </GroupBox>
+        </Grid>
+
+
+        <!-- Information Box -->
+        <components:ViewInformationComponent x:Name="ViewInfoComponent" Grid.Row="0" Grid.Column="4" Title="" Information=""/>
+
+        <!-- Keypad -->
+        <components:KeypadComponent x:Name="Keypad" Grid.Row="1" Grid.Column="4" MaxHeight="700" MaxWidth="500"/>
+    </Grid>
+</UserControl>

@@ -25,6 +25,9 @@ public partial class EnterLoanView : UserControl
 
         ViewInfoComponent.Title = title;
         ViewInfoComponent.Information += infoType + ".";
+
+        if (title == "Loan")
+            ViewInfoComponent.SetAdminColour();
     }
 
     private void Cancel_Click(object sender, RoutedEventArgs e)

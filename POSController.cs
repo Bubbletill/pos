@@ -185,9 +185,9 @@ public class POSController
         mainWindow.POSViewContainer.Content = tenderHome;
     }
 
-    private void IncreaseTenderHardTotal(TransactionTender tender, float amount)
+    private void IncreaseTenderHardTotal(TransactionTender tender, float amount, bool forcePositive = true)
     {
-        if (CurrentTransaction!.GetTotal() < 0)
+        if (CurrentTransaction!.GetTotal() < 0 && forcePositive)
             amount *= -1;
 
         var current = TenderHardTotals.GetValueOrDefault(tender, 0);
@@ -338,6 +338,18 @@ public class POSController
         CurrentTransaction.VoidTender();
         CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, "Transaction Voided"));
         Submit();
+    }
+
+    public void ActionPostVoid(Transaction transaction)
+    {
+        foreach (var entry in transaction.Tenders)
+        {
+            IncreaseTenderHardTotal(entry.Key, -entry.Value, false);
+            CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Tender " + entry.Key.GetTenderInternalName() + " modified by " + -entry.Value + " to hard totals"));
+        }
+
+        IncreaseTypeHardTotal(TransactionType.POST_VOID, transaction.GetTotal());
+        CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Post Void value of " + transaction.GetTotal() + " incremented to hard total"));
     }
 
     // If an empty transaction started, rather than voiding it, it can be cancelled.

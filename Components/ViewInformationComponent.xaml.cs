@@ -49,4 +49,9 @@ public partial class ViewInformationComponent : UserControl
             MainBox.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFC8ABFF");
         }
     }
+
+    public void SetAdminColour()
+    {
+        MainBox.Background = new SolidColorBrush(Color.FromRgb(0xFF, 0xe0, 0xe0));
+    }
 }

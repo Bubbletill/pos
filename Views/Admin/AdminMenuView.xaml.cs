@@ -1,4 +1,5 @@
 ﻿using BT_COMMONS.Operators;
+using BT_COMMONS.Transactions;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Admin;
 using BT_POS.Buttons.Menu;
@@ -35,7 +36,7 @@ public partial class AdminMenuView : UserControl
         _mainWindow = mainWindow;
         _controller = controller;
 
-        InfoComponent.MainBox.Background = new SolidColorBrush(Color.FromRgb(0xFF, 0xe0, 0xe0));
+        InfoComponent.SetAdminColour();
 
         _buttonStyle = FindResource("BTVerticleButton") as Style;
 
@@ -105,7 +106,7 @@ public partial class AdminMenuView : UserControl
             case AdminButton.POST_VOID:
                 return new ButtonData
                 {
-                    Name = "Postvoid",
+                    Name = "Post Void",
                     Permission = OperatorBoolPermission.POS_Admin_PostVoid,
                     OnClick = w =>
                     {
@@ -115,6 +116,39 @@ public partial class AdminMenuView : UserControl
                             return;
                         }
 
+                        _controller.StartTransaction(TransactionType.POST_VOID);
+                        w.POSViewContainer.Content = new TransactionInformationDialouge(
+                            "Post Void",
+                            "Please enter the transaction details for the transaction you would like to post void.",
+                            -1, // Store number -1 to force it to current store
+
+                            // Accept
+                            (transaction) =>
+                            {
+                                if (transaction == null)
+                                {
+                                    _controller.HeaderError("Transaction not found. Please check transation details.");
+                                    return;
+                                }
+
+                                if (transaction.PostTransType != TransactionType.SALE)
+                                {
+                                    _controller.HeaderError("This transaction can not be post voided.");
+                                    return;
+                                }
+
+                                w.POSViewContainer.Content = new PostVoidView(transaction);
+                            },
+
+                            // Cancel
+                            () =>
+                            {
+                                _controller.CancelTransaction();
+                                AdminMenuView av = App.AppHost.Services.GetRequiredService<AdminMenuView>();
+                                w.POSViewContainer.Content = av;
+                            },
+                            true // Admin colours
+                            );
                         return;
                     }
                 };

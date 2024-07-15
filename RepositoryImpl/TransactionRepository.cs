@@ -43,6 +43,7 @@ public class TransactionRepository : ITransactionRepository
 
         TransactionEntry entry = transactions[0];
         Transaction trxn = new Transaction();
+        trxn.Utid = entry.Utid;
         trxn.Store = entry.Store;
         trxn.Register = entry.Register;
         trxn.DateTime = entry.Date;
@@ -50,7 +51,7 @@ public class TransactionRepository : ITransactionRepository
         trxn.Type = entry.Type;
         trxn.Basket = JsonConvert.DeserializeObject<List<BasketItem>>(entry.Basket);
         trxn.Tenders = JsonConvert.DeserializeObject<Dictionary<TransactionTender, float>>(entry.Tenders);
-        trxn.PostTransType = trxn.PostTransType;
+        trxn.PostTransType = entry.PostTransType;
         return trxn;
     }
 
@@ -105,6 +106,23 @@ public class TransactionRepository : ITransactionRepository
         {
             Console.WriteLine(ex.StackTrace);
             return null;
+        }
+    }
+
+   public async Task<bool> UpdatePostTransactionType(int utid, TransactionType type)
+    {
+        try
+        {
+            await _database.SaveData("UPDATE transactions SET posttranstype=? WHERE utid=?;",
+                new { type, utid });
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+
+            return false;
         }
     }
 

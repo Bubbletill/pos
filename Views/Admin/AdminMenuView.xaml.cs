@@ -1,5 +1,6 @@
 ﻿using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
+using BT_COMMONS.Transactions.TypeAttributes;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Admin;
 using BT_POS.Buttons.Menu;
@@ -131,7 +132,7 @@ public partial class AdminMenuView : UserControl
                                     return;
                                 }
 
-                                if (transaction.PostTransType != TransactionType.SALE)
+                                if (!transaction.PostTransType.CanPostVoid())
                                 {
                                     _controller.HeaderError("This transaction can not be post voided.");
                                     return;

@@ -348,6 +348,9 @@ public class POSController
             CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Tender " + entry.Key.GetTenderInternalName() + " modified by " + -entry.Value + " to hard totals"));
         }
 
+        IncreaseTypeHardTotal(transaction.Type, -transaction.GetTotal());
+        CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Type " + transaction.Type.FriendlyName() + " modified by " + -transaction.GetTotal() + " to hard totals"));
+
         IncreaseTypeHardTotal(TransactionType.POST_VOID, transaction.GetTotal());
         CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Post Void value of " + transaction.GetTotal() + " incremented to hard total"));
     }

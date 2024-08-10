@@ -4,9 +4,11 @@ using BT_POS.Buttons;
 using BT_POS.Buttons.Menu;
 using BT_POS.Components;
 using Microsoft.Extensions.DependencyInjection;
+using Square.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -67,14 +69,14 @@ public partial class TenderSpecifiedView : UserControl
         ButtonStackPanel.Children.Add(button);
     }
 
-    private void AddAmountButton(float amount)
+    private async void AddAmountButton(float amount)
     {
         Button button = new Button();
         button.Style = _buttonStyle;
         button.Content = "£" + amount;
-        button.Click += (s, e) =>
+        button.Click += async (s, e) =>
         {
-            AddTender(amount);
+            await AddTender(amount);
         };
 
         ButtonStackPanel.Children.Add(button);
@@ -87,7 +89,7 @@ public partial class TenderSpecifiedView : UserControl
         TenderedTextBlock.Text = "£" + _controller.CurrentTransaction!.GetAmountTendered();
     }
 
-    private void AddTender(float amount)
+    private async Task AddTender(float amount)
     {
         switch (_tender)
         {
@@ -102,6 +104,18 @@ public partial class TenderSpecifiedView : UserControl
                     return;
                 }
 
+            case TransactionTender.SQUARE_CARD:
+                {
+                    ToggleReadOnly(true);
+                    ViewInfoComponent.Information = "Please follow the instructions in the pop-up window.";
+
+                    _controller.HeaderError();
+                    SquareCardHandler popup = new SquareCardHandler();
+
+                    string squareAmount = _controller.CurrentTransaction!.GetTotal().ToString("0.00").Replace(".", string.Empty);
+                    await popup.Start(long.Parse(squareAmount));
+                    return;
+                }
             default:
                 {
                     _controller.AddTender(_tender, amount);

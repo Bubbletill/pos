@@ -33,6 +33,10 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Windows.Devices.PointOfService;
 using BT_POS.Views.Return;
+using Square;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
+using BT_POS.Integrations.Square;
+using BT_COMMONS.Integrations.Square;
 
 namespace BT_POS;
 
@@ -48,6 +52,8 @@ public partial class App : Application
     public static List<TransModButton> TransModButtons;
     public static List<AdminButton> AdminButtons;
     public static List<CashManagementButton> AdminCashManagementButtons;
+
+    public static SquareIntegrationData? squareIntegrationData;
 
     public App()
     {
@@ -209,6 +215,47 @@ public partial class App : Application
                 {
                     MessageBox.Show("Tender Worldpay Card failed to initalise (code " + exitCode + "). This option has been removed.", "Bubbletill POS", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.None);
                     TenderTypes.Remove(TransactionTender.WORLDPAY_CARD);
+                }
+            }
+
+            if (TenderTypes!.Contains(TransactionTender.SQUARE_CARD))
+            {
+                // Load square data
+                squareIntegrationData = new SquareIntegrationData();
+                bool success = false;
+                try
+                {
+                    using (StreamReader r = new StreamReader("C:\\bubbletill\\sqaure-integration.json"))
+                    {
+                        string json = r.ReadToEnd();
+                        SquareDeviceData data = JsonConvert.DeserializeObject<SquareDeviceData>(json);
+
+                        if (data == null || data.api_key == null || data.terminal_device_code == null || data.terminal_device_id == null)
+                        {
+                            throw new Exception("Invalid config file");
+                        }
+
+                        squareIntegrationData.APIKey = data.api_key;
+                        squareIntegrationData.TerminalDeviceCode = data.terminal_device_code;
+                        squareIntegrationData.TerminalDeviceId = data.terminal_device_id;
+                        success = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Tender Square Card failed to initalise: " + ex.Message + ". This option has been removed.", "Bubbletill POS", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.None);
+                    TenderTypes.Remove(TransactionTender.SQUARE_CARD);
+                }
+
+                if (success)
+                {
+                    squareIntegrationData.Client = new SquareClient.Builder()
+                        .Environment(Square.Environment.Production)
+                        .BearerAuthCredentials(
+                            new Square.Authentication.BearerAuthModel.Builder(squareIntegrationData.APIKey).Build())
+                        .Build();
+
+                    // launch square integration service
                 }
             }
 

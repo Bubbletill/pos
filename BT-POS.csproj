@@ -34,6 +34,7 @@
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.6.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-preview.5.24306.7" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Square" Version="37.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +48,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Components\SquareCardHandler.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Admin\AdminCashManagementMenuView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

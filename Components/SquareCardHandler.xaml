@@ -13,10 +13,9 @@
             <RowDefinition Height="51*"/>
         </Grid.RowDefinitions>
         <Rectangle Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White"/>
-        <TextBlock x:Name="AboveText" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" FontSize="20" Text="Press refresh to update the transaction status"/>
+        <TextBlock x:Name="AboveText" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" FontSize="20" Text="SquareUp Terminal Client"/>
         <TextBlock x:Name="InfoText" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" FontSize="30" Text="Sending data to terminal, please wait..."/>
         <StackPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-            <Button x:Name="RefreshButton" Content="Refresh" Style="{DynamicResource BTHorizontalButton}" Click="RefreshButton_Click"/>
             <Button x:Name="CancelButton" Content="Cancel" Style="{DynamicResource BTHorizontalButton}" Click="CancelButton_Click"/>
         </StackPanel>
     </Grid>

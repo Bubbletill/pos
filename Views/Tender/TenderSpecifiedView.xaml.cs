@@ -4,6 +4,7 @@ using BT_POS.Buttons;
 using BT_POS.Buttons.Menu;
 using BT_POS.Components;
 using Microsoft.Extensions.DependencyInjection;
+using Square.Apis;
 using Square.Models;
 using System;
 using System.Collections.Generic;
@@ -110,10 +111,30 @@ public partial class TenderSpecifiedView : UserControl
                     ViewInfoComponent.Information = "Please follow the instructions in the pop-up window.";
 
                     _controller.HeaderError();
-                    SquareCardHandler popup = new SquareCardHandler();
+                    long squareAmount = long.Parse(amount.ToString("0.00").Replace(".", string.Empty));
 
-                    string squareAmount = _controller.CurrentTransaction!.GetTotal().ToString("0.00").Replace(".", string.Empty);
-                    await popup.Start(long.Parse(squareAmount));
+                    if (App.squareIntegrationData == null || App.squareIntegrationData.Client == null)
+                    {
+                        _controller.HeaderError("Client failed to initalise.");
+                        ToggleReadOnly(false);
+                        ViewInfoComponent.Information = "Please enter the amount the custom has given for this payment method.";
+                        return;
+                    }
+                    ITerminalApi terminalApi = App.squareIntegrationData.Client.TerminalApi;
+
+                    CreateTerminalCheckoutRequest body = new CreateTerminalCheckoutRequest.Builder(
+                        Guid.NewGuid().ToString(),
+                        new TerminalCheckout.Builder(
+                            new Money.Builder()
+                                .Amount(squareAmount)
+                                .Currency("GBP")
+                            .Build(),
+                            new DeviceCheckoutOptions.Builder(App.squareIntegrationData.TerminalDeviceId).Build()
+                            )
+                        .Build()
+                    ).Build();
+
+                    CreateTerminalCheckoutResponse result = await terminalApi.CreateTerminalCheckoutAsync(body);
                     return;
                 }
             default:

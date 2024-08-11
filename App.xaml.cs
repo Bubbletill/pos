@@ -31,12 +31,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
-using Windows.Devices.PointOfService;
 using BT_POS.Views.Return;
 using Square;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 using BT_POS.Integrations.Square;
 using BT_COMMONS.Integrations.Square;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System.Text;
 
 namespace BT_POS;
 
@@ -53,7 +55,10 @@ public partial class App : Application
     public static List<AdminButton> AdminButtons;
     public static List<CashManagementButton> AdminCashManagementButtons;
 
+    public static IConnection RabbitConnection;
+
     public static SquareIntegrationData? squareIntegrationData;
+  
 
     public App()
     {
@@ -62,6 +67,7 @@ public partial class App : Application
             {
                 IConfigurationBuilder builder = new ConfigurationBuilder();
                 builder.AddJsonFile("AppSettings.json");
+
                 IConfiguration config = builder.Build();
 
                 services.AddSingleton<IConfiguration>(provider => config);
@@ -93,6 +99,9 @@ public partial class App : Application
 
                 services.AddSingleton<POSController>();
             }).Build();
+
+        var rabbitConnectionFactory = new ConnectionFactory() { HostName = "localhost" };
+        RabbitConnection = rabbitConnectionFactory.CreateConnection();
     }
 
     protected override async void OnStartup(StartupEventArgs e)
@@ -102,10 +111,12 @@ public partial class App : Application
             POSSplashScreen splash = new POSSplashScreen();
             splash.Show();
 
+            splash.StatusText.Text = "Starting AppHost";
             await AppHost!.StartAsync();
 
             var controller = AppHost.Services.GetRequiredService<POSController>();
 
+            splash.StatusText.Text = "Loading register data";
             // Load data.json
             try
             {
@@ -131,6 +142,7 @@ public partial class App : Application
                 return;
             }
 
+            splash.StatusText.Text = "Loading hard totals";
             // Load hard totals
             try
             {
@@ -170,6 +182,7 @@ public partial class App : Application
                 File.WriteAllText("C:\\bubbletill\\hardtotals.json", json);
             }
 
+            splash.StatusText.Text = "Setting up operator groups";
             var operRepo = AppHost.Services.GetRequiredService<IOperatorRepository>();
             var operGroups = await operRepo.GetOperatorGroups();
             foreach (var group in operGroups)
@@ -178,6 +191,7 @@ public partial class App : Application
                 controller.OperatorGroups.Add(group.Id, group);
             }
 
+            splash.StatusText.Text = "Setting up configured buttons";
             var btnRepo = AppHost.Services.GetRequiredService<IButtonRepository>();
 
             TenderTypes = await btnRepo.GetTenderTypes();
@@ -197,10 +211,12 @@ public partial class App : Application
 
             // TODO: load pos peripherals
 
-
-            // Load required services
+            // Load integrations
+            // World pay
             if (TenderTypes!.Contains(TransactionTender.WORLDPAY_CARD))
             {
+                TenderTypes.Remove(TransactionTender.WORLDPAY_CARD);
+/*                splash.StatusText.Text = "Loading WorldPay integration";
                 ProcessStartInfo processInfo;
                 Process process;
 
@@ -215,14 +231,17 @@ public partial class App : Application
                 {
                     MessageBox.Show("Tender Worldpay Card failed to initalise (code " + exitCode + "). This option has been removed.", "Bubbletill POS", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.None);
                     TenderTypes.Remove(TransactionTender.WORLDPAY_CARD);
-                }
+                }*/
             }
 
+            // squareup
             if (TenderTypes!.Contains(TransactionTender.SQUARE_CARD))
             {
-                // Load square data
+                splash.StatusText.Text = "Loading SquareUp integration";
                 squareIntegrationData = new SquareIntegrationData();
                 bool success = false;
+
+                // Load data
                 try
                 {
                     using (StreamReader r = new StreamReader("C:\\bubbletill\\sqaure-integration.json"))
@@ -238,27 +257,45 @@ public partial class App : Application
                         squareIntegrationData.APIKey = data.api_key;
                         squareIntegrationData.TerminalDeviceCode = data.terminal_device_code;
                         squareIntegrationData.TerminalDeviceId = data.terminal_device_id;
-                        success = true;
                     }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Tender Square Card failed to initalise: " + ex.Message + ". This option has been removed.", "Bubbletill POS", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.None);
-                    TenderTypes.Remove(TransactionTender.SQUARE_CARD);
-                }
 
-                if (success)
-                {
+                    // start integration process
+                    ProcessStartInfo processInfo;
+                    processInfo = new ProcessStartInfo("C:\\bubbletill\\integrations\\square\\BT-INTEGRATIONS.SQUARE.exe");
+                    processInfo.WorkingDirectory = "C:\\bubbletill\\integrations\\square";
+                    processInfo.CreateNoWindow = true;
+                    squareIntegrationData.IntegrationProcess = Process.Start(processInfo);
+
+                    // Create api client
                     squareIntegrationData.Client = new SquareClient.Builder()
                         .Environment(Square.Environment.Production)
                         .BearerAuthCredentials(
                             new Square.Authentication.BearerAuthModel.Builder(squareIntegrationData.APIKey).Build())
                         .Build();
 
-                    // launch square integration service
+                    // Setup rabbitmq channel
+                    var rabbitChannel = RabbitConnection.CreateModel();
+                    rabbitChannel.ExchangeDeclare(exchange: "square.terminal.checkout", ExchangeType.Fanout);
+                    var qName = rabbitChannel.QueueDeclare().QueueName;
+                    var consumer = new EventingBasicConsumer(rabbitChannel);
+                    rabbitChannel.QueueBind(queue: qName, exchange: "square.terminal.checkout", routingKey: string.Empty);
+                    consumer.Received += (model, ea) =>
+                    {
+                        byte[] body = ea.Body.ToArray();
+                        var data = Encoding.UTF8.GetString(body);
+                        squareIntegrationData.RecieveCheckoutWebhook(data);
+                    };
+
+                    rabbitChannel.BasicConsume(queue: qName, autoAck: true, consumer: consumer);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Tender Square Card failed to initalise: " + ex.Message + ". This option has been removed.", "Bubbletill POS", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.None);
+                    TenderTypes.Remove(TransactionTender.SQUARE_CARD);
                 }
             }
 
+            splash.StatusText.Text = "Starting POS...";
             var mainWindow = AppHost.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
             splash.Close();
@@ -275,6 +312,14 @@ public partial class App : Application
     protected override async void OnExit(ExitEventArgs e)
     {
         await AppHost!.StopAsync();
+
+        RabbitConnection.Dispose();
+
+        // Stop the squareup integration service
+        if (squareIntegrationData != null && squareIntegrationData.IntegrationProcess != null)
+        {
+            squareIntegrationData.IntegrationProcess.Kill();
+        }
 
         base.OnExit(e);
     }

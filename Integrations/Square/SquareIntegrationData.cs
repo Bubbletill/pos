@@ -61,7 +61,6 @@ public class SquareIntegrationData
             return;
 
         CheckoutId = checkout.Id;
-        ProcessedPaymentIds = new List<string>();
         CardHandler = new SquareCardHandler(CheckoutId);
         CardHandler.InfoText.Text = "Please following the instructions on the card reader.";
         CardHandler.CancelButton.IsEnabled = true;
@@ -82,7 +81,7 @@ public class SquareIntegrationData
 
         if (checkout.Status == "COMPLETED")
         {
-            CardHandler.InfoText.Text = "Approved. Please wait...";
+            CardHandler.InfoText.Text = "Card Approved\nPlease wait...";
             CardHandler.CancelButton.IsEnabled = false;
 
             string amt = checkout.AmountMoney.Amount.ToString();
@@ -92,7 +91,10 @@ public class SquareIntegrationData
             try
             {
                 if (checkout.PaymentIds[0] != null)
+                {
                     controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "SquareUp: Payment ID " + checkout.PaymentIds[0]));
+                    controller.CurrentTransaction.CustomFields.Add("squareup_payment_id", checkout.PaymentIds[0]);
+                }
 
                 GetPaymentResponse paymentResponse = App.squareIntegrationData.Client.PaymentsApi.GetPayment(checkout.PaymentIds[0]);
                 Payment payment = paymentResponse.Payment;
@@ -100,7 +102,6 @@ public class SquareIntegrationData
                 controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Tender, payment!.CardDetails.Card.CardBrand + " " + payment.CardDetails.Card.CardType + " XXXX XXXX XXXX " + payment.CardDetails.Card.Last4));
                 controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Tender, "Auth Code: " + payment.CardDetails.AuthResultCode + " Receipt No: " + payment.ReceiptNumber));
                 controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Tender, "AID: " + payment.CardDetails.ApplicationIdentifier));
-                controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Tender, "Please retain for your records."));
             } 
             catch (Exception ex)
             {

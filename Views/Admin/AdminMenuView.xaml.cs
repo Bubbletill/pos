@@ -134,7 +134,20 @@ public partial class AdminMenuView : UserControl
 
                                 if (!transaction.PostTransType.CanPostVoid())
                                 {
-                                    _controller.HeaderError("This transaction can not be post voided.");
+                                    _controller.HeaderError("This transaction cannot be post voided.");
+                                    return;
+                                }
+
+                                bool canPv = true;
+                                foreach (TransactionTender tender in transaction.Tenders.Keys)
+                                {
+                                    if (!tender.CanPostVoid())
+                                        canPv = false;
+                                }
+
+                                if (!canPv)
+                                {
+                                    _controller.HeaderError("This transaction contains a tender that cannot be post voided.");
                                     return;
                                 }
 

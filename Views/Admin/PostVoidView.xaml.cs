@@ -80,17 +80,7 @@ public partial class PostVoidView : UserControl
 
     private async void PostVoid()
     {
-        bool success = await _transactionRepository.UpdatePostTransactionType(_transaction.Utid, TransactionType.POST_VOID);
-        if (!success)
-        {
-            _mainWindow.POSViewContainer.Content = new PostVoidView(_transaction);
-            _controller.HeaderError("Failed to post void this transaction. Please try again later.");
-            return;
-        }
-
-        _controller.ActionPostVoid(_transaction);
-        _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Transaction post voided successfully."));
-        await _controller.Submit();
+        await _controller.ActionPostVoid(_transaction);
     }
 
     private void Cancel()

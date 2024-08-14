@@ -51,6 +51,7 @@ public class TransactionRepository : ITransactionRepository
         trxn.Type = entry.Type;
         trxn.Basket = JsonConvert.DeserializeObject<List<BasketItem>>(entry.Basket);
         trxn.Tenders = JsonConvert.DeserializeObject<Dictionary<TransactionTender, float>>(entry.Tenders);
+        trxn.CustomFields = JsonConvert.DeserializeObject<Dictionary<string, string>>(entry.CustomFields);
         trxn.PostTransType = entry.PostTransType;
         return trxn;
     }
@@ -59,9 +60,9 @@ public class TransactionRepository : ITransactionRepository
     {
         try
         {
-            await _database.SaveData("INSERT INTO transactions (store, register, date, time, transactionid, type, operatorid, amount, basket, tenders, posttranstype) " +
-                "VALUES (@Store, @Register, @Date, @Time, @TransId, @Type, @Oper, @Amount, @Basket, @Tenders, @PTT);",
-                new { @Store = trans.Store, @Register = trans.Register, @Date = trans.DateTime.Date, @Time = trans.DateTime.ToLongTimeString(), @TransId = trans.TransactionId, @Type = trans.Type, @Oper = trans.Operator.OperatorId, @Amount = trans.GetTotal(), @Basket = JsonConvert.SerializeObject(trans.Basket), @Tenders = JsonConvert.SerializeObject(trans.Tenders), @PTT = (postTrans == null ? trans.Type : postTrans) });
+            await _database.SaveData("INSERT INTO transactions (store, register, date, time, transactionid, type, operatorid, amount, basket, tenders, customfields, posttranstype) " +
+                "VALUES (@Store, @Register, @Date, @Time, @TransId, @Type, @Oper, @Amount, @Basket, @Tenders, @CustomFields, @PTT);",
+                new { @Store = trans.Store, @Register = trans.Register, @Date = trans.DateTime.Date, @Time = trans.DateTime.ToLongTimeString(), @TransId = trans.TransactionId, @Type = trans.Type, @Oper = trans.Operator.OperatorId, @Amount = trans.GetTotal(), @Basket = JsonConvert.SerializeObject(trans.Basket), @Tenders = JsonConvert.SerializeObject(trans.Tenders), @CustomFields = JsonConvert.SerializeObject(trans.CustomFields), @PTT = (postTrans == null ? trans.Type : postTrans) });
 
             await _database.SaveData("INSERT INTO transaction_logs (store, register, date, transactionid, data) " +
     "VALUES (@Store, @Register, @Date, @TransId, @Data);",

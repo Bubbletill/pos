@@ -6,6 +6,7 @@ using BT_COMMONS.Transactions.TenderAttributes;
 using BT_COMMONS.Transactions.TypeAttributes;
 using BT_POS.Components;
 using BT_POS.Views;
+using BT_POS.Views.Admin;
 using BT_POS.Views.Dialogues;
 using BT_POS.Views.Tender;
 using Microsoft.Extensions.DependencyInjection;
@@ -340,8 +341,17 @@ public class POSController
         Submit();
     }
 
-    public void ActionPostVoid(Transaction transaction)
+    public async Task ActionPostVoid(Transaction transaction)
     {
+        MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
+        bool success = await _transactionRepository.UpdatePostTransactionType(transaction.Utid, TransactionType.POST_VOID);
+        if (!success)
+        {
+            mw.POSViewContainer.Content = new PostVoidView(transaction);
+            HeaderError("Failed to post void this transaction. Please try again later.");
+            return;
+        }
+
         foreach (var entry in transaction.Tenders)
         {
             IncreaseTenderHardTotal(entry.Key, -entry.Value, false);
@@ -353,6 +363,8 @@ public class POSController
 
         IncreaseTypeHardTotal(TransactionType.POST_VOID, transaction.GetTotal());
         CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Post Void value of " + transaction.GetTotal() + " incremented to hard total"));
+        CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Transaction post voided successfully."));
+        await Submit();
     }
 
     // If an empty transaction started, rather than voiding it, it can be cancelled.

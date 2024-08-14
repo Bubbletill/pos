@@ -129,9 +129,10 @@ public partial class TenderSpecifiedView : UserControl
                                 .Amount(squareAmount)
                                 .Currency("GBP")
                             .Build(),
-                            new DeviceCheckoutOptions.Builder(App.squareIntegrationData.TerminalDeviceId).Build()
-                            )
-                        .Build()
+                            new DeviceCheckoutOptions.Builder(App.squareIntegrationData.TerminalDeviceId)
+                                .SkipReceiptScreen(true)
+                            .Build()
+                         ).Build()
                     ).Build();
 
                     CreateTerminalCheckoutResponse result = await terminalApi.CreateTerminalCheckoutAsync(body);

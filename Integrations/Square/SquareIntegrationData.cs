@@ -1,4 +1,5 @@
-﻿using BT_COMMONS.Integrations.Square;
+﻿using BT_COMMONS.Helpers;
+using BT_COMMONS.Integrations.Square;
 using BT_COMMONS.Transactions;
 using BT_POS.Components;
 using BT_POS.Views.Tender;
@@ -84,10 +85,8 @@ public class SquareIntegrationData
             CardHandler.InfoText.Text = "Card Approved\nPlease wait...";
             CardHandler.CancelButton.IsEnabled = false;
 
-            string amt = checkout.AmountMoney.Amount.ToString();
-            amt = amt.Insert(amt.Length - 2, ".");
+            float amount = SquareUpHelper.ConvertSquareLongToFloat((long)checkout.AmountMoney.Amount);
 
-            float amount = float.Parse(amt);
             try
             {
                 if (checkout.PaymentIds[0] != null)

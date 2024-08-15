@@ -1,10 +1,12 @@
-﻿using BT_COMMONS.Transactions;
+﻿using BT_COMMONS.Helpers;
+using BT_COMMONS.Transactions;
 using BT_COMMONS.Transactions.TenderAttributes;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Menu;
 using BT_POS.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Square.Apis;
+using Square.Exceptions;
 using Square.Models;
 using System;
 using System.Collections.Generic;
@@ -22,6 +24,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Transaction = BT_COMMONS.Transactions.Transaction;
 
 namespace BT_POS.Views.Tender;
 
@@ -108,10 +111,81 @@ public partial class TenderSpecifiedView : UserControl
             case TransactionTender.SQUARE_CARD:
                 {
                     ToggleReadOnly(true);
-                    ViewInfoComponent.Information = "Please follow the instructions in the pop-up window.";
 
                     _controller.HeaderError();
-                    long squareAmount = long.Parse(amount.ToString("0.00").Replace(".", string.Empty));
+                    long squareAmount = SquareUpHelper.ConvertFloatToSquareLong(amount);
+
+                    Transaction currentTrxn = _controller.CurrentTransaction!;
+                    
+                    if (currentTrxn.GetTotal() < 0)
+                    {
+                        _controller.HeaderError("SquareUp refund are currently not supported.");
+                        ToggleReadOnly(false);
+                        return;
+                        if (!currentTrxn.CustomFields.ContainsKey("squareup_payment_id"))
+                        {
+                            _controller.HeaderError("SquareUp only supports returns for transactions of which it was tendered.");
+                            ToggleReadOnly(false);
+                            return;
+                        }
+
+                        GetPaymentResponse paymentResponse = App.squareIntegrationData.Client.PaymentsApi.GetPayment(currentTrxn.CustomFields["squareup_payment_id"]);
+                        Payment payment = paymentResponse.Payment;
+
+                        float paiedAmount = SquareUpHelper.ConvertSquareLongToFloat((long)payment.AmountMoney.Amount);
+                        float amountReturned = 0;
+                        if (payment.RefundedMoney != null)
+                            amountReturned = SquareUpHelper.ConvertSquareLongToFloat((long)payment.RefundedMoney.Amount);
+                        float leftToReturn = paiedAmount - amountReturned;
+
+                        if (amount > leftToReturn)
+                        {
+                            _controller.HeaderError("Invalid return amount. Amount able to return is £" + leftToReturn);
+                            ToggleReadOnly(false);
+                            return;
+                        }
+
+                        ViewInfoComponent.Information = "Please wait, processing refund...";
+                        IRefundsApi refundsApi = App.squareIntegrationData.Client.RefundsApi;
+                        RefundPaymentRequest refundBody = new RefundPaymentRequest.Builder(
+                            Guid.NewGuid().ToString(),
+                            new Money.Builder()
+                                .Amount(squareAmount)
+                                .Currency("GBP")
+                                .Build()
+                            )
+                            .PaymentId(payment.Id)
+                            .Reason("BT POS In-person Refund")
+                            .Build();
+
+                        try
+                        {
+                            RefundPaymentResponse refundResult = await refundsApi.RefundPaymentAsync(refundBody);
+                            PaymentRefund refund = refundResult.Refund;
+
+                            currentTrxn.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "SquareUp Refund Id: " + refund.Id));
+                            if (refund.Status == "FAILED" || refund.Status == "REJECTED")
+                            {
+                                currentTrxn.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "SquareUp Refund failed: " + refundResult.Errors.ToString()));
+                                _controller.HeaderError("SquareUp Refund failed: " + refundResult.Errors[0].Code);
+                                return;
+                            }
+
+                            currentTrxn.Logs.Add(new TransactionLog(TransactionLogType.Tender, "Your refund has been issued to the following card:"));
+                            currentTrxn.Logs.Add(new TransactionLog(TransactionLogType.Tender, payment!.CardDetails.Card.CardBrand + " " + payment.CardDetails.Card.CardType + " XXXX XXXX XXXX " + payment.CardDetails.Card.Last4));
+                            _controller.AddTender(TransactionTender.SQUARE_CARD, amount);
+                        }
+                        catch (ApiException e)
+                        {
+                            _controller.HeaderError("SQAPI Error: " +  e.Message);
+                            ToggleReadOnly(false);
+                            ViewInfoComponent.Information = "Please enter the amount the custom has given for this payment method.";
+                        }
+
+                        return;
+                    }
+
+                    ViewInfoComponent.Information = "Please follow the instructions in the pop-up window.";
 
                     if (App.squareIntegrationData == null || App.squareIntegrationData.Client == null)
                     {
@@ -193,7 +267,7 @@ public partial class TenderSpecifiedView : UserControl
             return;
         }
 
-        AddTender(amount);
+        await AddTender(amount);
     }
 
     private void ManualAmountEntryBox_PreviewTextInput(object sender, TextCompositionEventArgs e)

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BT_POS.Buttons.Admin.CashMngt;
+namespace BT_POS.Buttons.Admin;
 
-public enum CashManagementButton
+public enum AdminRegMngmtButton
 {
-    LOAN,
-    SPOT_CHECK,
-    PICKUP
+    TRAINING,
+    X_READ,
+    CLOSE_REGISTER
 }

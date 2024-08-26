@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="BT_POS.Views.Admin.AdminMenuView"
+﻿<UserControl x:Class="BT_POS.Views.Admin.AdminTrxnManagementMenuView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -21,6 +21,6 @@
         <StackPanel x:Name="ButtonStackPanel" Grid.Column="2" Orientation="Vertical" Grid.RowSpan="2"/>
 
         <!-- Information Box -->
-        <components:ViewInformationComponent x:Name="InfoComponent"  Grid.Row="0" Title="Administration" Information="Please select a category to manage." />
+        <components:ViewInformationComponent x:Name="InfoComponent" Grid.Row="0" Title="Transaction Management" Information="Please select an option." />
     </Grid>
 </UserControl>

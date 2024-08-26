@@ -16,7 +16,6 @@ using BT_COMMONS.Operators;
 using BT_COMMONS.Transactions;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Admin;
-using BT_POS.Buttons.Admin.CashMngt;
 using BT_POS.Buttons.ItemMod;
 using BT_POS.Buttons.Menu;
 using BT_POS.Buttons.TransMod;
@@ -53,7 +52,10 @@ public partial class App : Application
     public static List<ItemModButton> ItemModButtons;
     public static List<TransModButton> TransModButtons;
     public static List<AdminButton> AdminButtons;
-    public static List<CashManagementButton> AdminCashManagementButtons;
+
+    public static List<AdminCashMngmtButton> AdminCashManagementButtons;
+    public static List<AdminRegMngmtButton> AdminRegManagementButtons;
+    public static List<AdminTrxnMngmtButton> AdminTrxnManagementButtons;
 
     public static IConnection RabbitConnection;
 
@@ -96,6 +98,8 @@ public partial class App : Application
 
                 services.AddViewFactory<AdminMenuView>();
                 services.AddViewFactory<AdminCashManagementMenuView>();
+                services.AddViewFactory<AdminTrxnManagementMenuView>();
+                services.AddViewFactory<AdminRegManagementMenuView>();
 
                 services.AddSingleton<POSController>();
             }).Build();
@@ -208,6 +212,8 @@ public partial class App : Application
             TransModButtons = await btnRepo.GetTransModButtons();
             AdminButtons = await btnRepo.GetAdminButtons();
             AdminCashManagementButtons = await btnRepo.GetAdminCashManagementButtons();
+            AdminTrxnManagementButtons = await btnRepo.GetAdminTrxnManagementButtons();
+            AdminRegManagementButtons = await btnRepo.GetAdminRegManagementButtons();
 
             // TODO: load pos peripherals
 

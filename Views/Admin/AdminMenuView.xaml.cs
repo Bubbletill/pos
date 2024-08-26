@@ -72,7 +72,7 @@ public partial class AdminMenuView : UserControl
                 {
                     return new ButtonData
                     {
-                        Name = "Cash Management",
+                        Name = "Cash",
                         Permission = null,
                         OnClick = w =>
                         {
@@ -87,169 +87,47 @@ public partial class AdminMenuView : UserControl
                         }
                     };
                 }
-            case AdminButton.RECEIPT_REPRINT:
-                return new ButtonData
+
+            case AdminButton.TRXN_MANAGEMENT:
                 {
-                    Name = "Receipt Reprint",
-                    Permission = OperatorBoolPermission.POS_Admin_ReceiptReprint,
-                    OnClick = w =>
+                    return new ButtonData
                     {
-                        if (_controller.CurrentTransaction != null)
+                        Name = "Transaction",
+                        Permission = null,
+                        OnClick = w =>
                         {
-                            w.HeaderError("Action not allowed. Please suspend the current transaction.");
-                            return;
-                        }
-
-                        return;
-                    }
-                };
-
-            case AdminButton.POST_VOID:
-                return new ButtonData
-                {
-                    Name = "Post Void",
-                    Permission = OperatorBoolPermission.POS_Admin_PostVoid,
-                    OnClick = w =>
-                    {
-                        if (_controller.CurrentTransaction != null)
-                        {
-                            w.HeaderError("Action not allowed. Please suspend the current transaction.");
-                            return;
-                        }
-
-                        _controller.StartTransaction(TransactionType.POST_VOID);
-                        w.POSViewContainer.Content = new TransactionInformationDialouge(
-                            "Post Void",
-                            "Please enter the transaction details for the transaction you would like to post void.",
-                            -1, // Store number -1 to force it to current store
-
-                            // Accept
-                            (transaction) =>
+                            if (_controller.CurrentTransaction != null)
                             {
-                                if (transaction == null)
-                                {
-                                    _controller.HeaderError("Transaction not found. Please check transation details.");
-                                    return;
-                                }
+                                w.HeaderError("Action not allowed. Please suspend the current transaction.");
+                                return;
+                            }
 
-                                if (!transaction.PostTransType.CanPostVoid())
-                                {
-                                    _controller.HeaderError("This transaction cannot be post voided.");
-                                    return;
-                                }
+                            w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<AdminTrxnManagementMenuView>();
+                            return;
+                        }
+                    };
+                }
 
-                                bool canPv = true;
-                                foreach (TransactionTender tender in transaction.Tenders.Keys)
-                                {
-                                    if (!tender.CanPostVoid())
-                                        canPv = false;
-                                }
-
-                                if (!canPv)
-                                {
-                                    _controller.HeaderError("This transaction contains a tender that cannot be post voided.");
-                                    return;
-                                }
-
-                                w.POSViewContainer.Content = new PostVoidView(transaction);
-                            },
-
-                            // Cancel
-                            () =>
+            case AdminButton.REG_MANAGEMENT:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Register",
+                        Permission = null,
+                        OnClick = w =>
+                        {
+                            if (_controller.CurrentTransaction != null)
                             {
-                                _controller.CancelTransaction();
-                                AdminMenuView av = App.AppHost.Services.GetRequiredService<AdminMenuView>();
-                                w.POSViewContainer.Content = av;
-                            },
-                            true // Admin colours
-                            );
-                        return;
-                    }
-                };
+                                w.HeaderError("Action not allowed. Please suspend the current transaction.");
+                                return;
+                            }
 
-            case AdminButton.NO_SALE:
-                return new ButtonData
-                {
-                    Name = "No Sale",
-                    Permission = OperatorBoolPermission.POS_Admin_NoSale,
-                    OnClick = w =>
-                    {
-                        if (_controller.CurrentTransaction != null)
-                        {
-                            w.HeaderError("Action not allowed. Please suspend the current transaction.");
+                            w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<AdminRegManagementMenuView>();
                             return;
                         }
+                    };
+                }
 
-                        return;
-                    }
-                };
-
-            case AdminButton.TRAINING:
-                return new ButtonData
-                {
-                    Name = "Training Mode",
-                    Permission = OperatorBoolPermission.POS_Admin_Training,
-                    OnClick = w =>
-                    {
-                        if (_controller.CurrentTransaction != null)
-                        {
-                            w.HeaderError("Action not allowed. Please suspend the current transaction.");
-                            return;
-                        }
-
-                        _controller.TrainingModeToggleTransaction();
-                        return;
-                    }
-                };
-
-            case AdminButton.X_READ:
-                return new ButtonData
-                {
-                    Name = "X-Read",
-                    Permission = OperatorBoolPermission.POS_Admin_XRead,
-                    OnClick = w =>
-                    {
-                        if (_controller.CurrentTransaction != null)
-                        {
-                            w.HeaderError("Action not allowed. Please suspend the current transaction.");
-                            return;
-                        }
-
-                        _controller.RegisterXRead();
-                    }
-                };
-
-            case AdminButton.CLOSE_REGISTER:
-                return new ButtonData
-                {
-                    Name = "Close Register",
-                    Permission = OperatorBoolPermission.POS_Admin_CloseRegister,
-                    OnClick = w =>
-                    {
-                        if (_controller.CurrentTransaction != null)
-                        {
-                            w.HeaderError("Action not allowed. Please suspend the current transaction.");
-                            return;
-                        }
-
-                        if (_controller.TrainingMode)
-                        {
-                            w.HeaderError("Action not allowed. Please disable training mode.");
-                            return;
-                        }
-
-                        w.POSViewContainer.Content = new YesNoDialogue("Are you sure you want to close this register?", () =>
-                        {
-                            _controller.CloseRegister();
-                        }, () =>
-                        {
-                            AdminMenuView av = App.AppHost.Services.GetRequiredService<AdminMenuView>();
-                            w.POSViewContainer.Content = av;
-                        });
-
-                        return;
-                    }
-                };
 
             default:
                 {

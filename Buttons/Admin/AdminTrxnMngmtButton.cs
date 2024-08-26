@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace BT_POS.Buttons.Admin;
 
-public enum AdminButton
+public enum AdminTrxnMngmtButton
 {
-    CASH_MANAGEMENT,
-    TRXN_MANAGEMENT,
-    REG_MANAGEMENT,
-    EMPLOYEE_MANAGEMENT
+    RECEIPT_REPRINT,
+    POST_VOID
 }

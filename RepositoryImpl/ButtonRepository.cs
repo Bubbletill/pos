@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using BT_POS.Buttons.Admin;
-using BT_POS.Buttons.Admin.CashMngt;
 using BT_POS.Buttons.ItemMod;
 using BT_POS.Buttons.TransMod;
 using BT_COMMONS.Transactions;
@@ -105,16 +104,42 @@ public class ButtonRepository : IButtonRepository
         return buttons;
     }
 
-    public async Task<List<CashManagementButton>?> GetAdminCashManagementButtons()
+    public async Task<List<AdminCashMngmtButton>?> GetAdminCashManagementButtons()
     {
-        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"admincashmngt\";", new { });
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"admin_cash\";", new { });
         if (tables.Count == 0)
         {
             return null;
         }
 
         Trace.WriteLine(tables[0]);
-        var buttons = JsonConvert.DeserializeObject<List<CashManagementButton>>(tables[0]);
+        var buttons = JsonConvert.DeserializeObject<List<AdminCashMngmtButton>>(tables[0]);
+        return buttons;
+    }
+
+    public async Task<List<AdminTrxnMngmtButton>?> GetAdminTrxnManagementButtons()
+    {
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"admin_trxn\";", new { });
+        if (tables.Count == 0)
+        {
+            return null;
+        }
+
+        Trace.WriteLine(tables[0]);
+        var buttons = JsonConvert.DeserializeObject<List<AdminTrxnMngmtButton>>(tables[0]);
+        return buttons;
+    }
+
+    public async Task<List<AdminRegMngmtButton>?> GetAdminRegManagementButtons()
+    {
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"admin_reg\";", new { });
+        if (tables.Count == 0)
+        {
+            return null;
+        }
+
+        Trace.WriteLine(tables[0]);
+        var buttons = JsonConvert.DeserializeObject<List<AdminRegMngmtButton>>(tables[0]);
         return buttons;
     }
 }

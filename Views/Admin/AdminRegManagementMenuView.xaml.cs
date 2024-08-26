@@ -22,14 +22,14 @@ using System.Windows.Shapes;
 
 namespace BT_POS.Views.Admin;
 
-public partial class AdminCashManagementMenuView : UserControl
+public partial class AdminRegManagementMenuView : UserControl
 {
     private readonly MainWindow _mainWindow;
     private readonly POSController _controller;
 
     private readonly Style _buttonStyle;
 
-    public AdminCashManagementMenuView(MainWindow mainWindow, POSController controller)
+    public AdminRegManagementMenuView(MainWindow mainWindow, POSController controller)
     {
         InitializeComponent();
         _mainWindow = mainWindow;
@@ -39,7 +39,7 @@ public partial class AdminCashManagementMenuView : UserControl
 
         _buttonStyle = FindResource("BTVerticleButton") as Style;
 
-        LoadButtons(App.AdminCashManagementButtons);
+        LoadButtons(App.AdminRegManagementButtons);
         Button button = new Button();
         button.Style = _buttonStyle;
         button.Content = "Back";
@@ -50,7 +50,7 @@ public partial class AdminCashManagementMenuView : UserControl
         ButtonStackPanel.Children.Add(button);
     }
 
-    public void LoadButtons(List<AdminCashMngmtButton> buttons)
+    public void LoadButtons(List<AdminRegMngmtButton> buttons)
     {
         ButtonStackPanel.Children.Clear();
         buttons.ForEach(type =>
@@ -61,70 +61,15 @@ public partial class AdminCashManagementMenuView : UserControl
         ButtonStackPanel.UpdateLayout();
     }
 
-    public IButtonData GetButtonFunction(AdminCashMngmtButton button)
+    public IButtonData GetButtonFunction(AdminRegMngmtButton button)
     {
         switch (button)
         {
-            case AdminCashMngmtButton.LOAN:
-                {
-                    return new ButtonData
-                    {
-                        Name = "Loan",
-                        Permission = OperatorBoolPermission.POS_Admin_CashManagement_Loan,
-                        OnClick = w =>
-                        {
-                            if (_controller.CurrentTransaction != null)
-                            {
-                                w.HeaderError("Action not allowed. Please suspend the current transaction.");
-                                return;
-                            }
-
-                            w.POSViewContainer.Content = new EnterLoanView("Loan", "the loan");
-                        }
-                    };
-                }
-            case AdminCashMngmtButton.SPOT_CHECK:
-                {
-                    return new ButtonData
-                    {
-                        Name = "Spot Check",
-                        Permission = OperatorBoolPermission.POS_Admin_CashManagement_Spotcheck,
-                        OnClick = w =>
-                        {
-                            if (_controller.CurrentTransaction != null)
-                            {
-                                w.HeaderError("Action not allowed. Please suspend the current transaction.");
-                                return;
-                            }
-
-                            return;
-                        }
-                    };
-                }
-            case AdminCashMngmtButton.PICKUP:
-                {
-                    return new ButtonData
-                    {
-                        Name = "Pickup",
-                        Permission = OperatorBoolPermission.POS_Admin_CashManagement_Pickup,
-                        OnClick = w =>
-                        {
-                            if (_controller.CurrentTransaction != null)
-                            {
-                                w.HeaderError("Action not allowed. Please suspend the current transaction.");
-                                return;
-                            }
-
-                            return;
-                        }
-                    };
-                };
-
-            case AdminCashMngmtButton.NO_SALE:
+            case AdminRegMngmtButton.TRAINING:
                 return new ButtonData
                 {
-                    Name = "No Sale",
-                    Permission = OperatorBoolPermission.POS_Admin_CashManagement_NoSale,
+                    Name = "Training Mode",
+                    Permission = OperatorBoolPermission.POS_Admin_RegManagement_Training,
                     OnClick = w =>
                     {
                         if (_controller.CurrentTransaction != null)
@@ -132,6 +77,56 @@ public partial class AdminCashManagementMenuView : UserControl
                             w.HeaderError("Action not allowed. Please suspend the current transaction.");
                             return;
                         }
+
+                        _controller.TrainingModeToggleTransaction();
+                        return;
+                    }
+                };
+
+            case AdminRegMngmtButton.X_READ:
+                return new ButtonData
+                {
+                    Name = "X-Read",
+                    Permission = OperatorBoolPermission.POS_Admin_RegManagement_XRead,
+                    OnClick = w =>
+                    {
+                        if (_controller.CurrentTransaction != null)
+                        {
+                            w.HeaderError("Action not allowed. Please suspend the current transaction.");
+                            return;
+                        }
+
+                        _controller.RegisterXRead();
+                    }
+                };
+
+            case AdminRegMngmtButton.CLOSE_REGISTER:
+                return new ButtonData
+                {
+                    Name = "Close Register",
+                    Permission = OperatorBoolPermission.POS_Admin_RegManagement_CloseRegister,
+                    OnClick = w =>
+                    {
+                        if (_controller.CurrentTransaction != null)
+                        {
+                            w.HeaderError("Action not allowed. Please suspend the current transaction.");
+                            return;
+                        }
+
+                        if (_controller.TrainingMode)
+                        {
+                            w.HeaderError("Action not allowed. Please disable training mode.");
+                            return;
+                        }
+
+                        w.POSViewContainer.Content = new YesNoDialogue("Are you sure you want to close this register?", () =>
+                        {
+                            _controller.CloseRegister();
+                        }, () =>
+                        {
+                            AdminMenuView av = App.AppHost.Services.GetRequiredService<AdminMenuView>();
+                            w.POSViewContainer.Content = av;
+                        });
 
                         return;
                     }

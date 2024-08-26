@@ -65,7 +65,7 @@ public partial class LoginView : UserControl
             var oper = await _operatorRepository.GetOperator((int)loginResponse.ID);
             if (!_controller.RegisterOpen)
             {
-                if (!oper.HasBoolPermission(OperatorBoolPermission.POS_Admin_OpenRegister))
+                if (!oper.HasBoolPermission(OperatorBoolPermission.POS_Admin_RegManagement_OpenRegister))
                 {
                     MainWindow mw = App.AppHost.Services.GetRequiredService<MainWindow>();
                     mw.Logout();

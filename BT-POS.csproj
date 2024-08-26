@@ -52,6 +52,12 @@
     <Compile Update="Components\SquareCardHandler.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Admin\AdminTrxnManagementMenuView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Admin\AdminRegManagementMenuView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Admin\AdminCashManagementMenuView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

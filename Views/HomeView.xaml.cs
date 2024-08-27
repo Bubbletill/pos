@@ -7,6 +7,7 @@ using BT_POS.Buttons.Menu;
 using BT_POS.RepositoryImpl;
 using BT_POS.Views.Admin;
 using BT_POS.Views.Dialogues;
+using BT_POS.Views.Hotshot;
 using BT_POS.Views.Menus;
 using BT_POS.Views.Return;
 using BT_POS.Views.Tender;
@@ -157,7 +158,7 @@ public partial class HomeView : UserControl
                         Permission = OperatorBoolPermission.POS_Hotshot_Access,
                         OnClick = w =>
                         {
-
+                            w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<HotshotView>();
                             return;
                         }
                     };

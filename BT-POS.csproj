@@ -67,6 +67,9 @@
     <Compile Update="Views\Dialogues\AgeRestrictedDialogue.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Hotshot\HotshotView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\ResumeView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

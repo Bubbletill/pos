@@ -38,6 +38,8 @@ using BT_COMMONS.Integrations.Square;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using BT_COMMONS.Hotshot;
+using BT_POS.Views.Hotshot;
 
 namespace BT_POS;
 
@@ -56,6 +58,8 @@ public partial class App : Application
     public static List<AdminCashMngmtButton> AdminCashManagementButtons;
     public static List<AdminRegMngmtButton> AdminRegManagementButtons;
     public static List<AdminTrxnMngmtButton> AdminTrxnManagementButtons;
+
+    public static List<HotshotCategory> HotshotCategories;
 
     public static IConnection RabbitConnection;
 
@@ -81,6 +85,7 @@ public partial class App : Application
                 services.AddSingleton<IStockRepository, StockRepository>();
                 services.AddSingleton<IButtonRepository, ButtonRepository>();
                 services.AddSingleton<ISuspendRepository, SuspendRepository>();
+                services.AddSingleton<IHotshotRepository, HotshotRepository>();
 
                 services.AddSingleton<MainWindow>();
                 services.AddViewFactory<LoginView>();
@@ -89,6 +94,7 @@ public partial class App : Application
 
                 services.AddViewFactory<HomeView>();
                 services.AddViewFactory<TenderHomeView>();
+                services.AddViewFactory<HotshotView>();
                 services.AddViewFactory<ResumeView>();
 
                 services.AddViewFactory<EnterReturnView>();
@@ -215,15 +221,20 @@ public partial class App : Application
             AdminTrxnManagementButtons = await btnRepo.GetAdminTrxnManagementButtons();
             AdminRegManagementButtons = await btnRepo.GetAdminRegManagementButtons();
 
+            splash.StatusText.Text = "Loading Hotshots";
+            var hotshotRepo = AppHost.Services.GetRequiredService<IHotshotRepository>();
+            HotshotCategories = await hotshotRepo.GetHotshotCategories();
+
             // TODO: load pos peripherals
 
             // Load integrations
+            splash.StatusText.Text = "Loading POS intergrations";
+
             // World pay
             if (TenderTypes!.Contains(TransactionTender.WORLDPAY_CARD))
             {
                 TenderTypes.Remove(TransactionTender.WORLDPAY_CARD);
-/*                splash.StatusText.Text = "Loading WorldPay integration";
-                ProcessStartInfo processInfo;
+/*              ProcessStartInfo processInfo;
                 Process process;
 
                 processInfo = new ProcessStartInfo("cmd.exe", "/c " + "C:\\YESEFT\\StartPOSServer.bat");
@@ -243,7 +254,6 @@ public partial class App : Application
             // squareup
             if (TenderTypes!.Contains(TransactionTender.SQUARE_CARD))
             {
-                splash.StatusText.Text = "Loading SquareUp integration";
                 squareIntegrationData = new SquareIntegrationData();
                 bool success = false;
 

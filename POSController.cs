@@ -5,6 +5,7 @@ using BT_COMMONS.Transactions;
 using BT_COMMONS.Transactions.TenderAttributes;
 using BT_COMMONS.Transactions.TypeAttributes;
 using BT_POS.Components;
+using BT_POS.RepositoryImpl;
 using BT_POS.Views;
 using BT_POS.Views.Admin;
 using BT_POS.Views.Dialogues;
@@ -30,6 +31,7 @@ public class POSController
     private readonly IOperatorRepository _operatorRepository;
     private readonly ITransactionRepository _transactionRepository;
     private readonly ISuspendRepository _suspendRepository;
+    private readonly IStockRepository _stockRepository;
     public string? ControllerAuthenticationToken { get; set; }
     public bool GotInitialControllerData { get; set; } = false;
 
@@ -51,15 +53,16 @@ public class POSController
 
     public bool LoanPrompted = false;
 
-    public POSController(IOperatorRepository operatorRepository, ITransactionRepository transactionRepository, ISuspendRepository suspendRepository)
+    public POSController(IOperatorRepository operatorRepository, ITransactionRepository transactionRepository, ISuspendRepository suspendRepository, IStockRepository stockRepository)
     {
         _operatorRepository = operatorRepository;
         _transactionRepository = transactionRepository;
         _suspendRepository = suspendRepository;
+        _stockRepository = stockRepository;
 
         TenderHardTotals = new Dictionary<TransactionTender, float>();
         TypeHardTotals = new Dictionary<TransactionType, float>();
-        OperatorGroups = new Dictionary<int, OperatorGroup>(); 
+        OperatorGroups = new Dictionary<int, OperatorGroup>();
         TransactionLogQueue = new List<TransactionLog>();
     }
 
@@ -154,6 +157,7 @@ public class POSController
 
     public void AddItemToBasket(BasketItem item)
     {
+        HeaderError();
         if (CurrentTransaction == null)
         {
             StartTransaction(TransactionType.SALE);
@@ -169,6 +173,18 @@ public class POSController
         CurrentTransaction!.AddToBasket(item);
         CurrentTransaction!.SelectedItem = item;
         CheckTransactionType();
+    }
+
+    public async Task AddItemToBasket(int code)
+    {
+        BasketItem? item = await _stockRepository.GetItem(code);
+        if (item == null)
+        {
+            HeaderError("Invalid item code.");
+            return;
+        }
+
+        AddItemToBasket(item);
     }
 
     public void AddTender(TransactionTender tender, float amount)

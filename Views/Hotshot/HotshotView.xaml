@@ -27,7 +27,7 @@
 
 
         <!-- Buttons -->
-        <WrapPanel x:Name="ButtonPanel" Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="0,0,100,0">
+        <WrapPanel x:Name="ButtonPanel" Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
 
         </WrapPanel>
 

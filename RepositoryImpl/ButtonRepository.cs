@@ -28,7 +28,7 @@ public class ButtonRepository : IButtonRepository
 
     public async Task<List<TransactionTender>?> GetTenderTypes()
     {
-        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"tender\";", new { });
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `pos_buttons` WHERE `menu`=\"tender\";", new { });
         if (tables.Count == 0)
         {
             return null;
@@ -41,7 +41,7 @@ public class ButtonRepository : IButtonRepository
 
     public async Task<List<HomeButton>?> GetHomeButtons()
     {
-        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"home\";", new { });
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `pos_buttons` WHERE `menu`=\"home\";", new { });
         if (tables.Count == 0)
         {
             return null;
@@ -54,7 +54,7 @@ public class ButtonRepository : IButtonRepository
 
     public async Task<List<HomeButton>?> GetHomeTransButtons()
     {
-        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"home_trans\";", new { });
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `pos_buttons` WHERE `menu`=\"home_trans\";", new { });
         if (tables.Count == 0)
         {
             return null;
@@ -67,7 +67,7 @@ public class ButtonRepository : IButtonRepository
 
     public async Task<List<ItemModButton>?> GetItemModButtons()
     {
-        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"item_mod\";", new { });
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `pos_buttons` WHERE `menu`=\"item_mod\";", new { });
         if (tables.Count == 0)
         {
             return null;
@@ -80,7 +80,7 @@ public class ButtonRepository : IButtonRepository
 
     public async Task<List<TransModButton>?> GetTransModButtons()
     {
-        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"trans_mod\";", new { });
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `pos_buttons` WHERE `menu`=\"trans_mod\";", new { });
         if (tables.Count == 0)
         {
             return null;
@@ -93,7 +93,7 @@ public class ButtonRepository : IButtonRepository
 
     public async Task<List<AdminButton>?> GetAdminButtons()
     {
-        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"admin\";", new { });
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `pos_buttons` WHERE `menu`=\"admin\";", new { });
         if (tables.Count == 0)
         {
             return null;
@@ -106,7 +106,7 @@ public class ButtonRepository : IButtonRepository
 
     public async Task<List<AdminCashMngmtButton>?> GetAdminCashManagementButtons()
     {
-        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"admin_cash\";", new { });
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `pos_buttons` WHERE `menu`=\"admin_cash\";", new { });
         if (tables.Count == 0)
         {
             return null;
@@ -119,7 +119,7 @@ public class ButtonRepository : IButtonRepository
 
     public async Task<List<AdminTrxnMngmtButton>?> GetAdminTrxnManagementButtons()
     {
-        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"admin_trxn\";", new { });
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `pos_buttons` WHERE `menu`=\"admin_trxn\";", new { });
         if (tables.Count == 0)
         {
             return null;
@@ -132,7 +132,7 @@ public class ButtonRepository : IButtonRepository
 
     public async Task<List<AdminRegMngmtButton>?> GetAdminRegManagementButtons()
     {
-        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `buttons` WHERE `menu`=\"admin_reg\";", new { });
+        var tables = await _database.LoadData<string, dynamic>("SELECT buttons FROM `pos_buttons` WHERE `menu`=\"admin_reg\";", new { });
         if (tables.Count == 0)
         {
             return null;

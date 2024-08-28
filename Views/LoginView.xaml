@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
 
         <!-- Logo -->
-        <Image Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Source="/Assets/logo.png" RenderTransformOrigin="0.5,0.5" Margin="0,56,0,0" Grid.Row="1" Stretch="UniformToFill">
+        <Image Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Source="/Assets/logo.png" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Stretch="UniformToFill">
             <Image.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleX="0.75" ScaleY="0.75"/>

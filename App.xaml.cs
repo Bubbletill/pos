@@ -61,6 +61,8 @@ public partial class App : Application
 
     public static List<HotshotCategory> HotshotCategories;
 
+    public static Process? BackOfficeProcess { get; set; }
+
     public static IConnection RabbitConnection;
 
     public static SquareIntegrationData? squareIntegrationData;
@@ -373,5 +375,29 @@ public partial class App : Application
         };
 
         return button;
+    }
+
+    public static void LaunchBackOffice()
+    {
+        if (BackOfficeProcess == null)
+        {
+            RunBO();
+            return;
+        }
+
+        if (BackOfficeProcess.HasExited)
+        {
+            RunBO();
+            return;
+        }
+    }
+
+    private static void RunBO()
+    {
+        ProcessStartInfo processInfo;
+        processInfo = new ProcessStartInfo("C:\\bubbletill\\bo\\Bubbletill-BO.exe");
+        processInfo.WorkingDirectory = "C:\\bubbletill\\bo";
+        processInfo.CreateNoWindow = true;
+        App.BackOfficeProcess = Process.Start(processInfo);
     }
 }

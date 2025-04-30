@@ -2,6 +2,7 @@
 using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Operators;
 using BT_COMMONS.Operators.API;
+using BT_POS.Integrations.Square;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -93,7 +94,7 @@ public partial class LoginView : UserControl
 
     private void BackOfficeButton_Click(object sender, RoutedEventArgs e)
     {
-        
+        App.LaunchBackOffice();
     }
 
     private void UserIdBox_KeyUp(object sender, KeyEventArgs e)

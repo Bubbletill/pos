@@ -128,7 +128,25 @@ public partial class AdminMenuView : UserControl
                     };
                 }
 
+            case AdminButton.BACKOFFICE:
+                {
+                    return new ButtonData
+                    {
+                        Name = "Back Office",
+                        Permission = null,
+                        OnClick = w =>
+                        {
+                            if (!_controller.CurrentOperator.HasBoolPermission(OperatorBoolPermission.BO_Access))
+                            {
+                                _controller.HeaderError("Insufficient permission to access back office.");
+                                return;
+                            }
 
+                            App.LaunchBackOffice();
+                            return;
+                        }
+                    };
+                }
             default:
                 {
                     return null;

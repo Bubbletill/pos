@@ -20,13 +20,7 @@
         </Grid.RowDefinitions>
 
         <!-- Logo -->
-        <Image Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Source="/Assets/logo.png" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Stretch="UniformToFill">
-            <Image.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleX="0.75" ScaleY="0.75"/>
-                </TransformGroup>
-            </Image.RenderTransform>
-        </Image>
+        <Image Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Source="/Assets/logo.png" RenderTransformOrigin="0.5,0.5" Grid.Row="1" Stretch="None"/>
 
         <!-- Login Form -->
         <GroupBox Grid.Row="2" Grid.Column="1" BorderThickness="0,0,0,0" Background="#FFABDFFF">

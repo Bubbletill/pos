@@ -112,8 +112,15 @@ public partial class App : Application
                 services.AddSingleton<POSController>();
             }).Build();
 
-        var rabbitConnectionFactory = new ConnectionFactory() { HostName = "localhost" };
-        RabbitConnection = rabbitConnectionFactory.CreateConnection();
+        try
+        {
+            var rabbitConnectionFactory = new ConnectionFactory() { HostName = "localhost" };
+            RabbitConnection = rabbitConnectionFactory.CreateConnection();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("RabbitMQ failed to connect:\n" + ex.Message, "Bubbletill POS", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+        }
     }
 
     protected override async void OnStartup(StartupEventArgs e)

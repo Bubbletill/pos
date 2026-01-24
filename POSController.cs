@@ -131,6 +131,11 @@ public class POSController
         if (CurrentTransaction == null)
             return;
 
+        if (CurrentTransaction.Type != TransactionType.SALE ||
+            CurrentTransaction.Type != TransactionType.EXCHANGE ||
+            CurrentTransaction.Type != TransactionType.RETURN)
+            return;
+
         int saleItems = 0;
         int returnItems = 0;
         CurrentTransaction.Basket.ForEach(b =>

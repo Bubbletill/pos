@@ -174,6 +174,16 @@ public class SquareIntegrationData
                     CardHandler.InfoText.Text = "Card Declined: pin verification required.\nPlease following the instructions on the card reader.";
                     break;
                 }
+            case "CARDHOLDER_INSUFFICIENT_PERMISSIONS":
+                {
+                    CardHandler.InfoText.Text = "Card Declined: card may be frozen or cannot be used here.\nPlease following the instructions on the card reader.";
+                    break;
+                }
+            case "INSUFFICIENT_PERMISSIONS":
+                {
+                    CardHandler.InfoText.Text = "Card Declined: we don't have permission to accept this payment.\nPlease following the instructions on the card reader.";
+                    break;
+                }
             default:
                 {
                     CardHandler.InfoText.Text = error.Detail + "\nPlease following the instructions on the card reader.";

@@ -128,6 +128,7 @@ public partial class ItemModMenuView : UserControl
                             }
 
                             w.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<HomeView>();
+                            _controller.LineDisplayWrite("Item Voided", bi.Description);
 
                             return;
                         }

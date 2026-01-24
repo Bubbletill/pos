@@ -23,6 +23,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace BT_POS.Views.Menus.ItemMod;
 
@@ -76,6 +77,7 @@ public partial class ItemModChangeQty : UserControl
         _mainWindow.HeaderError(null);
         BasketItem selected = _controller.CurrentTransaction!.SelectedItem;
         selected.Quantity = qty;
+        _controller.LineDisplayWrite(selected.Description, selected.Quantity + " @ £" + selected.FilePrice + " : £" + selected.SalePrice);
         _controller.CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.Hidden, "Quantity for item " + selected.Code + " - " + selected.Description + " updated to " + qty));
         _mainWindow.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<HomeView>();
     }

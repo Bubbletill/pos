@@ -107,7 +107,7 @@ public class SquareIntegrationData
                 controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.Tender, "SquareUp: failed to get payment information: " + ex.Message));
             }
 
-            controller.AddTender(TransactionTender.SQUARE_CARD, amount);
+            controller.AddTender(TransactionTender.SQUARE_CARD, (decimal)amount);
 
             CardHandler.Close();
             CardHandler = null;

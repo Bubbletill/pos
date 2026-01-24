@@ -124,7 +124,7 @@ public partial class HomeView : UserControl
                                 return;
                             }
 
-                            if (_controller.CurrentTransaction.GetTotal() == 0.00 && _controller.CurrentTransaction.Type == TransactionType.EXCHANGE)
+                            if (_controller.CurrentTransaction.GetTotal() == 0.00m && _controller.CurrentTransaction.Type == TransactionType.EXCHANGE)
                             {
                                 _controller.Submit();
                                 return;

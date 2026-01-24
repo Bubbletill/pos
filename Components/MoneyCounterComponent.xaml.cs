@@ -35,7 +35,7 @@ public partial class MoneyCounterComponent : UserControl
         TotalTextBlock.Text = "£" + CalculateAmount();
     }
 
-    private float GetAmount(TextBox box)
+    private decimal GetAmount(TextBox box)
     {
         if (box.Text == null || box.Text == string.Empty)
         {
@@ -44,16 +44,16 @@ public partial class MoneyCounterComponent : UserControl
 
         try
         {
-            return float.Parse(box.Text);
+            return decimal.Parse(box.Text);
         } catch
         {
             return 0;
         }
     }
 
-    public float CalculateAmount()
+    public decimal CalculateAmount()
     {
-        float amount = 0;
+        decimal amount = 0;
         
         // Notes
         amount += GetAmount(FiftyPoundNotes) * 50;
@@ -75,22 +75,22 @@ public partial class MoneyCounterComponent : UserControl
         amount += GetAmount(OnePoundCoins) * 1;
         amount += GetAmount(OnePoundRolls) * 20;
 
-        amount += GetAmount(FiftyPenceCoins) * 0.5f;
+        amount += GetAmount(FiftyPenceCoins) * 0.5m;
         amount += GetAmount(FiftyPenceRolls) * 10;
 
-        amount += GetAmount(TwentyPenceCoins) * 0.2f;
+        amount += GetAmount(TwentyPenceCoins) * 0.2m;
         amount += GetAmount(TwentyPenceRolls) * 10;
 
-        amount += GetAmount(TenPenceCoins) * 0.1f;
+        amount += GetAmount(TenPenceCoins) * 0.1m;
         amount += GetAmount(TenPenceRolls) * 5;
 
-        amount += GetAmount(FivePenceCoins) * 0.05f;
+        amount += GetAmount(FivePenceCoins) * 0.05m;
         amount += GetAmount(FivePenceRolls) * 5;
 
-        amount += GetAmount(TwoPenceCoins) * 0.02f;
+        amount += GetAmount(TwoPenceCoins) * 0.02m;
         amount += GetAmount(TwoPenceRolls) * 1;
 
-        amount += GetAmount(OnePenceCoins) * 0.01f;
+        amount += GetAmount(OnePenceCoins) * 0.01m;
         amount += GetAmount(OnePenceRolls) * 1;
 
         return amount;

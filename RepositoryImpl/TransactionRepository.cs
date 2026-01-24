@@ -50,7 +50,7 @@ public class TransactionRepository : ITransactionRepository
         trxn.TransactionId = entry.TransactionId;
         trxn.Type = entry.Type;
         trxn.Basket = JsonConvert.DeserializeObject<List<BasketItem>>(entry.Basket);
-        trxn.Tenders = JsonConvert.DeserializeObject<Dictionary<TransactionTender, float>>(entry.Tenders);
+        trxn.Tenders = JsonConvert.DeserializeObject<Dictionary<TransactionTender, decimal>>(entry.Tenders);
         trxn.CustomFields = JsonConvert.DeserializeObject<Dictionary<string, string>>(entry.CustomFields);
         trxn.PostTransType = entry.PostTransType;
         return trxn;

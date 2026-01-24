@@ -40,6 +40,7 @@ using RabbitMQ.Client.Events;
 using System.Text;
 using BT_COMMONS.Hotshot;
 using BT_POS.Views.Hotshot;
+using BT_POS.Integrations.Hardware;
 
 namespace BT_POS;
 
@@ -182,8 +183,8 @@ public partial class App : Application
             catch (Exception ex)
             {
                 HardTotals ht = new HardTotals();
-                ht.Tender = new Dictionary<TransactionTender, float>();
-                ht.Type = new Dictionary<TransactionType, float>();
+                ht.Tender = new Dictionary<TransactionTender, decimal>();
+                ht.Type = new Dictionary<TransactionType, decimal>();
                 foreach (TransactionTender tender in Enum.GetValues(typeof(TransactionTender)))
                 {
                     ht.Tender.Add(tender, 0);
@@ -235,6 +236,20 @@ public partial class App : Application
             HotshotCategories = await hotshotRepo.GetHotshotCategories();
 
             // TODO: load pos peripherals
+            splash.StatusText.Text = "Starting peripherals";
+            try
+            {
+                controller.LineDisplayLoad(new SerialLineDisplay("COM3"));
+                if (controller.RegisterOpen)
+                    controller.LineDisplayWrite("Register Closed", "");
+                else
+                    controller.LineDisplayClear();
+            } catch (Exception ex)
+            {
+                controller.LineDisplayLoad(null);
+                MessageBox.Show("Line Display Error:\n" + ex.Message, "Bubbletill POS", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+            }
+            
 
             // Load integrations
             splash.StatusText.Text = "Loading POS intergrations";
@@ -336,6 +351,9 @@ public partial class App : Application
 
     protected override async void OnExit(ExitEventArgs e)
     {
+        var controller = AppHost.Services.GetRequiredService<POSController>();
+        controller.LineDisplayDispose();
+
         await AppHost!.StopAsync();
 
         RabbitConnection.Dispose();

@@ -48,7 +48,7 @@ public partial class TenderSpecifiedView : UserControl
         if (_controller.CurrentTransaction.Tenders.Count != 0)
         {
             localBasket.Add(new BasketItem(0, " ", 0, 0));
-            foreach (KeyValuePair<TransactionTender, float> entry in _controller.CurrentTransaction.Tenders)
+            foreach (KeyValuePair<TransactionTender, decimal> entry in _controller.CurrentTransaction.Tenders)
             {
                 localBasket.Add(new BasketItem(0, entry.Key.GetTenderExternalName(), entry.Value, 0));
             }
@@ -73,7 +73,7 @@ public partial class TenderSpecifiedView : UserControl
         ButtonStackPanel.Children.Add(button);
     }
 
-    private async void AddAmountButton(float amount)
+    private async void AddAmountButton(decimal amount)
     {
         Button button = new Button();
         button.Style = _buttonStyle;
@@ -91,9 +91,10 @@ public partial class TenderSpecifiedView : UserControl
         TotalTextBlock.Text = "£" + _controller.CurrentTransaction!.GetTotal();
         LeftToTenderTextBlock.Text = "£" + _controller.CurrentTransaction!.GetRemainingTender();
         TenderedTextBlock.Text = "£" + _controller.CurrentTransaction!.GetAmountTendered();
+        _controller.LineDisplayWrite("Remaining: £" + _controller.CurrentTransaction!.GetRemainingTender(), _tender.GetTenderExternalName());
     }
 
-    private async Task AddTender(float amount)
+    private async Task AddTender(decimal amount)
     {
         switch (_tender)
         {
@@ -113,7 +114,7 @@ public partial class TenderSpecifiedView : UserControl
                     ToggleReadOnly(true);
 
                     _controller.HeaderError();
-                    long squareAmount = SquareUpHelper.ConvertFloatToSquareLong(amount);
+                    long squareAmount = SquareUpHelper.ConvertFloatToSquareLong((float)amount);
 
                     Transaction currentTrxn = _controller.CurrentTransaction!;
                     
@@ -138,7 +139,7 @@ public partial class TenderSpecifiedView : UserControl
                             amountReturned = SquareUpHelper.ConvertSquareLongToFloat((long)payment.RefundedMoney.Amount);
                         float leftToReturn = paiedAmount - amountReturned;
 
-                        if (amount > leftToReturn)
+                        if ((float)amount > leftToReturn)
                         {
                             _controller.HeaderError("Invalid return amount. Amount able to return is £" + leftToReturn);
                             ToggleReadOnly(false);
@@ -241,10 +242,10 @@ public partial class TenderSpecifiedView : UserControl
         if (e.Key != Key.Enter)
             return;
 
-        float amount;
+        decimal amount;
         try
         {
-            amount = float.Parse(ManualAmountEntryBox.Text);
+            amount = decimal.Parse(ManualAmountEntryBox.Text);
         }
         catch (Exception ex)
         {

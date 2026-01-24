@@ -108,8 +108,14 @@ public partial class MainWindow : Window
         App.SetAPIToken(null);
 
         if (_posController.RegisterOpen)
+        {
             POSViewContainer.Content = _posLogin.Create();
+            _posController.LineDisplayWrite("Register Closed", "");
+        }
         else
+        {
             POSViewContainer.Content = _posRegClosed.Create();
+            _posController.LineDisplayClear();
+        }
     }
 }

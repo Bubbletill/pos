@@ -5,6 +5,7 @@ using BT_COMMONS.Transactions;
 using BT_COMMONS.Transactions.TenderAttributes;
 using BT_COMMONS.Transactions.TypeAttributes;
 using BT_POS.Components;
+using BT_POS.Integrations.Hardware;
 using BT_POS.RepositoryImpl;
 using BT_POS.Views;
 using BT_POS.Views.Admin;
@@ -41,8 +42,8 @@ public class POSController
     public int RegisterNumber { get; set; }
     public bool RegisterOpen { get; set; }
 
-    public Dictionary<TransactionTender, float> TenderHardTotals { get; set; }
-    public Dictionary<TransactionType, float> TypeHardTotals { get; set; }
+    public Dictionary<TransactionTender, decimal> TenderHardTotals { get; set; }
+    public Dictionary<TransactionType, decimal> TypeHardTotals { get; set; }
 
     public Operator? CurrentOperator { get; set; }
     public Dictionary<int, OperatorGroup>? OperatorGroups { get; set; }
@@ -53,6 +54,8 @@ public class POSController
 
     public bool LoanPrompted = false;
 
+    private SerialLineDisplay _serialLineDisplay;
+
     public POSController(IOperatorRepository operatorRepository, ITransactionRepository transactionRepository, ISuspendRepository suspendRepository, IStockRepository stockRepository)
     {
         _operatorRepository = operatorRepository;
@@ -60,8 +63,8 @@ public class POSController
         _suspendRepository = suspendRepository;
         _stockRepository = stockRepository;
 
-        TenderHardTotals = new Dictionary<TransactionTender, float>();
-        TypeHardTotals = new Dictionary<TransactionType, float>();
+        TenderHardTotals = new Dictionary<TransactionTender, decimal>();
+        TypeHardTotals = new Dictionary<TransactionType, decimal>();
         OperatorGroups = new Dictionary<int, OperatorGroup>();
         TransactionLogQueue = new List<TransactionLog>();
     }
@@ -104,6 +107,7 @@ public class POSController
         }
 
         CurrentOperator = oper;
+        LineDisplayWrite("Welcome to", "Bubbletill");
 
         return true;
     }
@@ -128,13 +132,19 @@ public class POSController
 
     public void CheckTransactionType()
     {
+        Debug.WriteLine("running!!");
         if (CurrentTransaction == null)
             return;
 
-        if (CurrentTransaction.Type != TransactionType.SALE ||
-            CurrentTransaction.Type != TransactionType.EXCHANGE ||
+        Debug.WriteLine("past curr trans!!");
+        Debug.WriteLine(CurrentTransaction.Type);
+
+        if (CurrentTransaction.Type != TransactionType.SALE &&
+            CurrentTransaction.Type != TransactionType.EXCHANGE &&
             CurrentTransaction.Type != TransactionType.RETURN)
             return;
+
+        Debug.WriteLine("past trans type!!");
 
         int saleItems = 0;
         int returnItems = 0;
@@ -145,6 +155,8 @@ public class POSController
             else
                 saleItems++;
         });
+
+        Debug.WriteLine("Return: " + returnItems + ", Sale: " + saleItems);
 
         if ((saleItems == 0 && returnItems == 0) || (saleItems > 0 && returnItems == 0))
         {
@@ -175,8 +187,9 @@ public class POSController
             return;
         }
 
-        CurrentTransaction!.AddToBasket(item);
+        string[] lines = CurrentTransaction!.AddToBasket(item);
         CurrentTransaction!.SelectedItem = item;
+        LineDisplayWrite(lines[0], lines[1]);
         CheckTransactionType();
     }
 
@@ -192,7 +205,7 @@ public class POSController
         AddItemToBasket(item);
     }
 
-    public void AddTender(TransactionTender tender, float amount)
+    public void AddTender(TransactionTender tender, decimal amount)
     {
         CurrentTransaction!.AddTender(tender, amount);
 
@@ -207,7 +220,7 @@ public class POSController
         mainWindow.POSViewContainer.Content = tenderHome;
     }
 
-    private void IncreaseTenderHardTotal(TransactionTender tender, float amount, bool forcePositive = true)
+    private void IncreaseTenderHardTotal(TransactionTender tender, decimal amount, bool forcePositive = true)
     {
         if (CurrentTransaction!.GetTotal() < 0 && forcePositive)
             amount *= -1;
@@ -225,7 +238,7 @@ public class POSController
         File.WriteAllText("C:\\bubbletill\\hardtotals.json", json);
     }
 
-    private void IncreaseTypeHardTotal(TransactionType type, float amount)
+    private void IncreaseTypeHardTotal(TransactionType type, decimal amount)
     {
         var current = TypeHardTotals.GetValueOrDefault(type, 0);
         current += amount;
@@ -261,14 +274,15 @@ public class POSController
     public async void RegisterXRead()
     {
         StartTransaction(TransactionType.X_READ);
+        LineDisplayWrite("X Read", "Please wait");
 
         CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, "Regiser X Reading"));
-        foreach (KeyValuePair<TransactionTender, float> entry in TenderHardTotals)
+        foreach (KeyValuePair<TransactionTender, decimal> entry in TenderHardTotals)
         {
             CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, entry.Key.GetTenderInternalName() + ": " + entry.Value));
         }
         CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, " "));
-        foreach (KeyValuePair<TransactionType, float> entry in TypeHardTotals)
+        foreach (KeyValuePair<TransactionType, decimal> entry in TypeHardTotals)
         {
             if (entry.Key.ShowOnXRead())
                 CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, entry.Key.ToString() + ": " + entry.Value));
@@ -283,6 +297,7 @@ public class POSController
             return;
 
         StartTransaction(TransactionType.REGISTER_CLOSE);
+        LineDisplayWrite("Closing Register", "Please wait");
 
         RegisterOpen = false;
         LoanPrompted = false;
@@ -297,19 +312,19 @@ public class POSController
 
         // Clear hard totals
         CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, "Regiser Close Reading"));
-        foreach (KeyValuePair<TransactionTender, float> entry in TenderHardTotals)
+        foreach (KeyValuePair<TransactionTender, decimal> entry in TenderHardTotals)
         {
             CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, entry.Key.GetTenderInternalName() + ": " + entry.Value));
         }
         CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, " "));
-        foreach (KeyValuePair<TransactionType, float> entry in TypeHardTotals)
+        foreach (KeyValuePair<TransactionType, decimal> entry in TypeHardTotals)
         {
             if (entry.Key.ShowOnXRead())
                 CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, entry.Key.ToString() + ": " + entry.Value));
         }
 
-        TenderHardTotals = new Dictionary<TransactionTender, float>();
-        TypeHardTotals = new Dictionary<TransactionType, float>();
+        TenderHardTotals = new Dictionary<TransactionTender, decimal>();
+        TypeHardTotals = new Dictionary<TransactionType, decimal>();
         foreach (TransactionTender tender in Enum.GetValues(typeof(TransactionTender)))
         {
             TenderHardTotals.Add(tender, 0);
@@ -332,7 +347,7 @@ public class POSController
         mw.Logout();
     }
 
-    public void LoanTransaction(float loan)
+    public void LoanTransaction(decimal loan)
     {
         StartTransaction(TransactionType.LOAN);
         AddItemToBasket(new BasketItem(0, "Loan", loan, 0));
@@ -356,6 +371,7 @@ public class POSController
 
     public void VoidTransaction()
     {
+        LineDisplayWrite("Transaction Voided", "");
         CurrentTransaction!.UpdateTransactionType(TransactionType.VOID);
         CurrentTransaction.VoidTender();
         CurrentTransaction.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, "Transaction Voided"));
@@ -420,7 +436,7 @@ public class POSController
         }
 
         // Update hard totals
-        foreach (KeyValuePair<TransactionTender, float> entry in CurrentTransaction.Tenders)
+        foreach (KeyValuePair<TransactionTender, decimal> entry in CurrentTransaction.Tenders)
         {
             if (TrainingMode)
                 break;
@@ -443,6 +459,7 @@ public class POSController
 
         if (CurrentTransaction.Change != 0)
         {
+            LineDisplayWrite("Change: £" + CurrentTransaction.Change, "");
             InfoPopup popup = new InfoPopup("Amount Tendered: £" + CurrentTransaction.Tenders[CurrentTransaction.GetChangeTender()] + "\nChange: £" + CurrentTransaction.Change);
             popup.ShowDialog();
         }
@@ -476,6 +493,7 @@ public class POSController
 
         HomeView home = App.AppHost.Services.GetRequiredService<HomeView>();
         mainWindow.POSViewContainer.Content = home;
+        LineDisplayWrite("Welcome to", "Bubbletill");
     }
 
     // Suspend transaction
@@ -483,6 +501,8 @@ public class POSController
     {
         if (CurrentTransaction == null)
             return;
+
+        LineDisplayWrite("Transaction Suspend", "");
 
         MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
 
@@ -511,6 +531,7 @@ public class POSController
 
         HomeView home = App.AppHost.Services.GetRequiredService<HomeView>();
         mainWindow.POSViewContainer.Content = home;
+        LineDisplayWrite("Welcome to", "Bubbletill");
     }
 
     public async void Resume(Transaction transaction, int sid)
@@ -594,5 +615,27 @@ public class POSController
 
         MainWindow mainWindow = App.AppHost.Services.GetRequiredService<MainWindow>();
         mainWindow.POSParentHeader_Status.Text = "Online";
+    }
+
+    public void LineDisplayWrite(string line1, string line2)
+    {
+        if (_serialLineDisplay == null) return;
+        _serialLineDisplay.Show(line1, line2);
+    }
+
+    public void LineDisplayClear()
+    {
+        if (_serialLineDisplay == null) return;
+        _serialLineDisplay.Clear();
+    }
+
+    public void LineDisplayLoad(SerialLineDisplay? serialLineDisplay)
+    {
+        _serialLineDisplay = serialLineDisplay;
+    }
+
+    public void LineDisplayDispose()
+    {
+        if (_serialLineDisplay != null) _serialLineDisplay.Dispose();
     }
 }

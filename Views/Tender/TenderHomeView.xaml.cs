@@ -38,7 +38,7 @@ public partial class TenderHomeView : UserControl
         if (_controller.CurrentTransaction.Tenders.Count != 0)
         {
             localBasket.Add(new BasketItem(0, " ", 0, 0));
-            foreach (KeyValuePair<TransactionTender, float> entry in _controller.CurrentTransaction.Tenders)
+            foreach (KeyValuePair<TransactionTender, decimal> entry in _controller.CurrentTransaction.Tenders)
             {
                 localBasket.Add(new BasketItem(0, entry.Key.GetTenderExternalName(), entry.Value, 0));
             }
@@ -103,5 +103,6 @@ public partial class TenderHomeView : UserControl
         TotalTextBlock.Text = "£" + _controller.CurrentTransaction!.GetTotal();
         LeftToTenderTextBlock.Text = "£" + _controller.CurrentTransaction!.GetRemainingTender();
         TenderedTextBlock.Text = "£" + _controller.CurrentTransaction!.GetAmountTendered();
+        _controller.LineDisplayWrite("Total: £" + _controller.CurrentTransaction!.GetTotal(), "Remaining: £" + _controller.CurrentTransaction!.GetRemainingTender());
     }
 }

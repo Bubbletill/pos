@@ -37,7 +37,7 @@ public partial class BasketOnlyView : UserControl
         if (_controller.CurrentTransaction.Tenders.Count != 0)
         {
             localBasket.Add(new BasketItem(0, " ", 0, 0));
-            foreach (KeyValuePair<TransactionTender, float> entry in _controller.CurrentTransaction.Tenders)
+            foreach (KeyValuePair<TransactionTender, decimal> entry in _controller.CurrentTransaction.Tenders)
             {
                 localBasket.Add(new BasketItem(0, entry.Key.GetTenderExternalName(), entry.Value, 0));
             }

@@ -35,6 +35,8 @@ public partial class LoginView : UserControl
         VersionText.Text = "POS Version " + FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
         _controller = controller;
         _operatorRepository = operatorRepository;
+        Keypad.DisableButton(Keypad.PeriodButton);
+        Keypad.SelectedBox = UserIdBox;
         UserIdBox.Focus();
     }
 
@@ -97,7 +99,12 @@ public partial class LoginView : UserControl
         App.LaunchBackOffice();
     }
 
-    private void UserIdBox_KeyUp(object sender, KeyEventArgs e)
+    private void KeyboardButton_Click(object sender, RoutedEventArgs e)
+    {
+        //Process.Start("C:\\Program Files\\Common Files\\microsoft shared\\ink\\tabtip.exe");
+    }
+
+    private void UserIdBox_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
@@ -106,7 +113,7 @@ public partial class LoginView : UserControl
         }
     }
 
-    private void PasswordBox_KeyUp(object sender, KeyEventArgs e)
+    private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter) 
         {

@@ -50,7 +50,15 @@ public partial class EnterReturnView : UserControl
 
     private async void Accept_Click(object sender, RoutedEventArgs e)
     {
-        ReturnEntry? returnEntry = await _transactionRepository.GetReturnEntry(int.Parse(StoreNumber.Text), int.Parse(RegisterNumber.Text), int.Parse(TransactionNumber.Text), DateOnly.Parse(Date.Text));
+        ReturnEntry? returnEntry;
+        try
+        {
+            returnEntry = await _transactionRepository.GetReturnEntry(int.Parse(StoreNumber.Text), int.Parse(RegisterNumber.Text), int.Parse(TransactionNumber.Text), DateOnly.Parse(Date.Text));
+        } catch (Exception ex)
+        {
+            _controller.HeaderError("Invalid data entry. Please check and try again.");
+            return;
+        }
         if (returnEntry == null) {
             Transaction? transaction = await _transactionRepository.GetTransaction(int.Parse(StoreNumber.Text), int.Parse(RegisterNumber.Text), int.Parse(TransactionNumber.Text), DateOnly.Parse(Date.Text));
             if (transaction == null)

@@ -22,14 +22,17 @@ public partial class KeypadComponent : UserControl
 
     public TextBox? SelectedBox { get; set; }
     public MaskedTextBox? SelectedMaskedBox { get; set; }
+    public PasswordBox? SelectedPasswordBox { get; set; }
 
 
     public KeypadComponent()
     {
         EventManager.RegisterClassHandler(typeof(TextBox), TextBox.GotFocusEvent, new RoutedEventHandler(TextBoxSelect));
-        EventManager.RegisterClassHandler(typeof(MaskedTextBox), TextBox.GotFocusEvent, new RoutedEventHandler(MaskedTextBoxSelect));
+        EventManager.RegisterClassHandler(typeof(MaskedTextBox), MaskedTextBox.GotFocusEvent, new RoutedEventHandler(MaskedTextBoxSelect));
+        EventManager.RegisterClassHandler(typeof(PasswordBox), PasswordBox.GotFocusEvent, new RoutedEventHandler(PasswordBoxSelect));
         SelectedBox = null;
         SelectedMaskedBox = null;
+        SelectedPasswordBox = null;
         InitializeComponent();
     }
 
@@ -43,25 +46,37 @@ public partial class KeypadComponent : UserControl
     {
         SelectedBox = (TextBox)sender;
         SelectedMaskedBox = null;
+        SelectedPasswordBox = null;
     }
 
     private void MaskedTextBoxSelect(object sender, RoutedEventArgs e)
     {
         SelectedMaskedBox = (MaskedTextBox)sender;
         SelectedBox = null;
+        SelectedPasswordBox = null;
+    }
+
+    private void PasswordBoxSelect(object sender, RoutedEventArgs e)
+    {
+        SelectedPasswordBox = (PasswordBox)sender;
+        SelectedBox = null;
+        SelectedMaskedBox = null;
     }
 
     private void AddToBox(char toAdd)
     {
-        if (SelectedBox == null && SelectedMaskedBox != null)
+        if (SelectedMaskedBox != null)
         {
             SelectedMaskedBox.PromptChar += toAdd;
         }
-        else if (SelectedMaskedBox == null && SelectedBox != null)
+        else if (SelectedBox != null)
         {
              SelectedBox.Text += toAdd;
         }
-        
+        else if (SelectedPasswordBox != null)
+        {
+            SelectedPasswordBox.Password += toAdd;
+        }
     }
 
     private void SevenButton_Click(object sender, RoutedEventArgs e)
@@ -121,11 +136,16 @@ public partial class KeypadComponent : UserControl
 
     private void BackButton_Click(object sender, RoutedEventArgs e)
     {
-        if (SelectedBox == null)
-            return;
+        if (SelectedBox != null)
+            SelectedBox.Text = BackText(SelectedBox.Text);
+        else if (SelectedMaskedBox != null)
+            SelectedMaskedBox.Text = BackText(SelectedMaskedBox.Text);
+        else if (SelectedPasswordBox != null)
+            SelectedPasswordBox.Password = BackText(SelectedPasswordBox.Password);
+    }
 
-        string s = SelectedBox.Text;
-
+    private string BackText(string s)
+    {
         if (s.Length > 1)
         {
             s = s.Substring(0, s.Length - 1);
@@ -135,28 +155,32 @@ public partial class KeypadComponent : UserControl
             s = "";
         }
 
-        SelectedBox.Text = s;
+        return s;
     }
 
     private void ClearButton_Click(object sender, RoutedEventArgs e)
     {
-        if (SelectedBox == null)
-            return;
-
-        SelectedBox.Clear();
+        if (SelectedBox != null)
+            SelectedBox.Clear();
+        else if (SelectedMaskedBox != null)
+            SelectedMaskedBox.Clear();
+        else if (SelectedPasswordBox != null)
+            SelectedPasswordBox.Clear();
     }
 
     private void EnterButton_Click(object sender, RoutedEventArgs e)
     {
-        if (SelectedBox == null)
-            return;
-
         var routedEvent = Keyboard.KeyDownEvent;
         var keyEvent = new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(this), 0, Key.Enter)
         {
             RoutedEvent = routedEvent
         };
 
-        SelectedBox.RaiseEvent(keyEvent);
+        if (SelectedBox != null)
+            SelectedBox.RaiseEvent(keyEvent);
+        else if (SelectedMaskedBox != null)
+            SelectedMaskedBox.RaiseEvent(keyEvent);
+        else if (SelectedPasswordBox != null)
+            SelectedPasswordBox.RaiseEvent(keyEvent);
     }
 }

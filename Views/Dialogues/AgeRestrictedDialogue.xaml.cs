@@ -1,31 +1,7 @@
-﻿using BT_COMMONS.DataRepositories;
-using BT_COMMONS.Operators;
-using BT_COMMONS.Transactions;
-using BT_POS.Buttons;
-using BT_POS.Buttons.Menu;
-using BT_POS.RepositoryImpl;
-using BT_POS.Views.Admin;
-using BT_POS.Views.Dialogues;
-using BT_POS.Views.Menus;
-using BT_POS.Views.Tender;
+﻿using BT_COMMONS.Transactions;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BT_POS.Views.Dialogues;
 
@@ -44,7 +20,12 @@ public partial class AgeRestrictedDialogue : UserControl
         if (_controller.CurrentTransaction != null )
         {
             BasketComponent.BasketGrid.ItemsSource = _controller.CurrentTransaction.Basket;
-        } 
+        }
+
+        ViewInformation.Information =
+            "Is the customer over " + item.AgeRestricted
+            + "? Please confirm with a valid, physical photo ID: passport, driving license, PASS card. Please either approve or refuse the item."
+            + "\nRestricted Item: " + item.Description;
     }
 
     private void Approve_Click(object sender, RoutedEventArgs e)

@@ -44,6 +44,10 @@ public partial class BoolAuthDialogue : UserControl
         _operatorRepository = App.AppHost.Services.GetRequiredService<IOperatorRepository>();
 
         InfoText.Text += permission.GetPromptName();
+
+        Keypad.DisableButton(Keypad.PeriodButton);
+        Keypad.SelectedBox = UserIdBox;
+        UserIdBox.Focus();
     }
 
 
@@ -100,7 +104,7 @@ public partial class BoolAuthDialogue : UserControl
         _onCancel();
     }
 
-    private void UserIdBox_KeyUp(object sender, KeyEventArgs e)
+    private void UserIdBox_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
@@ -109,7 +113,7 @@ public partial class BoolAuthDialogue : UserControl
         }
     }
 
-    private void PasswordBox_KeyUp(object sender, KeyEventArgs e)
+    private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {

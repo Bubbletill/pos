@@ -138,7 +138,7 @@ public partial class AdminTrxnManagementMenuView : UserControl
                             () =>
                             {
                                 _controller.CancelTransaction();
-                                AdminMenuView av = App.AppHost.Services.GetRequiredService<AdminMenuView>();
+                                AdminTrxnManagementMenuView av = App.AppHost.Services.GetRequiredService<AdminTrxnManagementMenuView>();
                                 w.POSViewContainer.Content = av;
                             },
                             true // Admin colours

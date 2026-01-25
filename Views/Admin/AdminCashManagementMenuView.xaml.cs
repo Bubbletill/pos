@@ -1,4 +1,5 @@
 ﻿using BT_COMMONS.Operators;
+using BT_COMMONS.Transactions;
 using BT_POS.Buttons;
 using BT_POS.Buttons.Admin;
 using BT_POS.Buttons.Menu;
@@ -133,6 +134,8 @@ public partial class AdminCashManagementMenuView : UserControl
                             return;
                         }
 
+                        _controller.StartTransaction(TransactionType.NO_SALE);
+                        _controller.Submit();
                         return;
                     }
                 };

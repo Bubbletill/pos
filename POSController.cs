@@ -132,19 +132,13 @@ public class POSController
 
     public void CheckTransactionType()
     {
-        Debug.WriteLine("running!!");
         if (CurrentTransaction == null)
             return;
-
-        Debug.WriteLine("past curr trans!!");
-        Debug.WriteLine(CurrentTransaction.Type);
 
         if (CurrentTransaction.Type != TransactionType.SALE &&
             CurrentTransaction.Type != TransactionType.EXCHANGE &&
             CurrentTransaction.Type != TransactionType.RETURN)
             return;
-
-        Debug.WriteLine("past trans type!!");
 
         int saleItems = 0;
         int returnItems = 0;
@@ -155,8 +149,6 @@ public class POSController
             else
                 saleItems++;
         });
-
-        Debug.WriteLine("Return: " + returnItems + ", Sale: " + saleItems);
 
         if ((saleItems == 0 && returnItems == 0) || (saleItems > 0 && returnItems == 0))
         {
@@ -193,16 +185,17 @@ public class POSController
         CheckTransactionType();
     }
 
-    public async Task AddItemToBasket(int code)
+    public async Task<BasketItem?> AddItemToBasket(int code)
     {
         BasketItem? item = await _stockRepository.GetItem(code);
         if (item == null)
         {
             HeaderError("Invalid item code.");
-            return;
+            return null;
         }
 
         AddItemToBasket(item);
+        return item;
     }
 
     public void AddTender(TransactionTender tender, decimal amount)

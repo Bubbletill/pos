@@ -1,5 +1,6 @@
 ﻿using BT_COMMONS.DataRepositories;
 using BT_COMMONS.Transactions;
+using BT_COMMONS.Transactions.TenderAttributes;
 using BT_POS.Views.Dialogues;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -38,7 +39,23 @@ public partial class PostVoidView : UserControl
         _transaction = transaction;
 
         ViewInformation.SetAdminColour();
-        BasketComponent.BasketGrid.ItemsSource = _transaction.Basket;
+
+        List<BasketItem> localBasket = new List<BasketItem>(_transaction.Basket);
+        BasketComponent.BasketGrid.ItemsSource = localBasket;
+        if (_transaction.Tenders.Count != 0)
+        {
+            localBasket.Add(new BasketItem(0, " ", 0, 0));
+            foreach (KeyValuePair<TransactionTender, decimal> entry in _transaction.Tenders)
+            {
+                localBasket.Add(new BasketItem(0, entry.Key.GetTenderExternalName(), entry.Value, 0));
+            }
+            if (_transaction.Change != 0)
+            {
+                localBasket.Add(new BasketItem(0, "Change", _controller.CurrentTransaction.Change, 0));
+            }
+        }
+
+
         TotalTextBlock.Text = "£" + _transaction.GetTotal();
 
         _controller.CurrentTransaction!.Logs.Add(new TransactionLog(TransactionLogType.NSGeneral, "Post Void details:"));
@@ -81,12 +98,12 @@ public partial class PostVoidView : UserControl
     private async void PostVoid()
     {
         await _controller.ActionPostVoid(_transaction);
-    }
+    }       
 
     private void Cancel()
     {
         _controller.CancelTransaction();
-        AdminMenuView av = App.AppHost.Services.GetRequiredService<AdminMenuView>();
+        AdminTrxnManagementMenuView av = App.AppHost.Services.GetRequiredService<AdminTrxnManagementMenuView>();
         _mainWindow.POSViewContainer.Content = av;
     }
 }

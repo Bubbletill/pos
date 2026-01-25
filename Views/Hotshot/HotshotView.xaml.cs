@@ -91,8 +91,20 @@ public partial class HotshotView : UserControl
             button.Content = item.title;
             button.Click += async (s, e) =>
             {
-                await _controller.AddItemToBasket(item.product);
-                _mainWindow.POSViewContainer.Content = App.AppHost.Services.GetRequiredService<HomeView>();
+                BasketItem? bi = await _controller.AddItemToBasket(item.product);
+                if (bi == null)
+                    return; // as header error will show
+
+                // if not age restricted (or customer is already confirmed of age), return home
+                // if this check fails then we do not go home and allow for the age restricted prompt to show
+                if (bi.AgeRestricted == 0 || 
+                (_controller.CurrentTransaction?.CustomerAge >= bi.AgeRestricted))
+                {
+                    _mainWindow.POSViewContainer.Content =
+                        App.AppHost.Services.GetRequiredService<HomeView>();
+                }
+
+
                 return;
             };
 

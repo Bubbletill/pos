@@ -35,6 +35,6 @@
        
 
         <!-- Information Box -->
-        <components:ViewInformationComponent Grid.Row="0" Grid.Column="4" Title="STOP. AGE RESTRICTED ITEM." Information="Is the customer over 18? Please confirm with a valid, physical photo ID: passport, driving license, PASS card. Please either approve or refuse the item."/>
+        <components:ViewInformationComponent x:Name="ViewInformation" Grid.Row="0" Grid.Column="4" Title="STOP. AGE RESTRICTED ITEM." Information="Is the customer over 18? Please confirm with a valid, physical photo ID: passport, driving license, PASS card. Please either approve or refuse the item."/>
     </Grid>
 </UserControl>
